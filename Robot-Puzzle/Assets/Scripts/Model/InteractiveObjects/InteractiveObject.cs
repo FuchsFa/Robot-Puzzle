@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractiveObject : MonoBehaviour {
+public abstract class InteractiveObject {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    private int posX;
+    private int posY;
+
+    /// <summary>
+    /// Gibt an, ob das Objekt bewegt(z.B. geschoben) werden kann.
+    /// </summary>
+    private bool movable;
+
+    /// <summary>
+    /// Gibt an, ob das Objekt von einem Roboter gegriffen werden kann.
+    /// </summary>
+    private bool grabable;
+
+    //TODO: TerrainType hinzufügen
 }
