@@ -70,10 +70,31 @@ public class Robot {
 
     /// <summary>
     /// Fügt das angegebene Teil zur Teileliste des Roboters hinzu.
+    /// Teile der Typen 'Tool' und 'Mobility' ersetzen bereits hinzugefügte Teile des gleichen Typs.
     /// </summary>
     /// <param name="part"></param>
     public void AddPart(RobotPart part) {
+        if(part.type != RobotPart.PartType.Sensor) {
+            RemovePartsOfSameType(part.type);
+        }
         parts.Add(part);
+        part.AddTo(this);
+    }
+
+    /// <summary>
+    /// Entfernt alle Teile des übergebenen Typs aus der Teileliste des Roboters.
+    /// </summary>
+    /// <param name="partType"></param>
+    private void RemovePartsOfSameType(RobotPart.PartType partType) {
+        List<RobotPart> partsToRemove = new List<RobotPart>();
+        foreach(RobotPart part in parts) {
+            if(part.type == partType) {
+                partsToRemove.Add(part);
+            }
+        }
+        foreach(RobotPart part in partsToRemove) {
+            RemovePart(part);
+        }
     }
 
     /// <summary>
@@ -83,6 +104,7 @@ public class Robot {
     public void RemovePart(RobotPart part) {
         if(parts.Contains(part)) {
             parts.Remove(part);
+            part.RemoveFrom(this);
         } else {
             Debug.LogError("Das Teil kann nicht vom Roboter entfernt werden, weil es nicht ein Teil von dessen Teileliste ist.");
         }
