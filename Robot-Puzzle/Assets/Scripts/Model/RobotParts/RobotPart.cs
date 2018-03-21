@@ -6,7 +6,7 @@ public abstract class RobotPart {
     /// <summary>
     /// Der Roboter an dem dieses Teil befestigt ist.
     /// </summary>
-    private Robot attachedTo;
+    protected Robot attachedTo;
 
     /// <summary>
     /// Ein enum der möglichen Typen, die Teile sein können.
