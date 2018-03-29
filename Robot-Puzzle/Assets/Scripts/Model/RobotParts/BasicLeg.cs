@@ -46,11 +46,4 @@ public class BasicLeg : RobotPart {
     public override void RemoveFrom(Robot robot) {
         attachedTo = null;
     }
-
-    /// <summary>
-    /// Lässt den Roboter einen Schritt in Blickrichtung gehen.
-    /// </summary>
-    public void Walk() {
-        //TODO: implementieren
-    }
 }

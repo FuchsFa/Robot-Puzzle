@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MoonSharp.Interpreter;
 
 public class Robot {
 
+    //Positions-spezifische Felder:
     private int posX;
     private int posY;
     private Vector2 direction;
@@ -16,7 +18,20 @@ public class Robot {
     private int startY;
     private Vector2 startDirection;
 
+    //Allgemeine Felder:
     private List<RobotPart> parts;
+
+    private Dictionary<string, System.Action> actionDictionary;
+
+    private Script script;
+
+    //Aktions-spezifische Felder:
+
+    //Für Grab()
+    private InteractiveObject grabbedObject;
+
+    //Für Sense()
+    private InteractiveObject sensedObject;
 
     /// <summary>
     /// Platziert den Roboter an Stelle 0/0 mit Blick nach Süden.
@@ -40,6 +55,32 @@ public class Robot {
         posY = oldY = startY = y;
         direction = oldDirection = startDirection = dir;
         parts = new List<RobotPart>();
+    }
+
+    /// <summary>
+    /// Erstellt das Dictionary, in dem alle Aktionen stehen, die der Roboter ausführen kann.
+    /// </summary>
+    private void InitializeActionDictionary() {
+        actionDictionary = new Dictionary<string, System.Action>();
+        //TODO: Die GetActionList() Funktion der RobotParts benutzen, um dieses dictionary zu füllen
+        actionDictionary.Add("turnLeft", TurnLeft);
+        actionDictionary.Add("turnRight", TurnRight);
+        actionDictionary.Add("grab", GrabObject);
+        actionDictionary.Add("release", ReleaseObject);
+        actionDictionary.Add("walk", Walk);
+        actionDictionary.Add("sense", Sense);
+    }
+
+    /// <summary>
+    /// Erstellt das Script-Object in dem der Programmcode des Roboters gespeichert wird.
+    /// Übergibt die Aktionen im actionDictionary an das Script.
+    /// </summary>
+    private void InitializeScript() {
+        script = new Script(CoreModules.Preset_HardSandbox);
+
+        foreach(string key in actionDictionary.Keys) {
+            script.Globals[key] = (System.Action)actionDictionary[key];
+        }
     }
 
     /// <summary>
@@ -111,6 +152,10 @@ public class Robot {
         
     }
 
+    //Aktionen:
+
+    //Grundlegende Aktionen
+
     /// <summary>
     /// Dreht die zurzeitige Ausrichtung des Roboters um 90° gegen den Uhrzeigersinn.
     /// </summary>
@@ -126,5 +171,55 @@ public class Robot {
         oldDirection = direction;
         direction = new Vector2(oldDirection.y, -oldDirection.x);
     }
-	
+
+    //Tool-spezifische Aktionen
+
+    /// <summary>
+    /// Wenn ein interactives Objekt vor dem Roboter liegt, wird es gegriffen,sofern noch kein anderes Objekt gehalten wird.
+    /// </summary>
+    public void GrabObject() {
+        if (grabbedObject != null) {
+            //Wenn bereits ein Objekt gegriffen wird, passiert nichts.
+            return;
+        }
+        InteractiveObject objectToGrab = CheckForObjectToGrab();
+        if (objectToGrab != null) {
+            grabbedObject = objectToGrab;
+        }
+    }
+
+    /// <summary>
+    /// Überprüft, ob vor dem Roboter ein Objekt liegt, das gegriffen werden kann.
+    /// </summary>
+    /// <returns>Gibt das Objekt zurück, welches gegriffen werden soll. Gibt null zurück, wenn kein greifbares Objekt vorhanden ist.</returns>
+    private InteractiveObject CheckForObjectToGrab() {
+        //TODO: implementieren
+        return null;
+    }
+
+    /// <summary>
+    /// Lässt das derzeit gehaltene Objekt los.
+    /// </summary>
+    public void ReleaseObject() {
+        grabbedObject = null;
+    }
+
+    //Mobility-spezifische Aktionen
+
+    /// <summary>
+    /// Lässt den Roboter einen Schritt in Blickrichtung gehen.
+    /// </summary>
+    public void Walk() {
+        //TODO: implementieren
+    }
+
+    //Sensor-spezifische Aktionen
+
+    /// <summary>
+    /// Überprüft, ob auf dem Feld vor dem Roboter ein interaktives Objekt liegt.
+    /// </summary>
+    public void Sense() {
+        //TODO: implementieren
+    }
+
 }

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BasicSensor : RobotPart {
-    private InteractiveObject sensedObject;
 
     /// <summary>
     /// Erstellt den Sensor und fügt ihn dem angegebenen Roboter hinzu.
@@ -46,13 +45,4 @@ public class BasicSensor : RobotPart {
         attachedTo = null;
     }
 
-    /// <summary>
-    /// Überprüft, ob auf dem Feld vor dem Roboter ein interaktives Objekt liegt.
-    /// </summary>
-    /// <returns>Das Objekt. Gibt null zurück, falls kein Objekt gefunden wurde.</returns>
-    public InteractiveObject Sense() {
-        sensedObject = null;
-        //TODO: implementieren
-        return sensedObject;
-    }
 }
