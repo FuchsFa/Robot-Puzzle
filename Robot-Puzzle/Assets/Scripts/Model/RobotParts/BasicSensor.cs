@@ -33,8 +33,8 @@ public class BasicSensor : RobotPart {
     /// Gibt ein Dictionary zurück mit allen Funktionen, die ein Roboter durch dieses Teil ausführen kann.
     /// </summary>
     /// <returns></returns>
-    public override Dictionary<string, Action> GetActionList() {
-        throw new NotImplementedException();
+    public override List<string> GetActionList() {
+        return new List<string>(new string[] { "sense" });
     }
 
     /// <summary>

@@ -33,8 +33,8 @@ public abstract class RobotPart {
     abstract public void RemoveFrom(Robot robot);
 
     /// <summary>
-    /// Liefert alle Actions, die dieses Teil bereitstellt, in Form eines Dictionarys.
+    /// Liefert alle Actions, die dieses Teil bereitstellt.
     /// </summary>
     /// <returns></returns>
-    abstract public Dictionary<string, System.Action> GetActionList();
+    abstract public List<string> GetActionList();
 }

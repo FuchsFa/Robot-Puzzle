@@ -22,6 +22,7 @@ public class Robot {
     private List<RobotPart> parts;
 
     private Dictionary<string, System.Action> actionDictionary;
+    private List<string> allowedActionNames;
 
     private Script script;
 
@@ -42,6 +43,9 @@ public class Robot {
         //Standardmäßig sehen Roboter nach Süden.
         direction = oldDirection = startDirection = new Vector2(0, -1);
         parts = new List<RobotPart>();
+        InitializeActionDictionary();
+        GetAllowedActionNames();
+        InitializeScript();
     }
 
     /// <summary>
@@ -55,6 +59,9 @@ public class Robot {
         posY = oldY = startY = y;
         direction = oldDirection = startDirection = dir;
         parts = new List<RobotPart>();
+        InitializeActionDictionary();
+        GetAllowedActionNames();
+        InitializeScript();
     }
 
     /// <summary>
@@ -62,13 +69,22 @@ public class Robot {
     /// </summary>
     private void InitializeActionDictionary() {
         actionDictionary = new Dictionary<string, System.Action>();
-        //TODO: Die GetActionList() Funktion der RobotParts benutzen, um dieses dictionary zu füllen
         actionDictionary.Add("turnLeft", TurnLeft);
         actionDictionary.Add("turnRight", TurnRight);
         actionDictionary.Add("grab", GrabObject);
         actionDictionary.Add("release", ReleaseObject);
         actionDictionary.Add("walk", Walk);
         actionDictionary.Add("sense", Sense);
+    }
+
+    /// <summary>
+    /// Füllt die 'allowedActionNames' Liste, in der alle Aktionen stehen, die der Roboter ausführen darf.
+    /// </summary>
+    private void GetAllowedActionNames() {
+        allowedActionNames = new List<string>();
+        foreach(RobotPart part in parts) {
+            allowedActionNames.AddRange(part.GetActionList());
+        }
     }
 
     /// <summary>
