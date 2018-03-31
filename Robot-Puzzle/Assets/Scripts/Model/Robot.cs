@@ -65,6 +65,21 @@ public class Robot {
     }
 
     /// <summary>
+    /// Initialisiert den Roboter mit den übergebenen Parametern.
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    public void InitializeRobot(Vector2 dir, int x = 0, int y = 0) {
+        ChangeStartingPosition(x, y);
+        ChangeStartingDirection(dir);
+        parts = new List<RobotPart>();
+        InitializeActionDictionary();
+        GetAllowedActionNames();
+        InitializeScript();
+    }
+
+    /// <summary>
     /// Erstellt das Dictionary, in dem alle Aktionen stehen, die der Roboter ausführen kann.
     /// </summary>
     private void InitializeActionDictionary() {
