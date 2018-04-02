@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoonSharp.Interpreter;
 
-public class Robot {
+public class Robot : MonoBehaviour {
 
     //Positions-spezifische Felder:
     private int posX;
@@ -21,10 +21,13 @@ public class Robot {
     //Allgemeine Felder:
     private List<RobotPart> parts;
 
-    private Dictionary<string, System.Action> actionDictionary;
+    private string scriptCode;
+
+    private Dictionary<string, System.Func<DynValue>> actionDictionary;
     private List<string> allowedActionNames;
 
     private Script script;
+    private DynValue coroutine;
 
     //Aktions-spezifische Felder:
 
@@ -38,14 +41,8 @@ public class Robot {
     /// Platziert den Roboter an Stelle 0/0 mit Blick nach Süden.
     /// </summary>
     public Robot() {
-        posX = oldX = startX = 0;
-        posY = oldY = startY = 0;
         //Standardmäßig sehen Roboter nach Süden.
-        direction = oldDirection = startDirection = new Vector2(0, -1);
-        parts = new List<RobotPart>();
-        InitializeActionDictionary();
-        GetAllowedActionNames();
-        InitializeScript();
+        InitializeRobot(new Vector2(0, -1));
     }
 
     /// <summary>
@@ -55,13 +52,7 @@ public class Robot {
     /// <param name="y"></param>
     /// <param name="dir">Ausrichtung des Roboters</param>
     public Robot(int x, int y, Vector2 dir) {
-        posX = oldX = startX = x;
-        posY = oldY = startY = y;
-        direction = oldDirection = startDirection = dir;
-        parts = new List<RobotPart>();
-        InitializeActionDictionary();
-        GetAllowedActionNames();
-        InitializeScript();
+        InitializeRobot(dir, x, y);
     }
 
     /// <summary>
@@ -83,7 +74,7 @@ public class Robot {
     /// Erstellt das Dictionary, in dem alle Aktionen stehen, die der Roboter ausführen kann.
     /// </summary>
     private void InitializeActionDictionary() {
-        actionDictionary = new Dictionary<string, System.Action>();
+        actionDictionary = new Dictionary<string, System.Func<DynValue>>();
         actionDictionary.Add("turnLeft", TurnLeft);
         actionDictionary.Add("turnRight", TurnRight);
         actionDictionary.Add("grab", GrabObject);
@@ -108,10 +99,46 @@ public class Robot {
     /// </summary>
     private void InitializeScript() {
         script = new Script(CoreModules.Preset_HardSandbox);
+        script.Options.DebugPrint = s => { Debug.Log(s); };//TODO: Debug-Nachrichten auf eine in-game lesbare Konsole schreiben.
 
         foreach(string key in actionDictionary.Keys) {
-            script.Globals[key] = (System.Action)actionDictionary[key];
+            script.Globals[key] = (System.Func<DynValue>)actionDictionary[key];
         }
+        scriptCode = "";
+    }
+
+    /// <summary>
+    /// Ändert das Skript des Roboters.
+    /// </summary>
+    /// <param name="code"></param>
+    public void ChangeScriptCode(string code) {
+        scriptCode = code;
+    }
+
+    /// <summary>
+    /// Startet eine neue Coroutine für das Skript des Roboters.
+    /// </summary>
+    public void StartLuaScript() {
+        script.DoString(scriptCode);
+
+        DynValue function = script.Globals.Get("action");
+        coroutine = script.CreateCoroutine(function);
+    }
+
+    /// <summary>
+    /// Lässt das Skript des Roboters weiterlaufen nachdem es mit einem yield angehalten wurde.
+    /// </summary>
+    public void ResumeAction() {
+        coroutine.Coroutine.Resume();
+    }
+
+    /// <summary>
+    /// Löscht die derzeitige Instanz der Coroutine für das Skript des Roboters und erstellt eine danach eine neue Coroutine.
+    /// </summary>
+    public void Restart() {
+        coroutine = null;
+        DynValue function = script.Globals.Get("action");
+        coroutine = script.CreateCoroutine(function);
     }
 
     /// <summary>
@@ -190,17 +217,21 @@ public class Robot {
     /// <summary>
     /// Dreht die zurzeitige Ausrichtung des Roboters um 90° gegen den Uhrzeigersinn.
     /// </summary>
-    public void TurnLeft() {
+    public DynValue TurnLeft() {
+        Debug.Log(gameObject.name + " turns left.");
         oldDirection = direction;
         direction = new Vector2(-oldDirection.y, oldDirection.x);
+        return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
     /// <summary>
     /// Dreht die zurzeitige Ausrichtung des Roboters um 90° im Uhrzeigersinn.
     /// </summary>
-    public void TurnRight() {
+    public DynValue TurnRight() {
+        Debug.Log(gameObject.name + " turns right.");
         oldDirection = direction;
         direction = new Vector2(oldDirection.y, -oldDirection.x);
+        return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
     //Tool-spezifische Aktionen
@@ -208,15 +239,17 @@ public class Robot {
     /// <summary>
     /// Wenn ein interactives Objekt vor dem Roboter liegt, wird es gegriffen,sofern noch kein anderes Objekt gehalten wird.
     /// </summary>
-    public void GrabObject() {
+    public DynValue GrabObject() {
+        Debug.Log(gameObject.name + " tries to grab.");
         if (grabbedObject != null) {
             //Wenn bereits ein Objekt gegriffen wird, passiert nichts.
-            return;
+            return DynValue.NewYieldReq(new DynValue[] { coroutine });
         }
         InteractiveObject objectToGrab = CheckForObjectToGrab();
         if (objectToGrab != null) {
             grabbedObject = objectToGrab;
         }
+        return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
     /// <summary>
@@ -231,8 +264,10 @@ public class Robot {
     /// <summary>
     /// Lässt das derzeit gehaltene Objekt los.
     /// </summary>
-    public void ReleaseObject() {
+    public DynValue ReleaseObject() {
+        Debug.Log(gameObject.name + " releases its grabbed object.");
         grabbedObject = null;
+        return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
     //Mobility-spezifische Aktionen
@@ -240,8 +275,10 @@ public class Robot {
     /// <summary>
     /// Lässt den Roboter einen Schritt in Blickrichtung gehen.
     /// </summary>
-    public void Walk() {
+    public DynValue Walk() {
+        Debug.Log(gameObject.name + " walks.");
         //TODO: implementieren
+        return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
     //Sensor-spezifische Aktionen
@@ -249,8 +286,10 @@ public class Robot {
     /// <summary>
     /// Überprüft, ob auf dem Feld vor dem Roboter ein interaktives Objekt liegt.
     /// </summary>
-    public void Sense() {
+    public DynValue Sense() {
+        Debug.Log(gameObject.name + " activates its sensor.");
         //TODO: implementieren
+        return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
 }
