@@ -38,24 +38,6 @@ public class Robot : MonoBehaviour {
     private InteractiveObject sensedObject;
 
     /// <summary>
-    /// Platziert den Roboter an Stelle 0/0 mit Blick nach Süden.
-    /// </summary>
-    public Robot() {
-        //Standardmäßig sehen Roboter nach Süden.
-        InitializeRobot(new Vector2(0, -1));
-    }
-
-    /// <summary>
-    /// Platziert den Roboter an der angegebenen Stelle mit der angegebenen Ausrichtung
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="dir">Ausrichtung des Roboters</param>
-    public Robot(int x, int y, Vector2 dir) {
-        InitializeRobot(dir, x, y);
-    }
-
-    /// <summary>
     /// Initialisiert den Roboter mit den übergebenen Parametern.
     /// </summary>
     /// <param name="dir"></param>
@@ -68,6 +50,16 @@ public class Robot : MonoBehaviour {
         InitializeActionDictionary();
         GetAllowedActionNames();
         InitializeScript();
+    }
+
+    /// <summary>
+    /// Setzt den Roboter auf seine Anfangsposition und -drehung zurück und startet sein Skript neu.
+    /// </summary>
+    public void ResetRobot() {
+        posX = oldX = startX;
+        posY = oldY = startY;
+        direction = oldDirection = startDirection;
+        RestartLuaScript();
     }
 
     /// <summary>
@@ -113,14 +105,17 @@ public class Robot : MonoBehaviour {
     /// <param name="code"></param>
     public void ChangeScriptCode(string code) {
         scriptCode = code;
+        Debug.Log(gameObject.name + "'s script has been changed to: " + code);
     }
 
     /// <summary>
     /// Startet eine neue Coroutine für das Skript des Roboters.
     /// </summary>
     public void StartLuaScript() {
+        Debug.Log("Start Lua Script");
         script.DoString(scriptCode);
 
+        coroutine = null;
         DynValue function = script.Globals.Get("action");
         coroutine = script.CreateCoroutine(function);
     }
@@ -129,13 +124,24 @@ public class Robot : MonoBehaviour {
     /// Lässt das Skript des Roboters weiterlaufen nachdem es mit einem yield angehalten wurde.
     /// </summary>
     public void ResumeAction() {
+        if(coroutine.Coroutine.State == CoroutineState.Dead) {
+            return;
+        }
         coroutine.Coroutine.Resume();
+    }
+
+    /// <summary>
+    /// Überprüft, ob der Roboter noch Aktionen in seiner Coroutine hat.
+    /// </summary>
+    /// <returns></returns>
+    public bool HasActionsLeft() {
+        return coroutine.Coroutine.State != CoroutineState.Dead;
     }
 
     /// <summary>
     /// Löscht die derzeitige Instanz der Coroutine für das Skript des Roboters und erstellt eine danach eine neue Coroutine.
     /// </summary>
-    public void Restart() {
+    public void RestartLuaScript() {
         coroutine = null;
         DynValue function = script.Globals.Get("action");
         coroutine = script.CreateCoroutine(function);

@@ -21,7 +21,19 @@ public class GameStateManager : MonoBehaviour {
         timeMultiplier = 1;
         isPaused = true;
         robotManager = GetComponent<RobotManager>();
+        TestStart();
 	}
+
+    /// <summary>
+    /// Erstellt die Für den Test nötigen Objekte und startet das Spiel.
+    /// </summary>
+    private void TestStart() {
+        GameObject robotObject = robotManager.CreateDefaultRobot();
+        TextAsset text = Resources.Load<TextAsset>("Texts/BotAActions");
+        string scriptCode = text.text;
+        robotObject.GetComponent<Robot>().ChangeScriptCode(scriptCode);
+        Play();
+    }
 
     /// <summary>
     /// Verändert den timeMultiplier, damit die Spielzeit schneller oder langsamer vergeht.
@@ -59,8 +71,12 @@ public class GameStateManager : MonoBehaviour {
     /// Startet das Spiel.
     /// </summary>
     private void Play() {
-        isPaused = false;
         Debug.Log("Play!");
+        isPaused = false;
+        if(currentTurn == 0) {
+            robotManager.StartRobotScripts();
+        }
+        
     }
 
     /// <summary>
@@ -82,12 +98,14 @@ public class GameStateManager : MonoBehaviour {
         timer = 0;
         currentTurn = 0;
         //TODO: Jetzt die Roboter und Objekte zurücksetzen.
+        robotManager.ResetRobots();
     }
 
     /// <summary>
     /// Führt alle nötigen Schritte für die derzeitige Runde aus.
     /// </summary>
     private void ExecuteTurn() {
-        //TODO: Jetzt die Aktionen für die Runde ausführen.
+        Debug.Log("Turn " + currentTurn);
+        robotManager.PerformRobotActionsForTurn();
     }
 }

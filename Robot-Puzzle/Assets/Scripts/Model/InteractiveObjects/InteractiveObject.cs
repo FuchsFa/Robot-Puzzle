@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class InteractiveObject : MonoBehaviour {
+public class InteractiveObject : MonoBehaviour {
 
     /// <summary>
     /// Der Roboter, der dieses Objekt greift.

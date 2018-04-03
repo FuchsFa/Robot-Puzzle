@@ -22,12 +22,13 @@ public class RobotManager : MonoBehaviour {
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    private void CreateRobot(int x, int y) {
+    private GameObject CreateRobot(int x, int y) {
         GameObject robotObject = Instantiate(robotPrefab);
         Robot bot = robotObject.GetComponent<Robot>();
         bot.InitializeRobot(new Vector2(0, -1), x, y);
         robotObject.transform.position = new Vector3(x, y);
         robots.Add(robotObject);
+        return robotObject;
     }
 
     /// <summary>
@@ -80,9 +81,57 @@ public class RobotManager : MonoBehaviour {
         Robot bot = robotObject.GetComponent<Robot>();
         bot.RemovePart(part);
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    /// <summary>
+    /// Erstellt einen Roboter an Stelle 0, 0 und fügt einen BasicArm, ein BasicLeg und einen BasicSensor zu iihm hinzu.
+    /// </summary>
+    public GameObject CreateDefaultRobot() {
+        GameObject robotObject = CreateRobot(0, 0);
+        BasicArm arm = new BasicArm();
+        BasicLeg leg = new BasicLeg();
+        BasicSensor sensor = new BasicSensor();
+        AddPartToRobot(robotObject, arm);
+        AddPartToRobot(robotObject, leg);
+        AddPartToRobot(robotObject, sensor);
+        return robotObject;
+    }
+
+    /// <summary>
+    /// Ruft die StartLuaScript Funktion jedes Roboter auf, damit diese ihre Aktionen ausführen können.
+    /// Wird aufgerufen, wenn der Spieler auf 'Play' drückt.
+    /// </summary>
+    public void StartRobotScripts() {
+        foreach(GameObject robotObject in robots) {
+            Robot bot = robotObject.GetComponent<Robot>();
+            bot.StartLuaScript();
+        }
+    }
+
+    /// <summary>
+    /// Führt das Lua-Skript jedes Roboters weiter aus, bis es wieder yield zurückgibt.
+    /// Wird zu Beginn jeder Runde aufgerufen.
+    /// </summary>
+    public void PerformRobotActionsForTurn() {
+        foreach(GameObject robotObject in robots) {
+            Robot bot = robotObject.GetComponent<Robot>();
+            if(bot.HasActionsLeft()) {
+                bot.ResumeAction();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Setzt alle Roboter auf ihren Anfangsstatus zurück.
+    /// </summary>
+    public void ResetRobots() {
+        foreach(GameObject robotObject in robots) {
+            Robot bot = robotObject.GetComponent<Robot>();
+            bot.ResetRobot();
+        }
+    }
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
 }
