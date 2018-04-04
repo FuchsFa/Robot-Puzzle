@@ -5,7 +5,17 @@ using UnityEngine;
 
 public class BasicLeg : RobotPart {
 
-    //TODO: TerrainType hinzufügen
+    GroundTile.TerrainType terrainCompatability;
+
+    public GroundTile.TerrainType TerrainCompatability {
+        get {
+            return terrainCompatability;
+        }
+
+        protected set {
+            terrainCompatability = value;
+        }
+    }
 
     /// <summary>
     /// Erstellt das Bein und fügt es dem angegebenen Roboer hinzu.
@@ -13,6 +23,7 @@ public class BasicLeg : RobotPart {
     /// <param name="robot"></param>
     public BasicLeg(Robot robot) {
         type = PartType.Mobility;
+        terrainCompatability = GroundTile.TerrainType.solid;
         robot.AddPart(this);
     }
 
@@ -21,6 +32,7 @@ public class BasicLeg : RobotPart {
     /// </summary>
     public BasicLeg() {
         type = PartType.Mobility;
+        terrainCompatability = GroundTile.TerrainType.solid;
     }
 
     /// <summary>

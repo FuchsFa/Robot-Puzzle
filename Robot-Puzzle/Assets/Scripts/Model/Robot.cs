@@ -287,6 +287,26 @@ public class Robot : MonoBehaviour {
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
+    /// <summary>
+    /// Überprüft alle RobotParts auf ihre TerrainCompatability.
+    /// Wenn die TerrainTypen mit dem TerrainTypen des übergebenen tiles übereinstimmen, wird true, sonst wird false zurückgegeben.
+    /// </summary>
+    /// <param name="tile"></param>
+    /// <returns></returns>
+    public bool CanWalkOn(GroundTile tile) {
+        bool canWalk = false;
+        foreach(RobotPart part in parts) {
+            if(part is BasicLeg) {
+                BasicLeg leg = part as BasicLeg;
+                if(leg.TerrainCompatability == tile.terrainType) {
+                    canWalk = true;
+                    break;
+                }
+            }
+        }
+        return canWalk;
+    }
+
     //Sensor-spezifische Aktionen
 
     /// <summary>
