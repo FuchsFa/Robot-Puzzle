@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Robot
   layers:
   - Default
   - TransparentFX
@@ -15,15 +16,15 @@ TagManager:
   - 
   - 
   - 
+  - Ground
   - 
+  - Wall
   - 
+  - Robot
   - 
+  - WorldObjects
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Wall Top
   - 
   - 
   - 
@@ -40,4 +41,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Ground
+    uniqueID: 3882249711
+    locked: 0
+  - name: Wall
+    uniqueID: 3951468531
+    locked: 0
+  - name: Robot
+    uniqueID: 704723279
+    locked: 0
+  - name: WorldObjects
+    uniqueID: 1987882343
+    locked: 0
+  - name: Wall Top
+    uniqueID: 2747306325
     locked: 0

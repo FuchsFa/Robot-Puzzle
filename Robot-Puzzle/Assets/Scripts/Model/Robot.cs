@@ -8,7 +8,7 @@ public class Robot : MonoBehaviour {
     //Positions-spezifische Felder:
     private int posX;
     private int posY;
-    private Vector2 direction;
+    public Vector2 direction;
 
     private int oldX;
     private int oldY;
@@ -33,6 +33,16 @@ public class Robot : MonoBehaviour {
 
     //Für Grab()
     private InteractiveObject grabbedObject;
+
+    public InteractiveObject GrabbedObject {
+        get {
+            return grabbedObject;
+        }
+
+        private set {
+            grabbedObject = value;
+        }
+    }
 
     //Für Sense()
     private InteractiveObject sensedObject;
@@ -254,6 +264,7 @@ public class Robot : MonoBehaviour {
         InteractiveObject objectToGrab = CheckForObjectToGrab();
         if (objectToGrab != null) {
             grabbedObject = objectToGrab;
+            objectToGrab.OnGrab(this);
         }
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
@@ -263,8 +274,7 @@ public class Robot : MonoBehaviour {
     /// </summary>
     /// <returns>Gibt das Objekt zurück, welches gegriffen werden soll. Gibt null zurück, wenn kein greifbares Objekt vorhanden ist.</returns>
     private InteractiveObject CheckForObjectToGrab() {
-        //TODO: implementieren
-        return null;
+        return GetComponent<RayCaster>().CheckForGrabableObject();
     }
 
     /// <summary>

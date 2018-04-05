@@ -14,10 +14,30 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     [SerializeField]private bool movable;
 
+    public bool Movable {
+        get {
+            return movable;
+        }
+
+        private set {
+            movable = value;
+        }
+    }
+
     /// <summary>
     /// Gibt an, ob das Objekt von einem Roboter gegriffen werden kann.
     /// </summary>
     [SerializeField]private bool grabable;
+
+    public bool Grabable {
+        get {
+            return grabable;
+        }
+
+        private set {
+            grabable = value;
+        }
+    }
 
     /// <summary>
     /// Wird aufgerufen, wenn das Objekt gegriffen wird.
