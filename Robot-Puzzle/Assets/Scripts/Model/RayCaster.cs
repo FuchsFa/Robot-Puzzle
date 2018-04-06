@@ -20,17 +20,17 @@ public class RayCaster : MonoBehaviour {
 	}
 
     /// <summary>
-    /// Überprüft, ob im Tile vor dem Roboter(in Blickrichtung) etwas ist, mit dem der Roboter zusammenstoßen würde.
+    /// Überprüft, ob im Tile vor dem Objekt(in Blickrichtung) etwas ist, mit dem es zusammenstoßen würde.
     /// </summary>
     /// <returns></returns>
     public bool CheckForCollisionsInFacingDirection() {
         bool collided = false;
 
-        Robot bot = GetComponent<Robot>();
-        raycastOrigin = new Vector2(transform.position.x + (bot.direction.x * 0.6f), transform.position.y + (bot.direction.y * 0.6f));
-        Vector2 raycastDirection = bot.direction;
-        if(bot.GrabbedObject != null) {
-            raycastOrigin += bot.direction;
+        InteractiveObject obj = GetComponent<InteractiveObject>();
+        raycastOrigin = new Vector2(transform.position.x + (obj.direction.x * 0.6f), transform.position.y + (obj.direction.y * 0.6f));
+        Vector2 raycastDirection = obj.direction;
+        if(GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            raycastOrigin += obj.direction;
         }
         collided = CheckForCollision(raycastOrigin, raycastDirection);
 
@@ -73,15 +73,15 @@ public class RayCaster : MonoBehaviour {
     }
 
     /// <summary>
-    /// Überprüft, ob im Tile vor dem Roboter(in Blickrichtung) etwas ist, das der Roboter greifen kann.
+    /// Überprüft, ob im Tile vor dem Objekt(in Blickrichtung) etwas ist, das gegriffen werden kann.
     /// </summary>
     /// <returns></returns>
     public InteractiveObject CheckForGrabableObject() {
         GameObject interactableObject = null;
 
-        Robot bot = GetComponent<Robot>();
-        raycastOrigin = new Vector2(transform.position.x + (bot.direction.x * 0.6f), transform.position.y + (bot.direction.y * 0.6f));
-        Vector2 raycastDirection = bot.direction;
+        InteractiveObject obj = GetComponent<InteractiveObject>();
+        raycastOrigin = new Vector2(transform.position.x + (obj.direction.x * 0.6f), transform.position.y + (obj.direction.y * 0.6f));
+        Vector2 raycastDirection = obj.direction;
         RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, 0.3f, collisionMask);
         Debug.DrawRay(raycastOrigin, raycastDirection, Color.red, 0.3f);
         if (hit) {
@@ -107,7 +107,7 @@ public class RayCaster : MonoBehaviour {
 
         //TODO: implementieren, sobald interaktive Objekte sich bewegen können.
 
-        return interactableObject.GetComponent<InteractiveObject>();
+        return null;
     }
 	
 	// Update is called once per frame

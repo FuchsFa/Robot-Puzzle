@@ -49,8 +49,8 @@ public class RobotManager : MonoBehaviour {
     /// <param name="x"></param>
     /// <param name="y"></param>
     private void ChangeRobotSartingPosition(GameObject robotObject, int x, int y) {
-        Robot bot = robotObject.GetComponent<Robot>();
-        bot.ChangeStartingPosition(x, y);
+        InteractiveObject obj = robotObject.GetComponent<InteractiveObject>();
+        obj.ChangeStartingPosition(x, y);
     }
 
     /// <summary>
@@ -58,8 +58,8 @@ public class RobotManager : MonoBehaviour {
     /// </summary>
     /// <param name="robotObject"></param>
     private void TurnRobotStartingDirection(GameObject robotObject) {
-        Robot bot = robotObject.GetComponent<Robot>();
-        bot.TurnStartingDirection();
+        InteractiveObject obj = robotObject.GetComponent<InteractiveObject>();
+        obj.TurnStartingDirection();
     }
 
     /// <summary>
