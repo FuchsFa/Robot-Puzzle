@@ -106,9 +106,12 @@ public class InteractiveObject : MonoBehaviour {
     public void TurnLeft() {
         oldDirection = direction;
         if(GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
+            grabbedObject.gameObject.transform.position = transform.position + new Vector3(direction.x, direction.y);
             //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
         }
         direction = new Vector2(-oldDirection.y, oldDirection.x);
+        gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
     }
 
     /// <summary>
@@ -117,9 +120,33 @@ public class InteractiveObject : MonoBehaviour {
     public void TurnRight() {
         oldDirection = direction;
         if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
+            grabbedObject.gameObject.transform.position = transform.position + new Vector3(direction.x, direction.y);
             //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
         }
         direction = new Vector2(oldDirection.y, -oldDirection.x);
+        gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
+    }
+
+    /// <summary>
+    /// Gibt die Blickrichtung als float zurück. Süden is 0, Norden ist 180.
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <returns></returns>
+    private float GetFacingAngle(Vector2 dir) {
+        if (dir.y == 1) {
+            return 180;
+        }
+        else if (dir.y == -1) {
+            return 0;
+        }
+        else if (dir.x == 1) {
+            return 90;
+        }
+        else if (dir.x == -1) {
+            return -90;
+        }
+        return 0;
     }
 
     /// <summary>
@@ -141,6 +168,10 @@ public class InteractiveObject : MonoBehaviour {
             oldY = posY;
             posX += (int)moveDir.x;
             posY += (int)moveDir.y;
+            if(GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+                InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
+                grabbedObject.gameObject.transform.position = new Vector3(grabbedObject.posX + moveDir.x + 0.5f, grabbedObject.posY + moveDir.y + 0.5f);
+            }
             gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
             Debug.Log(gameObject.name + " neue Position: " + posX + "/" + posY);
         }
