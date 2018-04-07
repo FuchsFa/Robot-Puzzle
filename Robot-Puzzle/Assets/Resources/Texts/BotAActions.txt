@@ -2,7 +2,9 @@ function action()
 	print("A line 1")
 	walk()
 	print("A line 2")
-	grab()
+	walk()
 	print("A line 3")
 	walk()
+	walk();
+	walk();
 end

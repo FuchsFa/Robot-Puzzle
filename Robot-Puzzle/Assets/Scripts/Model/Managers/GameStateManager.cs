@@ -29,9 +29,14 @@ public class GameStateManager : MonoBehaviour {
     /// </summary>
     private void TestStart() {
         GameObject robotObject = robotManager.CreateDefaultRobot();
+        robotObject.name = "Robot A";
         TextAsset text = Resources.Load<TextAsset>("Texts/BotAActions");
         string scriptCode = text.text;
         robotObject.GetComponent<Robot>().ChangeScriptCode(scriptCode);
+
+        GameObject robotTwo = robotManager.CreateDefaultRobot();
+        robotTwo.name = "Robot B";
+        robotTwo.GetComponent<InteractiveObject>().ChangeStartingPosition(0, -1);
         Play();
     }
 

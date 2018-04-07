@@ -111,6 +111,9 @@ public class Robot : MonoBehaviour {
     /// </summary>
     public void StartLuaScript() {
         Debug.Log("Start Lua Script");
+        if(scriptCode == "") {
+            return;
+        }
         script.DoString(scriptCode);
 
         coroutine = null;
@@ -133,6 +136,9 @@ public class Robot : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public bool HasActionsLeft() {
+        if(scriptCode == "") {
+            return false;
+        }
         return coroutine.Coroutine.State != CoroutineState.Dead;
     }
 
@@ -254,7 +260,6 @@ public class Robot : MonoBehaviour {
     public DynValue Walk() {
         Debug.Log(gameObject.name + " walks.");
         myInteractiveObject.Move(myInteractiveObject.direction);
-        gameObject.transform.position = new Vector3(myInteractiveObject.posX, myInteractiveObject.posY);
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 

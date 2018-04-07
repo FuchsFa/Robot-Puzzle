@@ -72,6 +72,7 @@ public class InteractiveObject : MonoBehaviour {
     public void ChangeStartingPosition(int x, int y) {
         posX = oldX = startX = x;
         posY = oldY = startY = y;
+        gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
     }
 
     /// <summary>
@@ -126,15 +127,33 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     /// <param name="moveDir"></param>
     public void Move(Vector2 moveDir) {
+        Debug.Log(gameObject.name + " bewegt sich.");
         if(movable && grabbedBy == null) {
             RayCaster raycaster = GetComponent<RayCaster>();
             if(raycaster.CheckForPushableObject() != null) {
-                //TODO: Jetzt das gefundene Objekt schieben.
+                Push(raycaster.CheckForPushableObject(), moveDir);
+            }
+            if(raycaster.CheckForCollisionsInDirection(moveDir)) {
+                Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
+                return;
             }
             oldX = posX;
             oldY = posY;
             posX += (int)moveDir.x;
             posY += (int)moveDir.y;
+            gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
+            Debug.Log(gameObject.name + " neue Position: " + posX + "/" + posY);
+        }
+    }
+
+    /// <summary>
+    /// Bewegt das angegebene Objekt in die angegebene Richtung.
+    /// </summary>
+    /// <param name="target"></param>
+    private void Push(InteractiveObject target, Vector2 dir) {
+        if(target.movable && target.grabbedBy == null) {
+            Debug.Log(gameObject.name + " schiebt " + target.gameObject.name + ".");
+            target.Move(dir);
         }
     }
 

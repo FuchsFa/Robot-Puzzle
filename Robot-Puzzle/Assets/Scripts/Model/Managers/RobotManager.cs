@@ -26,7 +26,7 @@ public class RobotManager : MonoBehaviour {
         GameObject robotObject = Instantiate(robotPrefab);
         Robot bot = robotObject.GetComponent<Robot>();
         bot.InitializeRobot(new Vector2(0, -1), x, y);
-        robotObject.transform.position = new Vector3(x, y);
+        robotObject.transform.position = new Vector3(x + 0.5f, y + 0.5f);
         robots.Add(robotObject);
         return robotObject;
     }
