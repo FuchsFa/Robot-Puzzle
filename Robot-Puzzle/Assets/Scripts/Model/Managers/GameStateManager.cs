@@ -110,7 +110,7 @@ public class GameStateManager : MonoBehaviour {
     /// Führt alle nötigen Schritte für die derzeitige Runde aus.
     /// </summary>
     private void ExecuteTurn() {
-        Debug.Log("Turn " + currentTurn);
+        Debug.Log("----- Turn " + currentTurn + "-----");
         robotManager.PerformRobotActionsForTurn();
     }
 }

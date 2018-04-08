@@ -106,6 +106,9 @@ public class RayCaster : MonoBehaviour {
 
         InteractiveObject obj = GetComponent<InteractiveObject>();
         raycastOrigin = new Vector2(transform.position.x + (obj.direction.x * 0.6f), transform.position.y + (obj.direction.y * 0.6f));
+        if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            raycastOrigin += obj.direction;
+        }
         Vector2 raycastDirection = obj.direction;
         RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, 0.3f, collisionMask);
         Debug.DrawRay(raycastOrigin, raycastDirection, Color.blue, 0.3f);

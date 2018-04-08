@@ -17,6 +17,11 @@ public class InteractiveObject : MonoBehaviour {
     private int startY;
     private Vector2 startDirection;
 
+    //Wenn dieses Objekt gegriffen wird, geben die folgenden Felder die Position relativ zum greifenden Objekt an.
+    private int relativeX;
+    private int relativeY;
+    private Vector2 relativeDirection;
+
     /// <summary>
     /// Der Roboter, der dieses Objekt greift.
     /// </summary>
@@ -105,12 +110,13 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     public void TurnLeft() {
         oldDirection = direction;
-        if(GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+        direction = new Vector2(-oldDirection.y, oldDirection.x);
+        if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
             InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
-            grabbedObject.gameObject.transform.position = transform.position + new Vector3(direction.x, direction.y);
+            grabbedObject.AdjustRelativePosition("Left");
+            grabbedObject.MoveToRelativePosition();
             //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
         }
-        direction = new Vector2(-oldDirection.y, oldDirection.x);
         gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
     }
 
@@ -119,13 +125,31 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     public void TurnRight() {
         oldDirection = direction;
+        direction = new Vector2(oldDirection.y, -oldDirection.x);
         if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
             InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
-            grabbedObject.gameObject.transform.position = transform.position + new Vector3(direction.x, direction.y);
+            grabbedObject.AdjustRelativePosition("Right");
+            grabbedObject.MoveToRelativePosition();
             //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
         }
-        direction = new Vector2(oldDirection.y, -oldDirection.x);
         gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
+    }
+
+    /// <summary>
+    /// Passt die relative Position an das Objekt, welches dieses Objekt greift, an.
+    /// Wird nach jeder Drehung aufgerufen.
+    /// </summary>
+    /// <param name="turnDir"></param>
+    public void AdjustRelativePosition(string turnDir) {
+        if(turnDir == "Right") {
+            int temp = relativeX;
+            relativeX = relativeY;
+            relativeY = -temp;
+        } else if(turnDir == "Left") {
+            int temp = relativeX;
+            relativeX = -relativeY;
+            relativeY = temp;
+        }
     }
 
     /// <summary>
@@ -157,8 +181,9 @@ public class InteractiveObject : MonoBehaviour {
         Debug.Log(gameObject.name + " bewegt sich.");
         if(movable && grabbedBy == null) {
             RayCaster raycaster = GetComponent<RayCaster>();
-            if(raycaster.CheckForPushableObject() != null) {
-                Push(raycaster.CheckForPushableObject(), moveDir);
+            InteractiveObject interactiveObject = raycaster.CheckForPushableObject();
+            if (interactiveObject != null) {
+                Push(interactiveObject, moveDir);
             }
             if(raycaster.CheckForCollisionsInDirection(moveDir)) {
                 Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
@@ -170,11 +195,24 @@ public class InteractiveObject : MonoBehaviour {
             posY += (int)moveDir.y;
             if(GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
                 InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
-                grabbedObject.gameObject.transform.position = new Vector3(grabbedObject.posX + moveDir.x + 0.5f, grabbedObject.posY + moveDir.y + 0.5f);
+                grabbedObject.MoveToRelativePosition();
             }
             gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
             Debug.Log(gameObject.name + " neue Position: " + posX + "/" + posY);
         }
+    }
+
+    /// <summary>
+    /// Bewegt das Objekt zu seiner relativen Posiion und passt seine Drehung an.
+    /// </summary>
+    public void MoveToRelativePosition() {
+        oldX = posX;
+        oldY = posY;
+        posX = grabbedBy.GetComponent<InteractiveObject>().posX + relativeX;
+        posY = grabbedBy.GetComponent<InteractiveObject>().posY + relativeY;
+        direction = grabbedBy.GetComponent<InteractiveObject>().direction + relativeDirection;
+        gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
+        gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
     }
 
     /// <summary>
@@ -190,13 +228,17 @@ public class InteractiveObject : MonoBehaviour {
 
     /// <summary>
     /// Wird aufgerufen, wenn das Objekt gegriffen wird.
-    /// Speichert den greifenden Roboter in der 'grabbedBy'  Variable.
+    /// Speichert den greifenden Roboter in der 'grabbedBy'  Variable. Speichert die relative Position.
     /// Sendet außerdem eine "OnGrab" Nachricht an das eigene gameObject, damit auch andere Skripte auf den Grab reagieren können.
     /// </summary>
     /// <param name="grabbingRobot"></param>
     public void OnGrab(Robot grabbingRobot) {
+        Debug.Log(grabbingRobot.gameObject.name + " greift " + gameObject.name);
         grabbedBy = grabbingRobot;
-        gameObject.SendMessage("OnGrab", SendMessageOptions.DontRequireReceiver);
+        relativeX = posX - grabbedBy.GetComponent<InteractiveObject>().posX;
+        relativeY = posY - grabbedBy.GetComponent<InteractiveObject>().posY;
+        relativeDirection = direction - grabbedBy.GetComponent<InteractiveObject>().direction;
+        //gameObject.SendMessage("OnGrab", SendMessageOptions.DontRequireReceiver);
     }
 
     /// <summary>
