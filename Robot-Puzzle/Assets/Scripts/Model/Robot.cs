@@ -248,6 +248,7 @@ public class Robot : MonoBehaviour {
     /// </summary>
     public DynValue ReleaseObject() {
         Debug.Log(gameObject.name + " releases its grabbed object.");
+        grabbedObject.OnRelease();
         grabbedObject = null;
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }

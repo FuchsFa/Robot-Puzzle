@@ -210,9 +210,11 @@ public class InteractiveObject : MonoBehaviour {
         oldY = posY;
         posX = grabbedBy.GetComponent<InteractiveObject>().posX + relativeX;
         posY = grabbedBy.GetComponent<InteractiveObject>().posY + relativeY;
+        oldDirection = direction;
         direction = grabbedBy.GetComponent<InteractiveObject>().direction + relativeDirection;
         gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
         gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
+        Debug.Log(gameObject.name + " moved to relative position: X" + oldX + "->" + posX + "; Y" + oldY + "->" + posY);
     }
 
     /// <summary>
@@ -229,7 +231,6 @@ public class InteractiveObject : MonoBehaviour {
     /// <summary>
     /// Wird aufgerufen, wenn das Objekt gegriffen wird.
     /// Speichert den greifenden Roboter in der 'grabbedBy'  Variable. Speichert die relative Position.
-    /// Sendet außerdem eine "OnGrab" Nachricht an das eigene gameObject, damit auch andere Skripte auf den Grab reagieren können.
     /// </summary>
     /// <param name="grabbingRobot"></param>
     public void OnGrab(Robot grabbingRobot) {
@@ -238,16 +239,49 @@ public class InteractiveObject : MonoBehaviour {
         relativeX = posX - grabbedBy.GetComponent<InteractiveObject>().posX;
         relativeY = posY - grabbedBy.GetComponent<InteractiveObject>().posY;
         relativeDirection = direction - grabbedBy.GetComponent<InteractiveObject>().direction;
-        //gameObject.SendMessage("OnGrab", SendMessageOptions.DontRequireReceiver);
     }
 
     /// <summary>
     /// Wird aufgerufen, wenn das Objekt losgelassen wird.
     /// Setzt die 'grabbedBy' Variable auf null zurück.
-    /// Sendet außerdem eine "OnRelease" Nachricht an das eigene gameObject, damit auch andere Skripte auf den Release reagieren können.
     /// </summary>
     public void OnRelease() {
         grabbedBy = null;
-        gameObject.SendMessage("OnRelease", SendMessageOptions.DontRequireReceiver);
+    }
+
+    /// <summary>
+    /// Passt das GameObject an, damit es graduell zwischen der alten un der neuen Position animiert.
+    /// </summary>
+    /// <param name="percentage"></param>
+    public void AdjustGameObject(float percentage) {
+        if(percentage > 1) {
+            percentage = 1;
+        }
+        if(oldX != posX && oldY != posY) {
+            //Wenn beide Koordinaten unterschiedlich sind, heisst das, dass das Objekt getragen wird und der träger sich gedreht hat. Das Objekt muss also auf einer Kurve bewegt werden.
+            //Kontrollpunkte zur Bestimmung der Kurve festlegen:
+            int controlX = oldX + relativeX;
+            int controlY = oldY + relativeY;
+            //Punkt auf der Kurve bestimmen:
+            float curveX = (((1 - percentage) * (1 - percentage)) * oldX) + (2 * percentage * (1 - percentage) * controlX) + ((percentage * percentage) * posX) + 0.5f;
+            float curveY = (((1 - percentage) * (1 - percentage)) * oldY) + (2 * percentage * (1 - percentage) * controlY) + ((percentage * percentage) * posY) + 0.5f;
+            gameObject.transform.position = new Vector3(curveX, curveY);
+        } else if(oldX != posX || oldY != posY) {
+            gameObject.transform.position = Vector2.Lerp(new Vector2(oldX, oldY), new Vector2(posX, posY), percentage) + new Vector2(0.5f, 0.5f);
+        }
+        if(oldDirection != direction) {
+            Quaternion currentRotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
+            Quaternion oldRotation = Quaternion.AngleAxis(GetFacingAngle(oldDirection), Vector3.forward);
+            gameObject.transform.rotation = Quaternion.Lerp(oldRotation, currentRotation, percentage);
+        }
+    }
+
+    /// <summary>
+    /// Passt die Positions- und Rotationsvariablen an, damit das GameObject richtig animiert wird.
+    /// </summary>
+    public void AdjustAnimationVariables() {
+        oldDirection = direction;
+        oldX = posX;
+        oldY = posY;
     }
 }

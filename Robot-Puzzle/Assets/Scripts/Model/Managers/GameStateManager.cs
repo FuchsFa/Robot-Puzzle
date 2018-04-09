@@ -59,6 +59,7 @@ public class GameStateManager : MonoBehaviour {
             timer = 0;
             ExecuteTurn();
         }
+        robotManager.AdjustRobotObjects(timer / timePerTurn);
 	}
 
     /// <summary>
