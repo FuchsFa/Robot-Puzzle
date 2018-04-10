@@ -27,7 +27,7 @@ public class RayCaster : MonoBehaviour {
         bool collided = false;
 
         InteractiveObject obj = GetComponent<InteractiveObject>();
-        raycastOrigin = new Vector2(transform.position.x + (obj.direction.x * 0.6f), transform.position.y + (obj.direction.y * 0.6f));
+        raycastOrigin = new Vector2(transform.position.x + (dir.x * 0.6f), transform.position.y + (dir.y * 0.6f));
         if(GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
             raycastOrigin += obj.direction;
         }
@@ -55,7 +55,7 @@ public class RayCaster : MonoBehaviour {
     }
 
     /// <summary>
-    /// Überprüft, ob das Object, das der Roboter gerade häl mit etwas zusammenstößt.
+    /// Überprüft, ob das Object, das der Roboter gerade hält mit etwas zusammenstößt.
     /// </summary>
     /// <returns></returns>
     public bool CheckForCollisionOfGrabbedObject() {
@@ -101,15 +101,16 @@ public class RayCaster : MonoBehaviour {
     /// Überprüft, ob im Tile vor dem Objekt(in Bewegungsrichtung) etwas ist, das geschoben werden kann.
     /// </summary>
     /// <returns></returns>
-    public InteractiveObject CheckForPushableObject() {
+    public InteractiveObject CheckForPushableObject(Vector2 dir) {
         InteractiveObject interactableObject = null;
 
         InteractiveObject obj = GetComponent<InteractiveObject>();
-        raycastOrigin = new Vector2(transform.position.x + (obj.direction.x * 0.6f), transform.position.y + (obj.direction.y * 0.6f));
+        raycastOrigin = new Vector2(transform.position.x + (dir.x * 0.6f), transform.position.y + (dir.y * 0.6f));
         if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
             raycastOrigin += obj.direction;
         }
-        Vector2 raycastDirection = obj.direction;
+        //Vector2 raycastDirection = obj.direction;
+        Vector2 raycastDirection = dir;
         RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, 0.3f, collisionMask);
         Debug.DrawRay(raycastOrigin, raycastDirection, Color.blue, 0.3f);
         if (hit) {

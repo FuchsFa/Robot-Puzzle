@@ -36,7 +36,12 @@ public class GameStateManager : MonoBehaviour {
 
         GameObject robotTwo = robotManager.CreateDefaultRobot();
         robotTwo.name = "Robot B";
-        robotTwo.GetComponent<InteractiveObject>().ChangeStartingPosition(0, -1);
+        robotTwo.GetComponent<InteractiveObject>().ChangeStartingPosition(1, 0);
+
+        GameObject robotThree = robotManager.CreateDefaultRobot();
+        robotThree.name = "Robot C";
+        robotThree.GetComponent<InteractiveObject>().ChangeStartingPosition(-1, -2);
+
         Play();
     }
 

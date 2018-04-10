@@ -109,13 +109,24 @@ public class InteractiveObject : MonoBehaviour {
     /// Dreht das Objekt um 90° gegen den Uhrzeigersinn.
     /// </summary>
     public void TurnLeft() {
+        Vector2 temp = oldDirection;
         oldDirection = direction;
         direction = new Vector2(-oldDirection.y, oldDirection.x);
         if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
             InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
+            //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
+            InteractiveObject pushableObject = grabbedObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
+            if(pushableObject != null) {
+                grabbedObject.Push(pushableObject, direction);
+            }
+            if (grabbedObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(direction)) {
+                Debug.LogError(gameObject.name + " kann sich nicht nach links drehen, weil sein getragenes Objekt kollidieren würde.");
+                direction = oldDirection;
+                oldDirection = temp;
+                return;
+            }
             grabbedObject.AdjustRelativePosition("Left");
             grabbedObject.MoveToRelativePosition();
-            //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
         }
         gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
     }
@@ -124,13 +135,25 @@ public class InteractiveObject : MonoBehaviour {
     /// Dreht das Objekt um 90° im Uhrzeigersinn.
     /// </summary>
     public void TurnRight() {
+        Vector2 temp = oldDirection;
         oldDirection = direction;
         direction = new Vector2(oldDirection.y, -oldDirection.x);
         if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
             InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
+            
+            //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
+            InteractiveObject pushableObject = grabbedObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
+            if (pushableObject != null) {
+                grabbedObject.Push(pushableObject, direction);
+            }
+            if (grabbedObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(direction)) {
+                Debug.LogError(gameObject.name + " kann sich nicht nach rechts drehen, weil sein getragenes Objekt kollidieren würde.");
+                direction = oldDirection;
+                oldDirection = temp;
+                return;
+            }
             grabbedObject.AdjustRelativePosition("Right");
             grabbedObject.MoveToRelativePosition();
-            //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
         }
         gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
     }
@@ -181,7 +204,7 @@ public class InteractiveObject : MonoBehaviour {
         Debug.Log(gameObject.name + " bewegt sich.");
         if(movable && grabbedBy == null) {
             RayCaster raycaster = GetComponent<RayCaster>();
-            InteractiveObject interactiveObject = raycaster.CheckForPushableObject();
+            InteractiveObject interactiveObject = raycaster.CheckForPushableObject(direction);
             if (interactiveObject != null) {
                 Push(interactiveObject, moveDir);
             }
