@@ -26,7 +26,7 @@ public class RobotManager : MonoBehaviour {
         GameObject robotObject = Instantiate(robotPrefab);
         Robot bot = robotObject.GetComponent<Robot>();
         bot.InitializeRobot(new Vector2(0, -1), x, y);
-        robotObject.transform.position = new Vector3(x, y);
+        robotObject.transform.position = new Vector3(x + 0.5f, y + 0.5f);
         robots.Add(robotObject);
         return robotObject;
     }
@@ -49,8 +49,8 @@ public class RobotManager : MonoBehaviour {
     /// <param name="x"></param>
     /// <param name="y"></param>
     private void ChangeRobotSartingPosition(GameObject robotObject, int x, int y) {
-        Robot bot = robotObject.GetComponent<Robot>();
-        bot.ChangeStartingPosition(x, y);
+        InteractiveObject obj = robotObject.GetComponent<InteractiveObject>();
+        obj.ChangeStartingPosition(x, y);
     }
 
     /// <summary>
@@ -58,8 +58,8 @@ public class RobotManager : MonoBehaviour {
     /// </summary>
     /// <param name="robotObject"></param>
     private void TurnRobotStartingDirection(GameObject robotObject) {
-        Robot bot = robotObject.GetComponent<Robot>();
-        bot.TurnStartingDirection();
+        InteractiveObject obj = robotObject.GetComponent<InteractiveObject>();
+        obj.TurnStartingDirection();
     }
 
     /// <summary>
@@ -108,10 +108,14 @@ public class RobotManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// Passt die Animationsvariablen an.
     /// Führt das Lua-Skript jedes Roboters weiter aus, bis es wieder yield zurückgibt.
     /// Wird zu Beginn jeder Runde aufgerufen.
     /// </summary>
     public void PerformRobotActionsForTurn() {
+        foreach(GameObject robotObject in robots) {
+            robotObject.GetComponent<InteractiveObject>().AdjustAnimationVariables();
+        }
         foreach(GameObject robotObject in robots) {
             Robot bot = robotObject.GetComponent<Robot>();
             if(bot.HasActionsLeft()) {
@@ -127,6 +131,16 @@ public class RobotManager : MonoBehaviour {
         foreach(GameObject robotObject in robots) {
             Robot bot = robotObject.GetComponent<Robot>();
             bot.ResetRobot();
+        }
+    }
+
+    /// <summary>
+    /// Animiert die GameObjects der Roboter, damit diese graduell an ihre derzeitige Position und Rotation angepasst werden.
+    /// </summary>
+    /// <param name="percentage"></param>
+    public void AdjustRobotObjects(float percentage) {
+        foreach(GameObject robotObject in robots) {
+            robotObject.GetComponent<InteractiveObject>().AdjustGameObject(percentage);
         }
     }
 

@@ -20,19 +20,18 @@ public class RayCaster : MonoBehaviour {
 	}
 
     /// <summary>
-    /// Überprüft, ob im Tile vor dem Roboter(in Blickrichtung) etwas ist, mit dem der Roboter zusammenstoßen würde.
+    /// Überprüft, ob im Tile vor dem Objekt(in angegebener Richtung) etwas ist, mit dem es zusammenstoßen würde.
     /// </summary>
     /// <returns></returns>
-    public bool CheckForCollisionsInFacingDirection() {
+    public bool CheckForCollisionsInDirection(Vector2 dir) {
         bool collided = false;
 
-        Robot bot = GetComponent<Robot>();
-        raycastOrigin = new Vector2(transform.position.x + (bot.direction.x * 0.6f), transform.position.y + (bot.direction.y * 0.6f));
-        Vector2 raycastDirection = bot.direction;
-        if(bot.GrabbedObject != null) {
-            raycastOrigin += bot.direction;
+        InteractiveObject obj = GetComponent<InteractiveObject>();
+        raycastOrigin = new Vector2(transform.position.x + (dir.x * 0.6f), transform.position.y + (dir.y * 0.6f));
+        if(GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            raycastOrigin += obj.direction;
         }
-        collided = CheckForCollision(raycastOrigin, raycastDirection);
+        collided = CheckForCollision(raycastOrigin, dir);
 
         return collided;
     }
@@ -56,7 +55,7 @@ public class RayCaster : MonoBehaviour {
     }
 
     /// <summary>
-    /// Überprüft, ob das Object, das der Roboter gerade häl mit etwas zusammenstößt.
+    /// Überprüft, ob das Object, das der Roboter gerade hält mit etwas zusammenstößt.
     /// </summary>
     /// <returns></returns>
     public bool CheckForCollisionOfGrabbedObject() {
@@ -73,41 +72,60 @@ public class RayCaster : MonoBehaviour {
     }
 
     /// <summary>
-    /// Überprüft, ob im Tile vor dem Roboter(in Blickrichtung) etwas ist, das der Roboter greifen kann.
+    /// Überprüft, ob im Tile vor dem Objekt(in Blickrichtung) etwas ist, das gegriffen werden kann.
     /// </summary>
     /// <returns></returns>
     public InteractiveObject CheckForGrabableObject() {
-        GameObject interactableObject = null;
+        InteractiveObject interactableObject = null;
 
-        Robot bot = GetComponent<Robot>();
-        raycastOrigin = new Vector2(transform.position.x + (bot.direction.x * 0.6f), transform.position.y + (bot.direction.y * 0.6f));
-        Vector2 raycastDirection = bot.direction;
+        InteractiveObject obj = GetComponent<InteractiveObject>();
+        raycastOrigin = new Vector2(transform.position.x + (obj.direction.x * 0.6f), transform.position.y + (obj.direction.y * 0.6f));
+        Vector2 raycastDirection = obj.direction;
         RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, 0.3f, collisionMask);
         Debug.DrawRay(raycastOrigin, raycastDirection, Color.red, 0.3f);
         if (hit) {
             if (hit.collider != myCollider && hit.transform.GetComponent<InteractiveObject>() != null) {
                 if(hit.transform.GetComponent<InteractiveObject>().Grabable == true) {
                     Debug.Log(gameObject.name + " hat ein Objekt zum Greifen gefunden: " + hit.transform.gameObject.name);
-                    interactableObject = hit.transform.gameObject;
+                    interactableObject = hit.transform.GetComponent<InteractiveObject>();
                 } else {
                     Debug.Log(gameObject.name + " hat ein Objekt gefunden: " + hit.transform.gameObject.name + ", aber es kann nicht gegriffen werden.");
                 }
             }
         }
 
-        return interactableObject.GetComponent<InteractiveObject>();
+        return interactableObject;
     }
 
     /// <summary>
     /// Überprüft, ob im Tile vor dem Objekt(in Bewegungsrichtung) etwas ist, das geschoben werden kann.
     /// </summary>
     /// <returns></returns>
-    public InteractiveObject CheckForPushableObject() {
-        GameObject interactableObject = null;
+    public InteractiveObject CheckForPushableObject(Vector2 dir) {
+        InteractiveObject interactableObject = null;
 
-        //TODO: implementieren, sobald interaktive Objekte sich bewegen können.
+        InteractiveObject obj = GetComponent<InteractiveObject>();
+        raycastOrigin = new Vector2(transform.position.x + (dir.x * 0.6f), transform.position.y + (dir.y * 0.6f));
+        if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            raycastOrigin += obj.direction;
+        }
+        //Vector2 raycastDirection = obj.direction;
+        Vector2 raycastDirection = dir;
+        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, 0.3f, collisionMask);
+        Debug.DrawRay(raycastOrigin, raycastDirection, Color.blue, 0.3f);
+        if (hit) {
+            if (hit.collider != myCollider && hit.transform.GetComponent<InteractiveObject>() != null) {
+                if (hit.transform.GetComponent<InteractiveObject>().Movable == true) {
+                    Debug.Log(gameObject.name + " hat ein Objekt zum Schieben gefunden: " + hit.transform.gameObject.name);
+                    interactableObject = hit.transform.GetComponent<InteractiveObject>();
+                }
+                else {
+                    Debug.Log(gameObject.name + " hat ein Objekt gefunden: " + hit.transform.gameObject.name + ", aber es kann nicht geschoben werden.");
+                }
+            }
+        }
 
-        return interactableObject.GetComponent<InteractiveObject>();
+        return interactableObject;
     }
 	
 	// Update is called once per frame

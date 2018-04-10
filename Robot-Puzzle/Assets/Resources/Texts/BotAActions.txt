@@ -1,8 +1,6 @@
 function action()
-	print("A line 1")
-	walk()
-	print("A line 2")
+	turnLeft()
 	grab()
-	print("A line 3")
+	turnLeft()
 	walk()
 end

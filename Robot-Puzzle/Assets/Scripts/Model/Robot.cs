@@ -5,19 +5,6 @@ using MoonSharp.Interpreter;
 
 public class Robot : MonoBehaviour {
 
-    //Positions-spezifische Felder:
-    private int posX;
-    private int posY;
-    public Vector2 direction;
-
-    private int oldX;
-    private int oldY;
-    private Vector2 oldDirection;
-
-    private int startX;
-    private int startY;
-    private Vector2 startDirection;
-
     //Allgemeine Felder:
     private List<RobotPart> parts;
 
@@ -28,6 +15,8 @@ public class Robot : MonoBehaviour {
 
     private Script script;
     private DynValue coroutine;
+
+    private InteractiveObject myInteractiveObject;
 
     //Aktions-spezifische Felder:
 
@@ -54,8 +43,9 @@ public class Robot : MonoBehaviour {
     /// <param name="x"></param>
     /// <param name="y"></param>
     public void InitializeRobot(Vector2 dir, int x = 0, int y = 0) {
-        ChangeStartingPosition(x, y);
-        ChangeStartingDirection(dir);
+        myInteractiveObject = GetComponent<InteractiveObject>();
+        myInteractiveObject.ChangeStartingPosition(x, y);
+        myInteractiveObject.ChangeStartingDirection(dir);
         parts = new List<RobotPart>();
         InitializeActionDictionary();
         GetAllowedActionNames();
@@ -66,9 +56,7 @@ public class Robot : MonoBehaviour {
     /// Setzt den Roboter auf seine Anfangsposition und -drehung zurück und startet sein Skript neu.
     /// </summary>
     public void ResetRobot() {
-        posX = oldX = startX;
-        posY = oldY = startY;
-        direction = oldDirection = startDirection;
+        myInteractiveObject.ResetPositionAndRotation();
         RestartLuaScript();
     }
 
@@ -123,6 +111,9 @@ public class Robot : MonoBehaviour {
     /// </summary>
     public void StartLuaScript() {
         Debug.Log("Start Lua Script");
+        if(scriptCode == "") {
+            return;
+        }
         script.DoString(scriptCode);
 
         coroutine = null;
@@ -145,6 +136,9 @@ public class Robot : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public bool HasActionsLeft() {
+        if(scriptCode == "") {
+            return false;
+        }
         return coroutine.Coroutine.State != CoroutineState.Dead;
     }
 
@@ -155,32 +149,6 @@ public class Robot : MonoBehaviour {
         coroutine = null;
         DynValue function = script.Globals.Get("action");
         coroutine = script.CreateCoroutine(function);
-    }
-
-    /// <summary>
-    /// Passt die Startposition an die angegebenen Koordinaten an.
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    public void ChangeStartingPosition(int x, int y) {
-        posX = oldX = startX = x;
-        posY = oldY = startY = y;
-    }
-
-    /// <summary>
-    /// Ändert die Startausrichtung. Sollte im Spiel nicht direkt aufgerufen werden. Stattdessen TurnStartingDirection verwenden.
-    /// </summary>
-    /// <param name="dir"></param>
-    private void ChangeStartingDirection(Vector2 dir) {
-        direction = oldDirection = startDirection = dir;
-    }
-
-    /// <summary>
-    /// Dreht die Startausrichtung des Roboters um 90° im Uhrzeigersinn.
-    /// </summary>
-    public void TurnStartingDirection() {
-        Vector2 dir = new Vector2(startDirection.y, -startDirection.x);
-        ChangeStartingDirection(dir);
     }
 
     /// <summary>
@@ -235,8 +203,7 @@ public class Robot : MonoBehaviour {
     /// </summary>
     public DynValue TurnLeft() {
         Debug.Log(gameObject.name + " turns left.");
-        oldDirection = direction;
-        direction = new Vector2(-oldDirection.y, oldDirection.x);
+        myInteractiveObject.TurnLeft();
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
@@ -245,8 +212,7 @@ public class Robot : MonoBehaviour {
     /// </summary>
     public DynValue TurnRight() {
         Debug.Log(gameObject.name + " turns right.");
-        oldDirection = direction;
-        direction = new Vector2(oldDirection.y, -oldDirection.x);
+        myInteractiveObject.TurnRight();
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
@@ -282,6 +248,7 @@ public class Robot : MonoBehaviour {
     /// </summary>
     public DynValue ReleaseObject() {
         Debug.Log(gameObject.name + " releases its grabbed object.");
+        grabbedObject.OnRelease();
         grabbedObject = null;
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
@@ -293,7 +260,7 @@ public class Robot : MonoBehaviour {
     /// </summary>
     public DynValue Walk() {
         Debug.Log(gameObject.name + " walks.");
-        //TODO: implementieren
+        myInteractiveObject.Move(myInteractiveObject.direction);
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 

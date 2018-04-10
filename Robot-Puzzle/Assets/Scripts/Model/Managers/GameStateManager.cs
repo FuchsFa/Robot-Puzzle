@@ -29,9 +29,19 @@ public class GameStateManager : MonoBehaviour {
     /// </summary>
     private void TestStart() {
         GameObject robotObject = robotManager.CreateDefaultRobot();
+        robotObject.name = "Robot A";
         TextAsset text = Resources.Load<TextAsset>("Texts/BotAActions");
         string scriptCode = text.text;
         robotObject.GetComponent<Robot>().ChangeScriptCode(scriptCode);
+
+        GameObject robotTwo = robotManager.CreateDefaultRobot();
+        robotTwo.name = "Robot B";
+        robotTwo.GetComponent<InteractiveObject>().ChangeStartingPosition(1, 0);
+
+        GameObject robotThree = robotManager.CreateDefaultRobot();
+        robotThree.name = "Robot C";
+        robotThree.GetComponent<InteractiveObject>().ChangeStartingPosition(-1, -2);
+
         Play();
     }
 
@@ -54,6 +64,7 @@ public class GameStateManager : MonoBehaviour {
             timer = 0;
             ExecuteTurn();
         }
+        robotManager.AdjustRobotObjects(timer / timePerTurn);
 	}
 
     /// <summary>
@@ -105,7 +116,7 @@ public class GameStateManager : MonoBehaviour {
     /// Führt alle nötigen Schritte für die derzeitige Runde aus.
     /// </summary>
     private void ExecuteTurn() {
-        Debug.Log("Turn " + currentTurn);
+        Debug.Log("----- Turn " + currentTurn + "-----");
         robotManager.PerformRobotActionsForTurn();
     }
 }
