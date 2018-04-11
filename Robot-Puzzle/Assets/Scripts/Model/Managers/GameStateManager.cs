@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameStateManager : MonoBehaviour {
 
     private RobotManager robotManager;
+    private WorldObjectManager worldObjectManager;
 
     private float timePerTurn = 1;
     private float timer;
@@ -21,6 +22,7 @@ public class GameStateManager : MonoBehaviour {
         timeMultiplier = 1;
         isPaused = true;
         robotManager = GetComponent<RobotManager>();
+        worldObjectManager = GetComponent<WorldObjectManager>();
         TestStart();
 	}
 
@@ -65,6 +67,7 @@ public class GameStateManager : MonoBehaviour {
             ExecuteTurn();
         }
         robotManager.AdjustRobotObjects(timer / timePerTurn);
+        worldObjectManager.AdjustWorldObjects(timer / timePerTurn);
 	}
 
     /// <summary>
@@ -118,5 +121,6 @@ public class GameStateManager : MonoBehaviour {
     private void ExecuteTurn() {
         Debug.Log("----- Turn " + currentTurn + "-----");
         robotManager.PerformRobotActionsForTurn();
+        worldObjectManager.PerformWorldObjectActionsForTurn();
     }
 }

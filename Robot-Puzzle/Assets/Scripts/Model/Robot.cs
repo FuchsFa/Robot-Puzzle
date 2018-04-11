@@ -110,7 +110,7 @@ public class Robot : MonoBehaviour {
     /// Startet eine neue Coroutine für das Skript des Roboters.
     /// </summary>
     public void StartLuaScript() {
-        Debug.Log("Start Lua Script");
+        Debug.Log("Start Lua Script for " + gameObject.name);
         if(scriptCode == "") {
             return;
         }
