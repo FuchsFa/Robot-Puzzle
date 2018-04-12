@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class GameStateManager : MonoBehaviour {
 
+    public static GameStateManager Instance { get; protected set; }
+
     private RobotManager robotManager;
-    private WorldObjectManager worldObjectManager;
+    public WorldObjectManager worldObjectManager;
 
     private float timePerTurn = 1;
     private float timer;
@@ -17,6 +19,7 @@ public class GameStateManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        Instance = this;
         timer = 0;
         currentTurn = 0;
         timeMultiplier = 1;
@@ -112,6 +115,10 @@ public class GameStateManager : MonoBehaviour {
         timer = 0;
         currentTurn = 0;
         //TODO: Jetzt die Roboter und Objekte zurücksetzen.
+        Object[] objects = FindObjectsOfType<GameObject>();
+        foreach (GameObject go in objects) {
+            go.SendMessage("OnStop", SendMessageOptions.DontRequireReceiver);
+        }
         robotManager.ResetRobots();
     }
 
@@ -120,7 +127,29 @@ public class GameStateManager : MonoBehaviour {
     /// </summary>
     private void ExecuteTurn() {
         Debug.Log("----- Turn " + currentTurn + "-----");
+        Object[] objects = FindObjectsOfType<GameObject>();
+        foreach (GameObject go in objects) {
+            go.SendMessage("OnNewTurn", SendMessageOptions.DontRequireReceiver);
+        }
         robotManager.PerformRobotActionsForTurn();
         worldObjectManager.PerformWorldObjectActionsForTurn();
+        if(CheckForVictory()) {
+            Debug.Log("Gewonnen!");
+            Pause();
+        }
+    }
+
+    /// <summary>
+    /// Überprüft, ob alle Ziele erfüllt worden sind.
+    /// </summary>
+    /// <returns></returns>
+    private bool CheckForVictory() {
+        Object[] objects = FindObjectsOfType<GameObject>();
+        foreach (GameObject go in objects) {
+            if(go.GetComponent<Goal>() && !go.GetComponent<Goal>().isFulfilled) {
+                return false;
+            }
+        }
+        return true;
     }
 }

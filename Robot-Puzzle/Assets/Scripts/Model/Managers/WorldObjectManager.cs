@@ -31,6 +31,20 @@ public class WorldObjectManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// Gibt ein Prefab des übergebenen Typs zurück, sofern dieser im prefabDictionary ist.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public GameObject GetPrefabFromDictionary(string type) {
+        if(!prefabDictionary.ContainsKey(type)) {
+            Debug.LogError("Es befindet sich kein Objekt vom Typ '" + type + "' im Prefab Dictionary");
+            return null;
+        } else {
+            return prefabDictionary[type];
+        }
+    }
+
+    /// <summary>
     /// Erstellt ein neues WorldObject des angegebenen Typs an der angegebenen Stelle.
     /// </summary>
     /// <param name="type"></param>
@@ -52,7 +66,7 @@ public class WorldObjectManager : MonoBehaviour {
     /// Entfernt das angegebene Objekt aus der worldObjects-Liste und zerstört es.
     /// </summary>
     /// <param name="worldObject"></param>
-    private void RemoveWorldObject(GameObject worldObject) {
+    public void RemoveWorldObject(GameObject worldObject) {
         if(worldObjects.Contains(worldObject)) {
             worldObjects.Remove(worldObject);
             Destroy(worldObject);

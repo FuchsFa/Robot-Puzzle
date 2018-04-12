@@ -54,7 +54,11 @@ public class WorldObject : MonoBehaviour {
         foreach (string key in actionDictionary.Keys) {
             script.Globals[key] = (System.Func<DynValue>)actionDictionary[key];
         }
-        scriptCode = scriptText.text;
+        if(scriptText) {
+            scriptCode = scriptText.text;
+        } else {
+            scriptCode = "";
+        }
     }
 
     /// <summary>

@@ -57,3 +57,6 @@ TagManager:
   - name: Wall Top
     uniqueID: 2747306325
     locked: 0
+  - name: WorldSpaceUI
+    uniqueID: 4237499475
+    locked: 0

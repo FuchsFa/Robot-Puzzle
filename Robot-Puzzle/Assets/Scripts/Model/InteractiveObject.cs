@@ -132,6 +132,18 @@ public class InteractiveObject : MonoBehaviour {
     }
 
     /// <summary>
+    /// Überprüft, ob das Objekt bereit ist, von einem Goal entfernt zu werden.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsReadyForOutput() {
+        if(grabbedBy == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Dreht das Objekt um 90° im Uhrzeigersinn.
     /// </summary>
     public void TurnRight() {
