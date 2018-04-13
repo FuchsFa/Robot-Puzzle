@@ -143,9 +143,4 @@ public class RobotManager : MonoBehaviour {
             robotObject.GetComponent<InteractiveObject>().AdjustGameObject(percentage);
         }
     }
-
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }

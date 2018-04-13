@@ -11,6 +11,22 @@ public class Goal : MonoBehaviour {
     private GameObject worldObjectReference;
 
     [SerializeField]
+    private bool rotationMatters;
+    [SerializeField]
+    private Vector2 worldObjectRotation;
+
+    [SerializeField]
+    private bool connectionsMatter;
+    [SerializeField]
+    private bool connectionNorth;
+    [SerializeField]
+    private bool connectionEast;
+    [SerializeField]
+    private bool connectionSouth;
+    [SerializeField]
+    private bool connectionWest;
+
+    [SerializeField]
     private SpriteRenderer worldObjectPreview;
 
     private int currentAmount;
@@ -30,7 +46,8 @@ public class Goal : MonoBehaviour {
         isFulfilled = false;
         currentAmount = 0;
         display.text = currentAmount + "/" + amountNeeded;
-        worldObjectReference = GameStateManager.Instance.worldObjectManager.GetPrefabFromDictionary(worldObjectType);
+        worldObjectReference = Instantiate(GameStateManager.Instance.worldObjectManager.GetPrefabFromDictionary(worldObjectType));
+        worldObjectReference.transform.parent = this.transform;
         worldObjectPreview.sprite = worldObjectReference.GetComponent<SpriteRenderer>().sprite;
         GetComponent<InteractiveObject>().SetStartingPositionAndRotation((int)(transform.position.x - 0.5f), (int)(transform.position.y - 0.5f), new Vector2(0, -1));
     }
@@ -45,6 +62,7 @@ public class Goal : MonoBehaviour {
         Debug.DrawRay(raycastOrigin, raycastDirection, Color.cyan, 0.5f);
         if (hit) {
             if (CompareToReference(hit.transform.gameObject) && hit.transform.gameObject.GetComponent<InteractiveObject>().IsReadyForOutput()) {
+                //TODO: Überprüfen, ob andere Goals in der gleichen Gruppe auch erfüllt sind.
                 currentAmount++;
                 GameStateManager.Instance.worldObjectManager.RemoveWorldObject(hit.transform.gameObject);
                 if (currentAmount >= amountNeeded) {
@@ -52,6 +70,8 @@ public class Goal : MonoBehaviour {
                     isFulfilled = true;
                 }
                 display.text = currentAmount + "/" + amountNeeded;
+            } else {
+                Debug.Log("Objekt kann nicht ans Ziel '" + gameObject.name + "' übergeben werden.");
             }
         }
     }
@@ -63,12 +83,21 @@ public class Goal : MonoBehaviour {
     /// <returns></returns>
     private bool CompareToReference(GameObject obj) {
         if(obj.GetComponent<WorldObject>() == null) {
+            Debug.Log("Das Objekt '" + obj.name + "' ist kein WorldObject.");
             return false;
         }
         if(obj.GetComponent<WorldObject>().GetType() != worldObjectReference.GetType()) {
+            Debug.Log("Das Objekt '" + obj.name + "' hat den falschen Typ.");
+            return false;
+        }
+        if(rotationMatters && obj.GetComponent<InteractiveObject>().direction != worldObjectRotation) {
             return false;
         }
         //TODO: Überprüfen, ob sonstige Faktoren, wie etwa Rotation und Verbindungen mit anderen Objekten stimmen.
+        if(connectionsMatter) {
+            bool[] temp = obj.GetComponent<WorldObject>().GetAbsoluteConnectionDirections();
+            return (connectionNorth == temp[0]) && (connectionEast == temp[1]) && (connectionSouth == temp[2]) && (connectionWest == temp[3]);
+        }
         return true;
     }
 

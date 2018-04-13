@@ -15,6 +15,11 @@ public class WorldObject : MonoBehaviour {
 
     private InteractiveObject myInteractiveObject;
 
+    /// <summary>
+    /// Reihenfolge der Verbindungen: [Front, Rechts, Rückseite, Links]
+    /// </summary>
+    private WorldObject[] connectedWorldObjects;
+
     [SerializeField]
     private GroundTile.TerrainType[] terrainCompatability;
 
@@ -28,6 +33,7 @@ public class WorldObject : MonoBehaviour {
         myInteractiveObject = GetComponent<InteractiveObject>();
         myInteractiveObject.ChangeStartingPosition(x, y);
         myInteractiveObject.ChangeStartingDirection(dir);
+        connectedWorldObjects = new WorldObject[] { null, null, null, null };
         InitializeActionDictionary();
         InitializeScript();
     }
@@ -106,6 +112,84 @@ public class WorldObject : MonoBehaviour {
         coroutine = script.CreateCoroutine(function);
     }
 
+    /// <summary>
+    /// Versucht, das übergebene WorldObject mit diesem zu verbinden.
+    /// </summary>
+    /// <param name="other"></param>
+    public void AttemptToConnectWorldObject(WorldObject other) {
+        int relativeX = other.gameObject.GetComponent<InteractiveObject>().posX - GetComponent<InteractiveObject>().posX;
+        int relativeY = other.gameObject.GetComponent<InteractiveObject>().posY - GetComponent<InteractiveObject>().posY;
+        Vector2 relativePosition = new Vector2(relativeX, relativeY);
+        int slot = GetConnectionSlotForPosition(relativePosition);
+        if(connectedWorldObjects[slot] != null) {
+            Debug.Log("Das angegebene WorldObject kann nicht mit diesem verbunden werden, weil der passende Slot schon belegt ist.");
+            return;
+        } else {
+            connectedWorldObjects[slot] = other;
+        }
+    }
+
+    /// <summary>
+    /// Entfernt die Verbindung zum angegebenen WorldObject
+    /// </summary>
+    /// <param name="other"></param>
+    public void RemoveConnectionToWorldObject(WorldObject other) {
+        for (int i = 0; i < connectedWorldObjects.Length; i++) {
+            if(connectedWorldObjects[i] == other) {
+                connectedWorldObjects[i] = null;
+                break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Überprüft die Verbindungen des WorldObjects und gibt zurück, in welcher absoluten Richtung diese Verbindungen liegen.
+    /// Die reihenfolge im zurückgegebenen Array ist: [Norden, Osten, Süden, Westen]
+    /// </summary>
+    /// <returns></returns>
+    public bool[] GetAbsoluteConnectionDirections() {
+        bool[] temp = new bool[] { false, false, false, false };
+        foreach (WorldObject obj in connectedWorldObjects) {
+            int relativeX = obj.gameObject.GetComponent<InteractiveObject>().posX - GetComponent<InteractiveObject>().posX;
+            int relativeY = obj.gameObject.GetComponent<InteractiveObject>().posY - GetComponent<InteractiveObject>().posY;
+            //Vector2 relativePosition = new Vector2(relativeX, relativeY);
+            if(relativeY > 0) {
+                temp[0] = true;
+            } else if(relativeY < 0) {
+                temp[2] = true;
+            } else if(relativeX > 0) {
+                temp[1] = true;
+            } else if(relativeX < 0) {
+                temp[3] = true;
+            }
+        }
+        return temp;
+    }
+
+    /// <summary>
+    /// Gibt den Index für das connectedWorldObject array zurück, den ein WorldObject an der übergebenen Stelle einnehmen würde.
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    private int GetConnectionSlotForPosition(Vector2 pos) {
+        if(pos == GetComponent<InteractiveObject>().direction) {
+            //Front
+            return 0;
+        } else if(pos == (GetComponent<InteractiveObject>().direction * -1)) {
+            //Rückseite
+            return 2;
+        } else if(pos == new Vector2(GetComponent<InteractiveObject>().direction.y, -1 * GetComponent<InteractiveObject>().direction.x)) {
+            //Rechts
+            return 1;
+        } else if (pos == new Vector2(-1 * GetComponent<InteractiveObject>().direction.y, GetComponent<InteractiveObject>().direction.x)) {
+            //Links
+            return 3;
+        } else {
+            //Kann nicht verbunden werden.
+            return -1;
+        }
+    }
+
     //Aktionen:
 
     /// <summary>
@@ -151,6 +235,10 @@ public class WorldObject : MonoBehaviour {
         return canWalk;
     }
 
+    /// <summary>
+    /// Lässt das WorldObject 1 Runde lang still stehen.
+    /// </summary>
+    /// <returns></returns>
     public DynValue Wait() {
         Debug.Log(gameObject.name + " waits.");
         return DynValue.NewYieldReq(new DynValue[] { coroutine });

@@ -110,9 +110,18 @@ public class WorldObjectManager : MonoBehaviour {
             worldObject.GetComponent<InteractiveObject>().AdjustGameObject(percentage);
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    /// <summary>
+    /// Verbindet die beiden übergebenen WorldObjects, falls möglich
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    public void ConnectWorldObjects(WorldObject a, WorldObject b) {
+        if(Vector3.Distance(a.transform.position, b.transform.position) > 1) {
+            Debug.Log("Die WorldObjects '" + a.gameObject.name + "' und '" + b.gameObject.name + "' sind zu weit auseinander, um verbunden zu werden.");
+            return;
+        }
+        a.AttemptToConnectWorldObject(b);
+        b.AttemptToConnectWorldObject(a);
+    }
 }
