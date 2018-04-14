@@ -144,7 +144,7 @@ public class WorldObject : MonoBehaviour {
 
     /// <summary>
     /// Überprüft die Verbindungen des WorldObjects und gibt zurück, in welcher absoluten Richtung diese Verbindungen liegen.
-    /// Die reihenfolge im zurückgegebenen Array ist: [Norden, Osten, Süden, Westen]
+    /// Die Reihenfolge im zurückgegebenen Array ist: [Norden, Osten, Süden, Westen]
     /// </summary>
     /// <returns></returns>
     public bool[] GetAbsoluteConnectionDirections() {
@@ -152,7 +152,6 @@ public class WorldObject : MonoBehaviour {
         foreach (WorldObject obj in connectedWorldObjects) {
             int relativeX = obj.gameObject.GetComponent<InteractiveObject>().posX - GetComponent<InteractiveObject>().posX;
             int relativeY = obj.gameObject.GetComponent<InteractiveObject>().posY - GetComponent<InteractiveObject>().posY;
-            //Vector2 relativePosition = new Vector2(relativeX, relativeY);
             if(relativeY > 0) {
                 temp[0] = true;
             } else if(relativeY < 0) {
@@ -164,6 +163,40 @@ public class WorldObject : MonoBehaviour {
             }
         }
         return temp;
+    }
+
+    /// <summary>
+    /// Findet alle WorldObjects, die mit diesem WorldObject zusammenhängen. Egal ob direkt oder indirekt. (Gibt auch sich selbst zurück)
+    /// </summary>
+    /// <returns></returns>
+    public List<WorldObject> GetAllConnectedWorldObjects() {
+        List<WorldObject> objects = new List<WorldObject>();
+        objects.AddRange(GetConnectedWorldObjects());
+        while(true) {
+            int counter = 0;
+            List<WorldObject> temp = new List<WorldObject>();
+            foreach(WorldObject obj in objects) {
+                temp.AddRange(obj.GetConnectedWorldObjects());
+            }
+            foreach(WorldObject tempObject in temp) {
+                if(!objects.Contains(tempObject)) {
+                    objects.Add(tempObject);
+                    counter++;
+                }
+            }
+            if(counter == 0) {
+                break;
+            }
+        }
+        return objects;
+    }
+
+    /// <summary>
+    /// Gibt die direkt verbundenen WorldObjects zurück.
+    /// </summary>
+    /// <returns></returns>
+    public WorldObject[] GetConnectedWorldObjects() {
+        return connectedWorldObjects;
     }
 
     /// <summary>

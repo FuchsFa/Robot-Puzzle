@@ -106,6 +106,19 @@ public class InteractiveObject : MonoBehaviour {
     }
 
     /// <summary>
+    /// Überprüft, ob das Objekt bereit ist, von einem Goal entfernt zu werden.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsReadyForOutput() {
+        if (grabbedBy == null) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Dreht das Objekt um 90° gegen den Uhrzeigersinn.
     /// </summary>
     public void TurnLeft() {
@@ -113,34 +126,33 @@ public class InteractiveObject : MonoBehaviour {
         oldDirection = direction;
         direction = new Vector2(-oldDirection.y, oldDirection.x);
         if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            List<InteractiveObject> grabbedObjects = new List<InteractiveObject>();
             InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
-            //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
-            InteractiveObject pushableObject = grabbedObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
-            if(pushableObject != null) {
-                grabbedObject.Push(pushableObject, direction);
+            grabbedObjects.Add(grabbedObject);
+            if(grabbedObject.GetComponent<WorldObject>()) {
+                WorldObject grabbedWO = grabbedObject.GetComponent<WorldObject>();
+                List<WorldObject> connectedWOs = grabbedWO.GetAllConnectedWorldObjects();
+                if(connectedWOs.Count > 0) {
+
+                }
             }
-            if (grabbedObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(direction)) {
-                Debug.LogError(gameObject.name + " kann sich nicht nach links drehen, weil sein getragenes Objekt kollidieren würde.");
-                direction = oldDirection;
-                oldDirection = temp;
-                return;
+            foreach(InteractiveObject interactiveObject in grabbedObjects) {
+                InteractiveObject pushableObject = interactiveObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
+                if (pushableObject != null) {
+                    interactiveObject.Push(pushableObject, direction);
+                }
+                if (interactiveObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(direction)) {
+                    Debug.LogError(gameObject.name + " kann sich nicht nach links drehen, weil sein getragenes Objekt kollidieren würde.");
+                    direction = oldDirection;
+                    oldDirection = temp;
+                    return;
+                }
+                //TODO: Da ja nicht alle connectedObjects eine relative Position haben, sondern nur das gegriffene Objekt, muss hier eine andere Lösung gefunden werden.
+                interactiveObject.AdjustRelativePosition("Left");
+                interactiveObject.MoveToRelativePosition();
             }
-            grabbedObject.AdjustRelativePosition("Left");
-            grabbedObject.MoveToRelativePosition();
         }
         gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
-    }
-
-    /// <summary>
-    /// Überprüft, ob das Objekt bereit ist, von einem Goal entfernt zu werden.
-    /// </summary>
-    /// <returns></returns>
-    public bool IsReadyForOutput() {
-        if(grabbedBy == null) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /// <summary>
@@ -152,8 +164,6 @@ public class InteractiveObject : MonoBehaviour {
         direction = new Vector2(oldDirection.y, -oldDirection.x);
         if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
             InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
-            
-            //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
             InteractiveObject pushableObject = grabbedObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
             if (pushableObject != null) {
                 grabbedObject.Push(pushableObject, direction);
