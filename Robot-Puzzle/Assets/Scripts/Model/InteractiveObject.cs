@@ -167,16 +167,28 @@ public class InteractiveObject : MonoBehaviour {
         oldDirection = direction;
         direction = new Vector2(oldDirection.y, -oldDirection.x);
         if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            List<InteractiveObject> grabbedObjects = new List<InteractiveObject>();
             InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
-            InteractiveObject pushableObject = grabbedObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
-            if (pushableObject != null) {
-                grabbedObject.Push(pushableObject, direction);
+            grabbedObjects.Add(grabbedObject);
+            if (grabbedObject.GetComponent<WorldObjectGroup>()) {
+                foreach (WorldObject obj in grabbedObject.GetComponent<WorldObjectGroup>().objects) {
+                    grabbedObjects.Add(obj.GetComponent<InteractiveObject>());
+                }
             }
-            if (grabbedObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(direction)) {
-                Debug.LogError(gameObject.name + " kann sich nicht nach rechts drehen, weil sein getragenes Objekt kollidieren würde.");
-                direction = oldDirection;
-                oldDirection = temp;
-                return;
+            foreach (InteractiveObject interactiveObject in grabbedObjects) {
+                if (!interactiveObject.GetComponent<RayCaster>()) {
+                    continue;
+                }
+                InteractiveObject pushableObject = interactiveObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
+                if (pushableObject != null) {
+                    interactiveObject.Push(pushableObject, direction);
+                }
+                if (interactiveObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(direction)) {
+                    Debug.LogError(gameObject.name + " kann sich nicht nach rechts drehen, weil sein getragenes Objekt kollidieren würde.");
+                    direction = oldDirection;
+                    oldDirection = temp;
+                    return;
+                }
             }
             grabbedObject.AdjustRelativePosition("Right");
             grabbedObject.MoveToRelativePosition();
@@ -341,5 +353,6 @@ public class InteractiveObject : MonoBehaviour {
         oldDirection = direction;
         oldX = posX;
         oldY = posY;
+        //Debug.Log("Animationsvariablen für '" + gameObject.name + "': oldX-" + oldX + ", oldY-" + oldY + ", oldDirection: " + GetFacingAngle(oldDirection));
     }
 }

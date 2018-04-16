@@ -65,6 +65,7 @@ public class GameStateManager : MonoBehaviour {
         if(timer >= timePerTurn) {
             currentTurn++;
             timer = 0;
+            PrepareTurn();
             ExecuteTurn();
         }
         robotManager.AdjustRobotObjects(timer / timePerTurn);
@@ -118,6 +119,14 @@ public class GameStateManager : MonoBehaviour {
             go.SendMessage("OnStop", SendMessageOptions.DontRequireReceiver);
         }
         robotManager.ResetRobots();
+    }
+
+    /// <summary>
+    /// Bereitet alles Nötige für die derzeite Runde vor.
+    /// </summary>
+    private void PrepareTurn() {
+        robotManager.AdjustRobotAnimationVariables();
+        worldObjectManager.AdjustWorldObjectAnimationVariables();
     }
 
     /// <summary>

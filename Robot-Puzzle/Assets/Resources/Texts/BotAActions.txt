@@ -6,5 +6,7 @@ function test()
 	grab()
 	turnLeft()
 	turnLeft()
+	turnRight()
+	turnRight()
 	walk()
 end

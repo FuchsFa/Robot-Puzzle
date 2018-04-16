@@ -108,14 +108,19 @@ public class RobotManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Passt die Animationsvariablen an.
+    /// Passt die Animationsvariablen von Robotern an.
+    /// </summary>
+    public void AdjustRobotAnimationVariables() {
+        foreach (GameObject robotObject in robots) {
+            robotObject.GetComponent<InteractiveObject>().AdjustAnimationVariables();
+        }
+    }
+
+    /// <summary>
     /// Führt das Lua-Skript jedes Roboters weiter aus, bis es wieder yield zurückgibt.
     /// Wird zu Beginn jeder Runde aufgerufen.
     /// </summary>
     public void PerformRobotActionsForTurn() {
-        foreach(GameObject robotObject in robots) {
-            robotObject.GetComponent<InteractiveObject>().AdjustAnimationVariables();
-        }
         foreach(GameObject robotObject in robots) {
             Robot bot = robotObject.GetComponent<Robot>();
             if(bot.HasActionsLeft()) {

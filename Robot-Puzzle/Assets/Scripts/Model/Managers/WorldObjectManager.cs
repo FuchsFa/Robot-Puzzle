@@ -14,10 +14,13 @@ public class WorldObjectManager : MonoBehaviour {
 
     private List<GameObject> worldObjects;
 
+    private List<GameObject> worldObjectGroups;
+
     // Use this for initialization
     void Start () {
         gameStateManager = GetComponent<GameStateManager>();
         worldObjects = new List<GameObject>();
+        worldObjectGroups = new List<GameObject>();
         InitializePrefabDictionary();
 	}
 
@@ -63,6 +66,7 @@ public class WorldObjectManager : MonoBehaviour {
         obj.InitializeWorldObject(new Vector2(0, -1), x, y);
         worldObject.transform.position = new Vector3(x + 0.5f, y + 0.5f);
         worldObjects.Add(worldObject);
+        worldObject.transform.SetParent(this.transform);
         return worldObject;
     }
 
@@ -89,14 +93,22 @@ public class WorldObjectManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Passt die Animationsvariablen an.
+    /// Passt die Animationsvariablen von WorldObjects und WorldObjectGroups an.
+    /// </summary>
+    public void AdjustWorldObjectAnimationVariables() {
+        foreach (GameObject group in worldObjectGroups) {
+            group.GetComponent<InteractiveObject>().AdjustAnimationVariables();
+        }
+        foreach (GameObject worldObject in worldObjects) {
+            worldObject.GetComponent<InteractiveObject>().AdjustAnimationVariables();
+        }
+    }
+
+    /// <summary>
     /// Führt das Lua-Skript jedes WorldObjects weiter aus, bis es wieder yield zurückgibt.
     /// Wird zu Beginn jeder Runde aufgerufen.
     /// </summary>
     public void PerformWorldObjectActionsForTurn() {
-        foreach(GameObject worldObject in worldObjects) {
-            worldObject.GetComponent<InteractiveObject>().AdjustAnimationVariables();
-        }
         foreach (GameObject worldObject in worldObjects) {
             WorldObject obj = worldObject.GetComponent<WorldObject>();
             if(obj.HasActionsLeft()) {
@@ -106,11 +118,17 @@ public class WorldObjectManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Animiert die GameObjects der Roboter, damit diese graduell an ihre derzeitige Position und Rotation angepasst werden.
+    /// Animiert die GameObjects der WorldObjects und WorldObjectGroups, damit diese graduell an ihre derzeitige Position und Rotation angepasst werden.
     /// </summary>
     /// <param name="percentage"></param>
     public void AdjustWorldObjects(float percentage) {
+        foreach(GameObject group in worldObjectGroups) {
+            group.GetComponent<InteractiveObject>().AdjustGameObject(percentage);
+        }
         foreach(GameObject worldObject in worldObjects) {
+            if(worldObject.GetComponent<WorldObject>().myGroup) {
+                continue;
+            }
             worldObject.GetComponent<InteractiveObject>().AdjustGameObject(percentage);
         }
     }
@@ -127,10 +145,21 @@ public class WorldObjectManager : MonoBehaviour {
         }
         if (a.myGroup == null && b.myGroup == null) {
             WorldObjectGroup group = Instantiate(groupObjectPrefab).GetComponent<WorldObjectGroup>();
+            group.transform.SetParent(this.transform);
             group.GetComponent<InteractiveObject>().SetStartingPositionAndRotation(0, 0, new Vector2(0, -1));
+            worldObjectGroups.Add(group.gameObject);
             group.AddObjectToGroup(a);
         }
         a.AttemptToConnectWorldObject(b);
         b.AttemptToConnectWorldObject(a);
+    }
+
+    /// <summary>
+    /// Entfernt die übergebene WorldObjectGroup aus worldObjectGroups und zerstört sie.
+    /// </summary>
+    /// <param name="group"></param>
+    public void RemoveWorldObjectGroup(WorldObjectGroup group) {
+        worldObjectGroups.Remove(group.gameObject);
+        Destroy(group);
     }
 }
