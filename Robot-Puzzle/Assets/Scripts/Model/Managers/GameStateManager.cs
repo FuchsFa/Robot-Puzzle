@@ -39,13 +39,11 @@ public class GameStateManager : MonoBehaviour {
         string scriptCode = text.text;
         robotObject.GetComponent<Robot>().ChangeScriptCode(scriptCode);
 
-        GameObject robotTwo = robotManager.CreateDefaultRobot();
-        robotTwo.name = "Robot B";
-        robotTwo.GetComponent<InteractiveObject>().ChangeStartingPosition(1, 0);
-
-        GameObject robotThree = robotManager.CreateDefaultRobot();
-        robotThree.name = "Robot C";
-        robotThree.GetComponent<InteractiveObject>().ChangeStartingPosition(-1, -2);
+        GameObject worldObjectOne = worldObjectManager.CreateWorldObject("Ore", 0, -1);
+        worldObjectOne.name = "Ore A";
+        GameObject worldObjectTwo = worldObjectManager.CreateWorldObject("Ore", -1, -1);
+        worldObjectTwo.name = "Ore B";
+        worldObjectManager.ConnectWorldObjects(worldObjectOne.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());
 
         Play();
     }
@@ -150,6 +148,7 @@ public class GameStateManager : MonoBehaviour {
                 return false;
             }
         }
-        return true;
+        //ODO: Wieder auf true setzen, sobald die Tests erledigt sind.
+        return false;
     }
 }

@@ -7,6 +7,9 @@ public class WorldObjectManager : MonoBehaviour {
     [SerializeField]
     private Dictionary<string, GameObject> prefabDictionary;
 
+    [SerializeField]
+    private GameObject groupObjectPrefab;
+
     private GameStateManager gameStateManager;
 
     private List<GameObject> worldObjects;
@@ -50,16 +53,17 @@ public class WorldObjectManager : MonoBehaviour {
     /// <param name="type"></param>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    public void CreateWorldObject(string type, int x, int y) {
+    public GameObject CreateWorldObject(string type, int x, int y) {
         if(!prefabDictionary.ContainsKey(type)) {
             Debug.LogError("WorldObjectManager -- Das Objekt vom Typ '" + type + "' kann nicht erstellt werden, weil der Typ nicht existiert.");
-            return;
+            return null;
         }
         GameObject worldObject = Instantiate(prefabDictionary[type]);
         WorldObject obj = worldObject.GetComponent<WorldObject>();
         obj.InitializeWorldObject(new Vector2(0, -1), x, y);
         worldObject.transform.position = new Vector3(x + 0.5f, y + 0.5f);
         worldObjects.Add(worldObject);
+        return worldObject;
     }
 
     /// <summary>
@@ -120,6 +124,11 @@ public class WorldObjectManager : MonoBehaviour {
         if(Vector3.Distance(a.transform.position, b.transform.position) > 1) {
             Debug.Log("Die WorldObjects '" + a.gameObject.name + "' und '" + b.gameObject.name + "' sind zu weit auseinander, um verbunden zu werden.");
             return;
+        }
+        if (a.myGroup == null && b.myGroup == null) {
+            WorldObjectGroup group = Instantiate(groupObjectPrefab).GetComponent<WorldObjectGroup>();
+            group.GetComponent<InteractiveObject>().SetStartingPositionAndRotation(0, 0, new Vector2(0, -1));
+            group.AddObjectToGroup(a);
         }
         a.AttemptToConnectWorldObject(b);
         b.AttemptToConnectWorldObject(a);

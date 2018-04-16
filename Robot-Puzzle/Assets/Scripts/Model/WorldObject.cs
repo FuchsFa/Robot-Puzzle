@@ -15,6 +15,8 @@ public class WorldObject : MonoBehaviour {
 
     private InteractiveObject myInteractiveObject;
 
+    public WorldObjectGroup myGroup;
+
     /// <summary>
     /// Reihenfolge der Verbindungen: [Front, Rechts, Rückseite, Links]
     /// </summary>
@@ -36,6 +38,7 @@ public class WorldObject : MonoBehaviour {
         connectedWorldObjects = new WorldObject[] { null, null, null, null };
         InitializeActionDictionary();
         InitializeScript();
+        myGroup = null;
     }
 
     /// <summary>
@@ -126,6 +129,13 @@ public class WorldObject : MonoBehaviour {
             return;
         } else {
             connectedWorldObjects[slot] = other;
+            if(myGroup != null) {
+                if(other.myGroup != null && other.myGroup != myGroup) {
+                    myGroup.MergeGroups(other.myGroup);
+                } else if(other.myGroup == null) {
+                    myGroup.AddObjectToGroup(other);
+                }
+            }
         }
     }
 
@@ -137,6 +147,7 @@ public class WorldObject : MonoBehaviour {
         for (int i = 0; i < connectedWorldObjects.Length; i++) {
             if(connectedWorldObjects[i] == other) {
                 connectedWorldObjects[i] = null;
+                myGroup.RemoveObjectFromGroup(other);
                 break;
             }
         }

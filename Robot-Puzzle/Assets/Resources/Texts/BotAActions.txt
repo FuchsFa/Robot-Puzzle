@@ -1,6 +1,10 @@
 function action()
-	turnLeft()
+	test()
+end
+
+function test()
 	grab()
+	turnLeft()
 	turnLeft()
 	walk()
 end

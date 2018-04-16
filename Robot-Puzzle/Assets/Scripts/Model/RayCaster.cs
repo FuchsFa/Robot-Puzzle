@@ -48,7 +48,12 @@ public class RayCaster : MonoBehaviour {
         if (hit) {
             if (hit.collider != myCollider) {
                 Debug.Log(gameObject.name + " ist mit " + hit.transform.gameObject.name + " zusammengestoßen.");
-                return true;
+                if (GetComponent<WorldObject>() && hit.transform.GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup.objects.Contains(hit.transform.GetComponent<WorldObject>())) {
+                    Debug.Log("Aber " + hit.transform.gameObject.name + " gehört zu seiner objectGroup und kann daher nicht mit ihm kollidieren.");
+                }
+                else {
+                    return true;
+                }
             }
         }
         return false;
@@ -87,7 +92,13 @@ public class RayCaster : MonoBehaviour {
             if (hit.collider != myCollider && hit.transform.GetComponent<InteractiveObject>() != null) {
                 if(hit.transform.GetComponent<InteractiveObject>().Grabable == true) {
                     Debug.Log(gameObject.name + " hat ein Objekt zum Greifen gefunden: " + hit.transform.gameObject.name);
-                    interactableObject = hit.transform.GetComponent<InteractiveObject>();
+                    GameObject foundObject = hit.transform.gameObject;
+                    if (foundObject.GetComponent<WorldObject>() && foundObject.GetComponent<WorldObject>().myGroup != null) {
+                        interactableObject = foundObject.GetComponent<WorldObject>().myGroup.GetComponent<InteractiveObject>();
+                        foundObject.GetComponent<WorldObject>().myGroup.MoveToObjectInGroup(foundObject.GetComponent<WorldObject>());
+                    } else {
+                        interactableObject = hit.transform.GetComponent<InteractiveObject>();
+                    }
                 } else {
                     Debug.Log(gameObject.name + " hat ein Objekt gefunden: " + hit.transform.gameObject.name + ", aber es kann nicht gegriffen werden.");
                 }
@@ -117,7 +128,15 @@ public class RayCaster : MonoBehaviour {
             if (hit.collider != myCollider && hit.transform.GetComponent<InteractiveObject>() != null) {
                 if (hit.transform.GetComponent<InteractiveObject>().Movable == true) {
                     Debug.Log(gameObject.name + " hat ein Objekt zum Schieben gefunden: " + hit.transform.gameObject.name);
-                    interactableObject = hit.transform.GetComponent<InteractiveObject>();
+                    if(hit.transform.GetComponent<WorldObject>()) {
+                        if(GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup.objects.Contains(hit.transform.GetComponent<WorldObject>())) {
+                            Debug.Log("Aber " + hit.transform.gameObject.name + " gehört zu seiner objectGroup und kann daher nicht geschoben werden.");
+                        } else if(hit.transform.GetComponent<WorldObject>().myGroup != null) {
+                            interactableObject = hit.transform.GetComponent<WorldObject>().myGroup.GetComponent<InteractiveObject>();
+                        }
+                    } else {
+                        interactableObject = hit.transform.GetComponent<InteractiveObject>();
+                    }
                 }
                 else {
                     Debug.Log(gameObject.name + " hat ein Objekt gefunden: " + hit.transform.gameObject.name + ", aber es kann nicht geschoben werden.");

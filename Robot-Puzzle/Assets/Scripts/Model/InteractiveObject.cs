@@ -111,7 +111,11 @@ public class InteractiveObject : MonoBehaviour {
     /// <returns></returns>
     public bool IsReadyForOutput() {
         if (grabbedBy == null) {
-            return true;
+            if(GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup) {
+                return GetComponent<WorldObject>().myGroup.GetComponent<InteractiveObject>().IsReadyForOutput();
+            } else {
+                return true;
+            }
         }
         else {
             return false;
@@ -129,14 +133,15 @@ public class InteractiveObject : MonoBehaviour {
             List<InteractiveObject> grabbedObjects = new List<InteractiveObject>();
             InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
             grabbedObjects.Add(grabbedObject);
-            if(grabbedObject.GetComponent<WorldObject>()) {
-                WorldObject grabbedWO = grabbedObject.GetComponent<WorldObject>();
-                List<WorldObject> connectedWOs = grabbedWO.GetAllConnectedWorldObjects();
-                if(connectedWOs.Count > 0) {
-
+            if(grabbedObject.GetComponent<WorldObjectGroup>()) {
+                foreach(WorldObject obj in grabbedObject.GetComponent<WorldObjectGroup>().objects) {
+                    grabbedObjects.Add(obj.GetComponent<InteractiveObject>());
                 }
             }
             foreach(InteractiveObject interactiveObject in grabbedObjects) {
+                if(!interactiveObject.GetComponent<RayCaster>()) {
+                    continue;
+                }
                 InteractiveObject pushableObject = interactiveObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
                 if (pushableObject != null) {
                     interactiveObject.Push(pushableObject, direction);
@@ -147,10 +152,9 @@ public class InteractiveObject : MonoBehaviour {
                     oldDirection = temp;
                     return;
                 }
-                //TODO: Da ja nicht alle connectedObjects eine relative Position haben, sondern nur das gegriffene Objekt, muss hier eine andere Lösung gefunden werden.
-                interactiveObject.AdjustRelativePosition("Left");
-                interactiveObject.MoveToRelativePosition();
             }
+            grabbedObject.AdjustRelativePosition("Left");
+            grabbedObject.MoveToRelativePosition();
         }
         gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
     }
@@ -225,25 +229,31 @@ public class InteractiveObject : MonoBehaviour {
     public void Move(Vector2 moveDir) {
         Debug.Log(gameObject.name + " bewegt sich.");
         if(movable && grabbedBy == null) {
-            RayCaster raycaster = GetComponent<RayCaster>();
-            InteractiveObject interactiveObject = raycaster.CheckForPushableObject(direction);
-            if (interactiveObject != null) {
-                Push(interactiveObject, moveDir);
+            if(GetComponent<WorldObjectGroup>()) {
+                foreach(WorldObject obj in GetComponent<WorldObjectGroup>().objects) {
+                    obj.GetComponent<InteractiveObject>().Move(moveDir);
+                }
+            } else {
+                RayCaster raycaster = GetComponent<RayCaster>();
+                InteractiveObject interactiveObject = raycaster.CheckForPushableObject(direction);
+                if (interactiveObject != null) {
+                    Push(interactiveObject, moveDir);
+                }
+                if (raycaster.CheckForCollisionsInDirection(moveDir)) {
+                    Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
+                    return;
+                }
+                oldX = posX;
+                oldY = posY;
+                posX += (int)moveDir.x;
+                posY += (int)moveDir.y;
+                if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+                    InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
+                    grabbedObject.MoveToRelativePosition();
+                }
+                gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
+                Debug.Log(gameObject.name + " neue Position: " + posX + "/" + posY);
             }
-            if(raycaster.CheckForCollisionsInDirection(moveDir)) {
-                Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
-                return;
-            }
-            oldX = posX;
-            oldY = posY;
-            posX += (int)moveDir.x;
-            posY += (int)moveDir.y;
-            if(GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
-                InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
-                grabbedObject.MoveToRelativePosition();
-            }
-            gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
-            Debug.Log(gameObject.name + " neue Position: " + posX + "/" + posY);
         }
     }
 
@@ -279,11 +289,11 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     /// <param name="grabbingRobot"></param>
     public void OnGrab(Robot grabbingRobot) {
-        Debug.Log(grabbingRobot.gameObject.name + " greift " + gameObject.name);
         grabbedBy = grabbingRobot;
         relativeX = posX - grabbedBy.GetComponent<InteractiveObject>().posX;
         relativeY = posY - grabbedBy.GetComponent<InteractiveObject>().posY;
         relativeDirection = direction - grabbedBy.GetComponent<InteractiveObject>().direction;
+        Debug.Log(grabbingRobot.gameObject.name + " greift " + gameObject.name + " Relative Position: " + relativeX + "/" + relativeY);
     }
 
     /// <summary>
@@ -299,6 +309,9 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     /// <param name="percentage"></param>
     public void AdjustGameObject(float percentage) {
+        if(GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup != null) {
+            return;
+        }
         if(percentage > 1) {
             percentage = 1;
         }
