@@ -241,31 +241,25 @@ public class InteractiveObject : MonoBehaviour {
     public void Move(Vector2 moveDir) {
         Debug.Log(gameObject.name + " bewegt sich.");
         if(movable && grabbedBy == null) {
-            if(GetComponent<WorldObjectGroup>()) {
-                foreach(WorldObject obj in GetComponent<WorldObjectGroup>().objects) {
-                    obj.GetComponent<InteractiveObject>().Move(moveDir);
-                }
-            } else {
-                RayCaster raycaster = GetComponent<RayCaster>();
-                InteractiveObject interactiveObject = raycaster.CheckForPushableObject(direction);
-                if (interactiveObject != null) {
-                    Push(interactiveObject, moveDir);
-                }
-                if (raycaster.CheckForCollisionsInDirection(moveDir)) {
-                    Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
-                    return;
-                }
-                oldX = posX;
-                oldY = posY;
-                posX += (int)moveDir.x;
-                posY += (int)moveDir.y;
-                if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
-                    InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
-                    grabbedObject.MoveToRelativePosition();
-                }
-                gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
-                Debug.Log(gameObject.name + " neue Position: " + posX + "/" + posY);
+            RayCaster raycaster = GetComponent<RayCaster>();
+            InteractiveObject interactiveObject = raycaster.CheckForPushableObject(direction);
+            if (interactiveObject != null) {
+                Push(interactiveObject, moveDir);
             }
+            if (raycaster.CheckForCollisionsInDirection(moveDir)) {
+                Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
+                return;
+            }
+            oldX = posX;
+            oldY = posY;
+            posX += (int)moveDir.x;
+            posY += (int)moveDir.y;
+            if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+                InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
+                grabbedObject.MoveToRelativePosition();
+            }
+            gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
+            Debug.Log(gameObject.name + " neue Position: " + posX + "/" + posY);
         }
     }
 
@@ -321,7 +315,9 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     /// <param name="percentage"></param>
     public void AdjustGameObject(float percentage) {
+        //Debug.Log("-" + gameObject.name + " " + Mathf.Round(percentage * 100) + "-");
         if(GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup != null) {
+            //Wenn das Objekt ein WorldObject is und Teil einer WorldObjectGroup ist, übernimmt die Gruppe die Bewegung.
             return;
         }
         if(percentage > 1) {
@@ -343,6 +339,21 @@ public class InteractiveObject : MonoBehaviour {
             Quaternion currentRotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
             Quaternion oldRotation = Quaternion.AngleAxis(GetFacingAngle(oldDirection), Vector3.forward);
             gameObject.transform.rotation = Quaternion.Lerp(oldRotation, currentRotation, percentage);
+        }
+        if((oldX != posX || oldY != posY || oldDirection != direction) && GetComponent<WorldObjectGroup>()) {
+            //Wenn das Objekt eine WorldObjectGroup ist, müssen die einzelnen Teile davon auf Pushes und Kollisionen überprüft werden.
+            foreach(WorldObject worldObject in GetComponent<WorldObjectGroup>().objects) {
+                RayCaster raycaster = worldObject.GetComponent<RayCaster>();
+                //TODO: pushDirection jeden frame neu anpassen.
+                Vector2 pushDirection = new Vector2(posX - oldX, posY - oldY);
+                InteractiveObject interactiveObject = raycaster.CheckForPushableObject(pushDirection);
+                if (interactiveObject != null && Vector2.Distance(worldObject.transform.position, interactiveObject.transform.position) < 0.9f) {
+                    worldObject.GetComponent<InteractiveObject>().Push(interactiveObject, pushDirection);
+                }
+                if (raycaster.CheckForCollisionsInDirection(pushDirection)) {
+                    Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
+                }
+            }
         }
     }
 

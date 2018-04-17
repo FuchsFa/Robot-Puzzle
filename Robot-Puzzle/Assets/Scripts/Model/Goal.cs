@@ -86,14 +86,13 @@ public class Goal : MonoBehaviour {
             Debug.Log("Das Objekt '" + obj.name + "' ist kein WorldObject.");
             return false;
         }
-        if(obj.GetComponent<WorldObject>().GetType() != worldObjectReference.GetType()) {
+        if(obj.GetComponent<WorldObject>().GetObjectType() != worldObjectReference.GetComponent<WorldObject>().GetObjectType()) {
             Debug.Log("Das Objekt '" + obj.name + "' hat den falschen Typ.");
             return false;
         }
         if(rotationMatters && obj.GetComponent<InteractiveObject>().direction != worldObjectRotation) {
             return false;
         }
-        //TODO: Überprüfen, ob sonstige Faktoren, wie etwa Rotation und Verbindungen mit anderen Objekten stimmen.
         if(connectionsMatter) {
             bool[] temp = obj.GetComponent<WorldObject>().GetAbsoluteConnectionDirections();
             return (connectionNorth == temp[0]) && (connectionEast == temp[1]) && (connectionSouth == temp[2]) && (connectionWest == temp[3]);

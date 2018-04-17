@@ -5,6 +5,9 @@ using MoonSharp.Interpreter;
 
 public class WorldObject : MonoBehaviour {
 
+    [SerializeField]
+    private string objectType;
+
     public TextAsset scriptText;
     private string scriptCode;
 
@@ -45,11 +48,12 @@ public class WorldObject : MonoBehaviour {
     /// Erstellt das Dictionary, in dem alle Aktionen stehen, die von WorldObjects ausgeführt werden können.
     /// </summary>
     private void InitializeActionDictionary() {
-        actionDictionary = new Dictionary<string, System.Func<DynValue>>();
-        actionDictionary.Add("turnLeft", TurnLeft);
-        actionDictionary.Add("turnRight", TurnRight);
-        actionDictionary.Add("walk", Walk);
-        actionDictionary.Add("wait", Wait);
+        actionDictionary = new Dictionary<string, System.Func<DynValue>> {
+            { "turnLeft", TurnLeft },
+            { "turnRight", TurnRight },
+            { "walk", Walk },
+            { "wait", Wait }
+        };
     }
 
     /// <summary>
@@ -177,26 +181,23 @@ public class WorldObject : MonoBehaviour {
     }
 
     /// <summary>
+    /// Gibt den Objekttypen als string zurück.
+    /// </summary>
+    /// <returns></returns>
+    public string GetObjectType() {
+        return objectType;
+    }
+
+    /// <summary>
     /// Findet alle WorldObjects, die mit diesem WorldObject zusammenhängen. Egal ob direkt oder indirekt. (Gibt auch sich selbst zurück)
     /// </summary>
     /// <returns></returns>
     public List<WorldObject> GetAllConnectedWorldObjects() {
         List<WorldObject> objects = new List<WorldObject>();
-        objects.AddRange(GetConnectedWorldObjects());
-        while(true) {
-            int counter = 0;
-            List<WorldObject> temp = new List<WorldObject>();
-            foreach(WorldObject obj in objects) {
-                temp.AddRange(obj.GetConnectedWorldObjects());
-            }
-            foreach(WorldObject tempObject in temp) {
-                if(!objects.Contains(tempObject)) {
-                    objects.Add(tempObject);
-                    counter++;
-                }
-            }
-            if(counter == 0) {
-                break;
+        objects.Add(this);
+        if(myGroup != null) {
+            foreach(WorldObject worldObject in myGroup.objects) {
+                objects.Add(worldObject);
             }
         }
         return objects;
