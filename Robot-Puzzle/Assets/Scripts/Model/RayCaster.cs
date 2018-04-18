@@ -47,11 +47,10 @@ public class RayCaster : MonoBehaviour {
         Debug.DrawRay(raycastOrigin, raycastDirection, Color.red, 0.3f);
         if (hit) {
             if (hit.collider != myCollider) {
-                Debug.Log(gameObject.name + " ist mit " + hit.transform.gameObject.name + " zusammengestoßen.");
+                //Debug.Log(gameObject.name + " ist mit " + hit.transform.gameObject.name + " zusammengestoßen.");
                 if (GetComponent<WorldObject>() && hit.transform.GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup.objects.Contains(hit.transform.GetComponent<WorldObject>())) {
-                    Debug.Log("Aber " + hit.transform.gameObject.name + " gehört zu seiner objectGroup und kann daher nicht mit ihm kollidieren.");
-                }
-                else {
+                    //Debug.Log("Aber " + hit.transform.gameObject.name + " gehört zu seiner objectGroup und kann daher nicht mit ihm kollidieren.");
+                } else {
                     return true;
                 }
             }
@@ -127,10 +126,10 @@ public class RayCaster : MonoBehaviour {
         if (hit) {
             if (hit.collider != myCollider && hit.transform.GetComponent<InteractiveObject>() != null) {
                 if (hit.transform.GetComponent<InteractiveObject>().Movable == true) {
-                    Debug.Log(gameObject.name + " hat ein Objekt zum Schieben gefunden: " + hit.transform.gameObject.name);
+                    //Debug.Log(gameObject.name + " hat ein Objekt zum Schieben gefunden: " + hit.transform.gameObject.name);
                     if(hit.transform.GetComponent<WorldObject>()) {
                         if(GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup.objects.Contains(hit.transform.GetComponent<WorldObject>())) {
-                            Debug.Log("Aber " + hit.transform.gameObject.name + " gehört zu seiner objectGroup und kann daher nicht geschoben werden.");
+                            //Debug.Log("Aber " + hit.transform.gameObject.name + " gehört zu seiner objectGroup und kann daher nicht geschoben werden.");
                         } else if(hit.transform.GetComponent<WorldObject>().myGroup != null) {
                             interactableObject = hit.transform.GetComponent<WorldObject>().myGroup.GetComponent<InteractiveObject>();
                         } else {

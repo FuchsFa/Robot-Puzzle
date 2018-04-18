@@ -58,7 +58,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.45
 --- !u!114 &114238075371459768
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -70,6 +70,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c4577f78e9f1144cb665583ba95e90c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectType: 
   scriptText: {fileID: 0}
   myGroup: {fileID: 0}
   terrainCompatability: 00000000
