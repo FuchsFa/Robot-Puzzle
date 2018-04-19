@@ -128,7 +128,7 @@ public class RayCaster : MonoBehaviour {
                 if (hit.transform.GetComponent<InteractiveObject>().Movable == true) {
                     //Debug.Log(gameObject.name + " hat ein Objekt zum Schieben gefunden: " + hit.transform.gameObject.name);
                     if(hit.transform.GetComponent<WorldObject>()) {
-                        if(GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup.objects.Contains(hit.transform.GetComponent<WorldObject>())) {
+                        if(GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup != null && GetComponent<WorldObject>().myGroup.objects.Contains(hit.transform.GetComponent<WorldObject>())) {
                             //Debug.Log("Aber " + hit.transform.gameObject.name + " gehört zu seiner objectGroup und kann daher nicht geschoben werden.");
                         } else if(hit.transform.GetComponent<WorldObject>().myGroup != null) {
                             interactableObject = hit.transform.GetComponent<WorldObject>().myGroup.GetComponent<InteractiveObject>();

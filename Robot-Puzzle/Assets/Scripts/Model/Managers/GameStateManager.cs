@@ -44,7 +44,7 @@ public class GameStateManager : MonoBehaviour {
         GameObject worldObjectTwo = worldObjectManager.CreateWorldObject("Ore", -1, -1);
         worldObjectTwo.name = "Ore B";
         worldObjectManager.ConnectWorldObjects(worldObjectOne.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());
-        GameObject worldObjectThree = worldObjectManager.CreateWorldObject("Ingot", -1, 0);
+        GameObject worldObjectThree = worldObjectManager.CreateWorldObject("Ingot", 1, -1);
 
         Play();
     }

@@ -350,7 +350,6 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     private void CheckWorldObjectGroupCollision() {
         foreach (WorldObject worldObject in GetComponent<WorldObjectGroup>().objects) {
-            //Neuer Versuch:
             Collider2D collider = worldObject.GetComponent<Collider2D>();
             RayCaster raycaster = worldObject.GetComponent<RayCaster>();
             Collider2D[] detectedCollider = new Collider2D[1];
@@ -365,28 +364,40 @@ public class InteractiveObject : MonoBehaviour {
                 float angleBetweenObjects = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
                 Debug.Log("**Winkel dazwischen: " + angleBetweenObjects);
                 Debug.DrawLine(detectedCollider[0].transform.position, worldObject.transform.position, Color.green);
-                if(interactiveObject.Movable && Vector2.Distance(worldObject.transform.position, interactiveObject.transform.position) < 0.9f) {
-                    Vector2 pushDirection = GetDirectionVectorForRoundedAngle(angleBetweenObjects + 90);
+                if(CanPushObject(worldObject.GetComponent<InteractiveObject>(), interactiveObject)) {
+                    Vector2 pushDirection = GetDirectionVectorForRoundedAngle(angleBetweenObjects + 90); //Es werden 90° addiert, weil angleBetweenObjects einen anderen Standard-Winkel hat als der Rest des Spiels.
                     worldObject.GetComponent<InteractiveObject>().Push(interactiveObject, pushDirection);
                 } else {
+                    //TODO: Fehler nur ausgeben, wenn das Objekt tatsächlich nicht bewegt werden kann. z.Z. ist es möglich hierher zu kommen, auch wenn das Objekt weiter bewegt werden kann.
                     Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
                 }
                 
             }
-
-            //alter Versuch:
-            /*RayCaster raycaster = worldObject.GetComponent<RayCaster>();
-            Vector3 rotationAngles = transform.eulerAngles;
-            float rota = rotationAngles.z;
-            Vector2 pushDirection = GetDirectionVectorForRoundedAngle(rota);
-            InteractiveObject interactiveObject = raycaster.CheckForPushableObject(pushDirection);
-            if (interactiveObject != null && Vector2.Distance(worldObject.transform.position, interactiveObject.transform.position) < 0.9f) {
-                worldObject.GetComponent<InteractiveObject>().Push(interactiveObject, pushDirection);
-            }
-            if (raycaster.CheckForCollisionsInDirection(pushDirection) && Vector2.Distance(worldObject.transform.position, interactiveObject.transform.position) < 0.9f) {
-                Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
-            }*/
         }
+    }
+
+    /// <summary>
+    /// Überprüf, ob das erste übergebene WorldObject das Zweite schieben darf.
+    /// </summary>
+    /// <param name="pusher"></param>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    private bool CanPushObject(InteractiveObject pusher, InteractiveObject target) {
+        if(!target.Movable) {
+            Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil " + target.name + " nicht bewegbar ist.");
+            return false;
+        }
+        if(Vector2.Distance(pusher.transform.position, target.transform.position) >= 0.9f) {
+            Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil die beiden zu weit voneinander entfernt sind.");
+            return false;
+        }
+        if(Vector2.Distance(pusher.transform.position, new Vector2(target.posX + 0.5f, target.posY + 0.5f)) >= 1) {
+            Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil " + pusher.name + " zu weit von " + target.name + "s Zielposition(" + target.posX + "/" + target.posY + ") entfernt ist(Distanz: " + Vector2.Distance(pusher.transform.position, new Vector2(target.posX, target.posY)) + ")");
+            return false;
+        } else {
+            Debug.Log("***Entfernung zwischen der aktuellen Position von " + pusher.name + " und der Zielposition von " + target.name + " beträgt: " + Vector2.Distance(pusher.transform.position, new Vector2(target.posX, target.posY)));
+        }
+        return true;
     }
 
     /// <summary>
@@ -396,13 +407,14 @@ public class InteractiveObject : MonoBehaviour {
     /// <returns></returns>
     private Vector2 GetDirectionVectorForRoundedAngle(float angle) {
         float roundedAngle = Mathf.Round(angle / 90) * 90;
+        Debug.Log("***Gerundeter Winkel: " + roundedAngle);
         if(roundedAngle == 0) {
             return new Vector2(0, -1);
-        } else if(roundedAngle == 90) {
+        } else if(roundedAngle == 90 || roundedAngle == -270) {
             return new Vector2(1, 0);
-        } else if(roundedAngle == 180) {
+        } else if(roundedAngle == 180 || roundedAngle == -180) {
             return new Vector2(0, 1);
-        } else if(roundedAngle == 270) {
+        } else if(roundedAngle == 270 || roundedAngle == -90) {
             return new Vector2(-1, 0);
         }
         return new Vector2(0, -1);
