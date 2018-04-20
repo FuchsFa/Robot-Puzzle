@@ -138,21 +138,6 @@ public class InteractiveObject : MonoBehaviour {
                     grabbedObjects.Add(obj.GetComponent<InteractiveObject>());
                 }
             }
-            /*foreach(InteractiveObject interactiveObject in grabbedObjects) {
-                if(!interactiveObject.GetComponent<RayCaster>()) {
-                    continue;
-                }
-                InteractiveObject pushableObject = interactiveObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
-                if (pushableObject != null) {
-                    interactiveObject.Push(pushableObject, direction);
-                }
-                if (interactiveObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(direction)) {
-                    Debug.LogError(gameObject.name + " kann sich nicht nach links drehen, weil sein getragenes Objekt kollidieren würde.");
-                    direction = oldDirection;
-                    oldDirection = temp;
-                    return;
-                }
-            }*/
             grabbedObject.AdjustRelativePosition("Left");
             grabbedObject.MoveToRelativePosition();
         }
@@ -175,21 +160,6 @@ public class InteractiveObject : MonoBehaviour {
                     grabbedObjects.Add(obj.GetComponent<InteractiveObject>());
                 }
             }
-            /*foreach (InteractiveObject interactiveObject in grabbedObjects) {
-                if (!interactiveObject.GetComponent<RayCaster>()) {
-                    continue;
-                }
-                InteractiveObject pushableObject = interactiveObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
-                if (pushableObject != null) {
-                    interactiveObject.Push(pushableObject, direction);
-                }
-                if (interactiveObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(direction)) {
-                    Debug.LogError(gameObject.name + " kann sich nicht nach rechts drehen, weil sein getragenes Objekt kollidieren würde.");
-                    direction = oldDirection;
-                    oldDirection = temp;
-                    return;
-                }
-            }*/
             grabbedObject.AdjustRelativePosition("Right");
             grabbedObject.MoveToRelativePosition();
         }
@@ -364,10 +334,10 @@ public class InteractiveObject : MonoBehaviour {
                 float angleBetweenObjects = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
                 Debug.Log("**Winkel dazwischen: " + angleBetweenObjects);
                 Debug.DrawLine(detectedCollider[0].transform.position, worldObject.transform.position, Color.green);
-                if(CanPushObject(worldObject.GetComponent<InteractiveObject>(), interactiveObject)) {
-                    Vector2 pushDirection = GetDirectionVectorForRoundedAngle(angleBetweenObjects + 90); //Es werden 90° addiert, weil angleBetweenObjects einen anderen Standard-Winkel hat als der Rest des Spiels.
+                Vector2 pushDirection = GetDirectionVectorForRoundedAngle(angleBetweenObjects + 90); //Es werden 90° addiert, weil angleBetweenObjects einen anderen Standard-Winkel hat als der Rest des Spiels.
+                if (CanPushObject(worldObject.GetComponent<InteractiveObject>(), interactiveObject, pushDirection)) {
                     worldObject.GetComponent<InteractiveObject>().Push(interactiveObject, pushDirection);
-                } else {
+                } else if (interactiveObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(pushDirection)) {
                     //TODO: Fehler nur ausgeben, wenn das Objekt tatsächlich nicht bewegt werden kann. z.Z. ist es möglich hierher zu kommen, auch wenn das Objekt weiter bewegt werden kann.
                     Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
                 }
@@ -381,10 +351,15 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     /// <param name="pusher"></param>
     /// <param name="target"></param>
+    /// <param name="pushDirection"></param>
     /// <returns></returns>
-    private bool CanPushObject(InteractiveObject pusher, InteractiveObject target) {
+    private bool CanPushObject(InteractiveObject pusher, InteractiveObject target, Vector2 pushDirection) {
         if(!target.Movable) {
             Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil " + target.name + " nicht bewegbar ist.");
+            return false;
+        }
+        if(target.GetComponent<RayCaster>().CheckForCollisionsInDirection(pushDirection)) {
+            Debug.LogError("***" + target.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
             return false;
         }
         if(Vector2.Distance(pusher.transform.position, target.transform.position) >= 0.9f) {
