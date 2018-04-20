@@ -323,9 +323,14 @@ public class InteractiveObject : MonoBehaviour {
             Collider2D collider = worldObject.GetComponent<Collider2D>();
             RayCaster raycaster = worldObject.GetComponent<RayCaster>();
             Collider2D[] detectedCollider = new Collider2D[1];
-            ContactFilter2D contactFilter = new ContactFilter2D {
-                layerMask = raycaster.collisionMask
-            };
+            ContactFilter2D contactFilter = new ContactFilter2D();
+            contactFilter.layerMask = raycaster.collisionMask;
+            contactFilter.useLayerMask = true;
+
+            /*GameObject test = new GameObject();
+            test.layer = LayerMask.NameToLayer("Goals");
+            Debug.Log("!!!!!!!!!" + contactFilter.IsFilteringLayerMask(test));*/
+
             collider.OverlapCollider(contactFilter, detectedCollider);
             if(detectedCollider[0] != null && detectedCollider[0].GetComponent<InteractiveObject>()) {
                 Debug.Log("*" + worldObject.gameObject.name + " Overlap mit " + detectedCollider[0].name);

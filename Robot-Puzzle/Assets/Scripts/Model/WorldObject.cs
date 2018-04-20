@@ -165,6 +165,9 @@ public class WorldObject : MonoBehaviour {
     public bool[] GetAbsoluteConnectionDirections() {
         bool[] temp = new bool[] { false, false, false, false };
         foreach (WorldObject obj in connectedWorldObjects) {
+            if(obj == null) {
+                continue;
+            }
             int relativeX = obj.gameObject.GetComponent<InteractiveObject>().posX - GetComponent<InteractiveObject>().posX;
             int relativeY = obj.gameObject.GetComponent<InteractiveObject>().posY - GetComponent<InteractiveObject>().posY;
             if(relativeY > 0) {

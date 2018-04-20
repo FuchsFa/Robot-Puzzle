@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4885110670296992}
   - component: {fileID: 212963557086228726}
-  m_Layer: 16
+  m_Layer: 15
   m_Name: Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 224311047884133466}
   - component: {fileID: 222704896656304922}
   - component: {fileID: 114763175136565550}
-  m_Layer: 16
+  m_Layer: 15
   m_Name: DisplayText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 223060487591968776}
   - component: {fileID: 114094725482720268}
   - component: {fileID: 114162523916628210}
-  m_Layer: 16
+  m_Layer: 15
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ GameObject:
   - component: {fileID: 114339580536576504}
   - component: {fileID: 212626991727143216}
   - component: {fileID: 58300237256693686}
-  m_Layer: 16
+  m_Layer: 15
   m_Name: Goal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,13 +190,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worldObjectType: Ore
+  rotationMatters: 0
+  worldObjectRotation: {x: 0, y: 0}
+  connectionsMatter: 0
+  connectionNorth: 0
+  connectionEast: 0
+  connectionSouth: 0
+  connectionWest: 0
   worldObjectPreview: {fileID: 212963557086228726}
   amountNeeded: 10
   display: {fileID: 114763175136565550}
   collisionMask:
     serializedVersion: 2
-    m_Bits: 86016
+    m_Bits: 81920
   isFulfilled: 0
+  myGroup: {fileID: 0}
+  hasFittingObject: 0
+  lastCheckedObject: {fileID: 0}
 --- !u!114 &114763175136565550
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -261,7 +271,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1987882343
+  m_SortingLayerID: 784979057
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300006, guid: 2fa09424e3a6630449db96e3b9c7ab1a, type: 3}
@@ -305,7 +315,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1987882343
+  m_SortingLayerID: 784979057
   m_SortingLayer: 4
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300016, guid: 2fa09424e3a6630449db96e3b9c7ab1a, type: 3}
