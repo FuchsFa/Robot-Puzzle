@@ -41,9 +41,11 @@ public class GameStateManager : MonoBehaviour {
 
         GameObject worldObjectOne = worldObjectManager.CreateWorldObject("Ore", 0, -1);
         worldObjectOne.name = "Ore A";
+        worldObjectOne.GetComponent<WorldObject>().OpenForConnections();
         GameObject worldObjectTwo = worldObjectManager.CreateWorldObject("Ore", -1, -1);
         worldObjectTwo.name = "Ore B";
-        worldObjectManager.ConnectWorldObjects(worldObjectOne.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());
+        worldObjectTwo.GetComponent<WorldObject>().OpenForConnections();
+        //worldObjectManager.ConnectWorldObjects(worldObjectOne.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());
         /*GameObject worldObjectThree = worldObjectManager.CreateWorldObject("Ore", -2, -1);
         worldObjectThree.name = "Ore C";
         worldObjectManager.ConnectWorldObjects(worldObjectThree.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());*/
@@ -143,6 +145,7 @@ public class GameStateManager : MonoBehaviour {
         foreach (GameObject go in objects) {
             go.SendMessage("OnNewTurn", SendMessageOptions.DontRequireReceiver);
         }
+        worldObjectManager.ConnectAllAvailableWorldObjects();
         robotManager.PerformRobotActionsForTurn();
         worldObjectManager.PerformWorldObjectActionsForTurn();
         if(CheckForVictory()) {
@@ -162,7 +165,6 @@ public class GameStateManager : MonoBehaviour {
                 return false;
             }
         }
-        //ODO: Wieder auf true setzen, sobald die Tests erledigt sind.
-        return false;
+        return true;
     }
 }

@@ -13,7 +13,7 @@ public class GoalGroup : MonoBehaviour {
     }
 
     /// <summary>
-    /// 
+    /// Startet den Output für alle Goals in der Goalgruppe.
     /// </summary>
     public void StartOutputForMyGoals() {
         if(AreMyGoalsReady()) {
@@ -24,7 +24,7 @@ public class GoalGroup : MonoBehaviour {
     }
 
     /// <summary>
-    /// 
+    /// Überprüft, ob jedes Goal ein passendes Objekt auf sich stehen hat.
     /// </summary>
     /// <returns></returns>
     private bool AreMyGoalsReady() {

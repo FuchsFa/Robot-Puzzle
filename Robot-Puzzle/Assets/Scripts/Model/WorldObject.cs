@@ -25,6 +25,9 @@ public class WorldObject : MonoBehaviour {
     /// </summary>
     private WorldObject[] connectedWorldObjects;
 
+    //Solange das WorldObject connective ist, verbindet es sich automatisch mit benachbarten WorldObjects, die ebenfalls connective sind.
+    private bool connective;
+
     [SerializeField]
     private GroundTile.TerrainType[] terrainCompatability;
 
@@ -42,6 +45,7 @@ public class WorldObject : MonoBehaviour {
         InitializeActionDictionary();
         InitializeScript();
         myGroup = null;
+        connective = false;
     }
 
     /// <summary>
@@ -120,6 +124,13 @@ public class WorldObject : MonoBehaviour {
     }
 
     /// <summary>
+    /// Macht das WorldObject connective oder nicht mehr connective, je nach dem Wert der übergeben wird.
+    /// </summary>
+    public void OpenForConnections(bool value = true) {
+        connective = value;
+    }
+
+    /// <summary>
     /// Versucht, das übergebene WorldObject mit diesem zu verbinden.
     /// </summary>
     /// <param name="other"></param>
@@ -189,6 +200,14 @@ public class WorldObject : MonoBehaviour {
     /// <returns></returns>
     public string GetObjectType() {
         return objectType;
+    }
+
+    /// <summary>
+    /// Gibt an, ob das WorldObject mit anderen Objekten verbunden werden kann.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsConnective() {
+        return connective;
     }
 
     /// <summary>

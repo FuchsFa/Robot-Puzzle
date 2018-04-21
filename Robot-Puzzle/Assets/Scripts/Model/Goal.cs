@@ -77,7 +77,7 @@ public class Goal : MonoBehaviour {
                     //Der eigentliche Output passiert dann aber erst, wenn auch das letzte Goal der Gruppe bereit ist.
                     hasFittingObject = true;
                     lastCheckedObject = hit.transform.gameObject;
-                    Debug.Log("+" + name + " hat eon Objekt geefunden, das es als Output nehmen kann: " + lastCheckedObject.name);
+                    Debug.Log("+" + name + " hat ein Objekt gefunden, das es als Output nehmen kann: " + lastCheckedObject.name);
                     myGroup.StartOutputForMyGoals();
                     return;
                 }
