@@ -3,8 +3,11 @@ function action()
 end
 
 function test()
-	grab()
+	weld()
+	turnRight()
+	walk()
+	turnLeft()
+	weld()
 	walk()
 	walk()
-	release()
 end

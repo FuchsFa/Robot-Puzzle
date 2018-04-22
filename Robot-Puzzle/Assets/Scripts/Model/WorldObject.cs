@@ -127,6 +127,7 @@ public class WorldObject : MonoBehaviour {
     /// Macht das WorldObject connective oder nicht mehr connective, je nach dem Wert der übergeben wird.
     /// </summary>
     public void OpenForConnections(bool value = true) {
+        Debug.Log(name + " offen für Verbindungen: " + value);
         connective = value;
     }
 
@@ -143,6 +144,7 @@ public class WorldObject : MonoBehaviour {
             Debug.Log("Das angegebene WorldObject kann nicht mit diesem verbunden werden, weil der passende Slot schon belegt ist.");
             return;
         } else {
+            Debug.Log(name + " und " + other.name + " erfolgreich miteinander verbunden.");
             connectedWorldObjects[slot] = other;
             if(myGroup != null) {
                 if(other.myGroup != null && other.myGroup != myGroup) {

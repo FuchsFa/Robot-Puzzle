@@ -71,6 +71,7 @@ public class Robot : MonoBehaviour {
         actionDictionary.Add("release", ReleaseObject);
         actionDictionary.Add("walk", Walk);
         actionDictionary.Add("sense", Sense);
+        actionDictionary.Add("weld", Weld);
     }
 
     /// <summary>
@@ -250,6 +251,19 @@ public class Robot : MonoBehaviour {
         Debug.Log(gameObject.name + " releases its grabbed object.");
         grabbedObject.OnRelease();
         grabbedObject = null;
+        return DynValue.NewYieldReq(new DynValue[] { coroutine });
+    }
+
+    /// <summary>
+    /// Versucht ein Objekt vor sich zu schweißen.
+    /// </summary>
+    /// <returns></returns>
+    public DynValue Weld() {
+        Debug.Log(name + " versucht, etwas zu schweißen.");
+        WorldObject objectToWeld = GetComponent<RayCaster>().CheckForWorldObject(GetComponent<InteractiveObject>().direction);
+        if(objectToWeld != null) {
+            objectToWeld.OpenForConnections(true);
+        }
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 

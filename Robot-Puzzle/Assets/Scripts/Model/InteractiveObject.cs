@@ -211,14 +211,16 @@ public class InteractiveObject : MonoBehaviour {
     public void Move(Vector2 moveDir) {
         Debug.Log(gameObject.name + " bewegt sich.");
         if(movable && grabbedBy == null) {
-            RayCaster raycaster = GetComponent<RayCaster>();
-            InteractiveObject interactiveObject = raycaster.CheckForPushableObject(direction);
-            if (interactiveObject != null) {
-                Push(interactiveObject, moveDir);
-            }
-            if (raycaster.CheckForCollisionsInDirection(moveDir)) {
-                Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
-                return;
+            if(GetComponent<RayCaster>()) {
+                RayCaster raycaster = GetComponent<RayCaster>();
+                InteractiveObject interactiveObject = raycaster.CheckForPushableObject(direction);
+                if (interactiveObject != null) {
+                    Push(interactiveObject, moveDir);
+                }
+                if (raycaster.CheckForCollisionsInDirection(moveDir)) {
+                    Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
+                    return;
+                }
             }
             oldX = posX;
             oldY = posY;
@@ -374,8 +376,10 @@ public class InteractiveObject : MonoBehaviour {
         if(Vector2.Distance(pusher.transform.position, new Vector2(target.posX + 0.5f, target.posY + 0.5f)) >= 1) {
             Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil " + pusher.name + " zu weit von " + target.name + "s Zielposition(" + target.posX + "/" + target.posY + ") entfernt ist(Distanz: " + Vector2.Distance(pusher.transform.position, new Vector2(target.posX, target.posY)) + ")");
             return false;
-        } else {
-            Debug.Log("***Entfernung zwischen der aktuellen Position von " + pusher.name + " und der Zielposition von " + target.name + " beträgt: " + Vector2.Distance(pusher.transform.position, new Vector2(target.posX, target.posY)));
+        }
+        if(target.posX == oldX && target.posY == oldY) {
+            Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil es von ihm geschoben wurde.");
+            return false;
         }
         return true;
     }

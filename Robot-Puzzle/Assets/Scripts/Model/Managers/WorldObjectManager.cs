@@ -137,16 +137,18 @@ public class WorldObjectManager : MonoBehaviour {
     /// Versucht alle WorldObjects, die connective sind, miteinander zu verbinden. Danach wird die Konnektivität aller WorldObjects zurückgesetzt.
     /// </summary>
     public void ConnectAllAvailableWorldObjects() {
+        List<GameObject> connectedThisTurn = new List<GameObject>();
         foreach(GameObject obj in worldObjects) {
             if(obj.GetComponent<WorldObject>().IsConnective()) {
                 foreach(GameObject objectToConnectTo in worldObjects) {
                     if(objectToConnectTo != obj && objectToConnectTo.GetComponent<WorldObject>().IsConnective()) {
                         ConnectWorldObjects(obj.GetComponent<WorldObject>(), objectToConnectTo.GetComponent<WorldObject>());
+                        connectedThisTurn.Add(obj);
                     }
                 }
             }
         }
-        foreach(GameObject obj in worldObjects) {
+        foreach(GameObject obj in connectedThisTurn) {
             obj.GetComponent<WorldObject>().OpenForConnections(false);
         }
     }

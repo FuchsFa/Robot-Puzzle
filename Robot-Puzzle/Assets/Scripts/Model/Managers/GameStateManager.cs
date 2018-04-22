@@ -35,16 +35,17 @@ public class GameStateManager : MonoBehaviour {
     private void TestStart() {
         GameObject robotObject = robotManager.CreateDefaultRobot();
         robotObject.name = "Robot A";
+        WeldingTool tool = new WeldingTool(robotObject.GetComponent<Robot>());
         TextAsset text = Resources.Load<TextAsset>("Texts/BotAActions");
         string scriptCode = text.text;
         robotObject.GetComponent<Robot>().ChangeScriptCode(scriptCode);
 
         GameObject worldObjectOne = worldObjectManager.CreateWorldObject("Ore", 0, -1);
         worldObjectOne.name = "Ore A";
-        worldObjectOne.GetComponent<WorldObject>().OpenForConnections();
+        //worldObjectOne.GetComponent<WorldObject>().OpenForConnections();
         GameObject worldObjectTwo = worldObjectManager.CreateWorldObject("Ore", -1, -1);
         worldObjectTwo.name = "Ore B";
-        worldObjectTwo.GetComponent<WorldObject>().OpenForConnections();
+        //worldObjectTwo.GetComponent<WorldObject>().OpenForConnections();
         //worldObjectManager.ConnectWorldObjects(worldObjectOne.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());
         /*GameObject worldObjectThree = worldObjectManager.CreateWorldObject("Ore", -2, -1);
         worldObjectThree.name = "Ore C";
