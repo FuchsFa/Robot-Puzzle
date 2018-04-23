@@ -166,7 +166,8 @@ public class WorldObjectManager : MonoBehaviour {
         if (a.myGroup == null && b.myGroup == null) {
             WorldObjectGroup group = Instantiate(groupObjectPrefab).GetComponent<WorldObjectGroup>();
             group.transform.SetParent(this.transform);
-            group.GetComponent<InteractiveObject>().SetStartingPositionAndRotation(0, 0, new Vector2(0, -1));
+            group.GetComponent<InteractiveObject>().SetStartingPositionAndRotation(a.GetComponent<InteractiveObject>().posX, a.GetComponent<InteractiveObject>().posY, new Vector2(0, -1));
+            group.transform.position = new Vector3(a.GetComponent<InteractiveObject>().posX + 0.5f, a.GetComponent<InteractiveObject>().posY + 0.5f);
             worldObjectGroups.Add(group.gameObject);
             group.AddObjectToGroup(a);
         }

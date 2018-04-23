@@ -339,13 +339,12 @@ public class InteractiveObject : MonoBehaviour {
                 InteractiveObject interactiveObject = detectedCollider[0].GetComponent<InteractiveObject>();
                 Vector2 dir = detectedCollider[0].transform.position - worldObject.transform.position;
                 float angleBetweenObjects = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                Debug.Log("**Winkel dazwischen: " + angleBetweenObjects);
+                //Debug.Log("**Winkel dazwischen: " + angleBetweenObjects);
                 Debug.DrawLine(detectedCollider[0].transform.position, worldObject.transform.position, Color.green);
                 Vector2 pushDirection = GetDirectionVectorForRoundedAngle(angleBetweenObjects + 90); //Es werden 90° addiert, weil angleBetweenObjects einen anderen Standard-Winkel hat als der Rest des Spiels.
                 if (CanPushObject(worldObject.GetComponent<InteractiveObject>(), interactiveObject, pushDirection)) {
                     worldObject.GetComponent<InteractiveObject>().Push(interactiveObject, pushDirection);
                 } else if (interactiveObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(pushDirection)) {
-                    //TODO: Fehler nur ausgeben, wenn das Objekt tatsächlich nicht bewegt werden kann. z.Z. ist es möglich hierher zu kommen, auch wenn das Objekt weiter bewegt werden kann.
                     Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
                 }
                 
@@ -377,7 +376,7 @@ public class InteractiveObject : MonoBehaviour {
             Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil " + pusher.name + " zu weit von " + target.name + "s Zielposition(" + target.posX + "/" + target.posY + ") entfernt ist(Distanz: " + Vector2.Distance(pusher.transform.position, new Vector2(target.posX, target.posY)) + ")");
             return false;
         }
-        if(target.posX == oldX && target.posY == oldY) {
+        if(target.posX == pusher.oldX && target.posY == pusher.oldY) {
             Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil es von ihm geschoben wurde.");
             return false;
         }
@@ -391,7 +390,7 @@ public class InteractiveObject : MonoBehaviour {
     /// <returns></returns>
     private Vector2 GetDirectionVectorForRoundedAngle(float angle) {
         float roundedAngle = Mathf.Round(angle / 90) * 90;
-        Debug.Log("***Gerundeter Winkel: " + roundedAngle);
+        //Debug.Log("***Gerundeter Winkel: " + roundedAngle);
         if(roundedAngle == 0) {
             return new Vector2(0, -1);
         } else if(roundedAngle == 90 || roundedAngle == -270) {

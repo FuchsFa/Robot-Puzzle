@@ -54,6 +54,9 @@ TagManager:
   - name: Goals
     uniqueID: 784979057
     locked: 0
+  - name: ObjectConnections
+    uniqueID: 1476249097
+    locked: 0
   - name: WorldObjects
     uniqueID: 1987882343
     locked: 0

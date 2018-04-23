@@ -25,6 +25,8 @@ public class WorldObject : MonoBehaviour {
     /// </summary>
     private WorldObject[] connectedWorldObjects;
 
+    private GameObject[] connectionSprites;
+
     //Solange das WorldObject connective ist, verbindet es sich automatisch mit benachbarten WorldObjects, die ebenfalls connective sind.
     private bool connective;
 
@@ -42,6 +44,11 @@ public class WorldObject : MonoBehaviour {
         myInteractiveObject.ChangeStartingPosition(x, y);
         myInteractiveObject.ChangeStartingDirection(dir);
         connectedWorldObjects = new WorldObject[] { null, null, null, null };
+        connectionSprites = new GameObject[4];
+        for (int i = 0; i < 4; i++) {
+            connectionSprites[i] = transform.GetChild(i).gameObject;
+            connectionSprites[i].SetActive(false);
+        }
         InitializeActionDictionary();
         InitializeScript();
         myGroup = null;
@@ -146,6 +153,7 @@ public class WorldObject : MonoBehaviour {
         } else {
             Debug.Log(name + " und " + other.name + " erfolgreich miteinander verbunden.");
             connectedWorldObjects[slot] = other;
+            connectionSprites[slot].SetActive(true);
             if(myGroup != null) {
                 if(other.myGroup != null && other.myGroup != myGroup) {
                     myGroup.MergeGroups(other.myGroup);
@@ -165,6 +173,7 @@ public class WorldObject : MonoBehaviour {
             if(connectedWorldObjects[i] == other) {
                 connectedWorldObjects[i] = null;
                 myGroup.RemoveObjectFromGroup(other);
+                connectionSprites[i].SetActive(false);
                 break;
             }
         }
