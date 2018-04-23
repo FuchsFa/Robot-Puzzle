@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class GameStateManager : MonoBehaviour {
 
+    public static GameStateManager Instance { get; protected set; }
+
     private RobotManager robotManager;
+    public WorldObjectManager worldObjectManager;
 
     private float timePerTurn = 1;
     private float timer;
@@ -16,11 +19,13 @@ public class GameStateManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        Instance = this;
         timer = 0;
         currentTurn = 0;
         timeMultiplier = 1;
         isPaused = true;
         robotManager = GetComponent<RobotManager>();
+        worldObjectManager = GetComponent<WorldObjectManager>();
         TestStart();
 	}
 
@@ -30,17 +35,23 @@ public class GameStateManager : MonoBehaviour {
     private void TestStart() {
         GameObject robotObject = robotManager.CreateDefaultRobot();
         robotObject.name = "Robot A";
+        WeldingTool tool = new WeldingTool(robotObject.GetComponent<Robot>());
         TextAsset text = Resources.Load<TextAsset>("Texts/BotAActions");
         string scriptCode = text.text;
         robotObject.GetComponent<Robot>().ChangeScriptCode(scriptCode);
 
-        GameObject robotTwo = robotManager.CreateDefaultRobot();
-        robotTwo.name = "Robot B";
-        robotTwo.GetComponent<InteractiveObject>().ChangeStartingPosition(1, 0);
+        GameObject worldObjectOne = worldObjectManager.CreateWorldObject("Ore", 0, -1);
+        worldObjectOne.name = "Ore A";
+        //worldObjectOne.GetComponent<WorldObject>().OpenForConnections();
+        GameObject worldObjectTwo = worldObjectManager.CreateWorldObject("Ore", -1, -1);
+        worldObjectTwo.name = "Ore B";
+        //worldObjectTwo.GetComponent<WorldObject>().OpenForConnections();
+        //worldObjectManager.ConnectWorldObjects(worldObjectOne.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());
+        /*GameObject worldObjectThree = worldObjectManager.CreateWorldObject("Ore", -2, -1);
+        worldObjectThree.name = "Ore C";
+        worldObjectManager.ConnectWorldObjects(worldObjectThree.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());*/
 
-        GameObject robotThree = robotManager.CreateDefaultRobot();
-        robotThree.name = "Robot C";
-        robotThree.GetComponent<InteractiveObject>().ChangeStartingPosition(-1, -2);
+        //GameObject worldObjectIngot = worldObjectManager.CreateWorldObject("Ingot", -4, 2);
 
         Play();
     }
@@ -62,9 +73,11 @@ public class GameStateManager : MonoBehaviour {
         if(timer >= timePerTurn) {
             currentTurn++;
             timer = 0;
+            PrepareTurn();
             ExecuteTurn();
         }
         robotManager.AdjustRobotObjects(timer / timePerTurn);
+        worldObjectManager.AdjustWorldObjects(timer / timePerTurn);
 	}
 
     /// <summary>
@@ -109,7 +122,19 @@ public class GameStateManager : MonoBehaviour {
         timer = 0;
         currentTurn = 0;
         //TODO: Jetzt die Roboter und Objekte zurücksetzen.
+        Object[] objects = FindObjectsOfType<GameObject>();
+        foreach (GameObject go in objects) {
+            go.SendMessage("OnStop", SendMessageOptions.DontRequireReceiver);
+        }
         robotManager.ResetRobots();
+    }
+
+    /// <summary>
+    /// Bereitet alles Nötige für die derzeite Runde vor.
+    /// </summary>
+    private void PrepareTurn() {
+        robotManager.AdjustRobotAnimationVariables();
+        worldObjectManager.AdjustWorldObjectAnimationVariables();
     }
 
     /// <summary>
@@ -117,6 +142,30 @@ public class GameStateManager : MonoBehaviour {
     /// </summary>
     private void ExecuteTurn() {
         Debug.Log("----- Turn " + currentTurn + "-----");
+        Object[] objects = FindObjectsOfType<GameObject>();
+        foreach (GameObject go in objects) {
+            go.SendMessage("OnNewTurn", SendMessageOptions.DontRequireReceiver);
+        }
+        worldObjectManager.ConnectAllAvailableWorldObjects();
         robotManager.PerformRobotActionsForTurn();
+        worldObjectManager.PerformWorldObjectActionsForTurn();
+        if(CheckForVictory()) {
+            Debug.Log("Gewonnen!");
+            Pause();
+        }
+    }
+
+    /// <summary>
+    /// Überprüft, ob alle Ziele erfüllt worden sind.
+    /// </summary>
+    /// <returns></returns>
+    private bool CheckForVictory() {
+        Object[] objects = FindObjectsOfType<GameObject>();
+        foreach (GameObject go in objects) {
+            if(go.GetComponent<Goal>() && !go.GetComponent<Goal>().isFulfilled) {
+                return false;
+            }
+        }
+        return true;
     }
 }

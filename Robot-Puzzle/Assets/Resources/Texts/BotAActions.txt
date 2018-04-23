@@ -1,6 +1,13 @@
 function action()
+	test()
+end
+
+function test()
+	weld()
+	turnRight()
+	walk()
 	turnLeft()
-	grab()
-	turnLeft()
+	weld()
+	walk()
 	walk()
 end

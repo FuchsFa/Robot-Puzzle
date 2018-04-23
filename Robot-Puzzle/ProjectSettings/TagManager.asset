@@ -21,7 +21,7 @@ TagManager:
   - Wall
   - 
   - Robot
-  - 
+  - Goals
   - WorldObjects
   - 
   - Wall Top
@@ -51,9 +51,18 @@ TagManager:
   - name: Robot
     uniqueID: 704723279
     locked: 0
+  - name: Goals
+    uniqueID: 784979057
+    locked: 0
+  - name: ObjectConnections
+    uniqueID: 1476249097
+    locked: 0
   - name: WorldObjects
     uniqueID: 1987882343
     locked: 0
   - name: Wall Top
     uniqueID: 2747306325
+    locked: 0
+  - name: WorldSpaceUI
+    uniqueID: 4237499475
     locked: 0

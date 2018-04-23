@@ -42,13 +42,17 @@ public class RayCaster : MonoBehaviour {
     /// <param name="raycastOrigin"></param>
     /// <param name="raycastDirection"></param>
     /// <returns></returns>
-    private bool CheckForCollision(Vector2 raycastOrigin, Vector2 raycastDirection) {
-        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, 0.3f, collisionMask);
+    private bool CheckForCollision(Vector2 raycastOrigin, Vector2 raycastDirection, float distance = 0.3f) {
+        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, distance, collisionMask);
         Debug.DrawRay(raycastOrigin, raycastDirection, Color.red, 0.3f);
         if (hit) {
             if (hit.collider != myCollider) {
-                Debug.Log(gameObject.name + " ist mit " + hit.transform.gameObject.name + " zusammengestoßen.");
-                return true;
+                //Debug.Log(gameObject.name + " ist mit " + hit.transform.gameObject.name + " zusammengestoßen.");
+                if (GetComponent<WorldObject>() && hit.transform.GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup.objects.Contains(hit.transform.GetComponent<WorldObject>())) {
+                    //Debug.Log("Aber " + hit.transform.gameObject.name + " gehört zu seiner objectGroup und kann daher nicht mit ihm kollidieren.");
+                } else {
+                    return true;
+                }
             }
         }
         return false;
@@ -75,19 +79,25 @@ public class RayCaster : MonoBehaviour {
     /// Überprüft, ob im Tile vor dem Objekt(in Blickrichtung) etwas ist, das gegriffen werden kann.
     /// </summary>
     /// <returns></returns>
-    public InteractiveObject CheckForGrabableObject() {
+    public InteractiveObject CheckForGrabableObject(float distance = 0.3f) {
         InteractiveObject interactableObject = null;
 
         InteractiveObject obj = GetComponent<InteractiveObject>();
         raycastOrigin = new Vector2(transform.position.x + (obj.direction.x * 0.6f), transform.position.y + (obj.direction.y * 0.6f));
         Vector2 raycastDirection = obj.direction;
-        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, 0.3f, collisionMask);
+        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, distance, collisionMask);
         Debug.DrawRay(raycastOrigin, raycastDirection, Color.red, 0.3f);
         if (hit) {
             if (hit.collider != myCollider && hit.transform.GetComponent<InteractiveObject>() != null) {
                 if(hit.transform.GetComponent<InteractiveObject>().Grabable == true) {
                     Debug.Log(gameObject.name + " hat ein Objekt zum Greifen gefunden: " + hit.transform.gameObject.name);
-                    interactableObject = hit.transform.GetComponent<InteractiveObject>();
+                    GameObject foundObject = hit.transform.gameObject;
+                    if (foundObject.GetComponent<WorldObject>() && foundObject.GetComponent<WorldObject>().myGroup != null) {
+                        interactableObject = foundObject.GetComponent<WorldObject>().myGroup.GetComponent<InteractiveObject>();
+                        foundObject.GetComponent<WorldObject>().myGroup.MoveToObjectInGroup(foundObject.GetComponent<WorldObject>());
+                    } else {
+                        interactableObject = hit.transform.GetComponent<InteractiveObject>();
+                    }
                 } else {
                     Debug.Log(gameObject.name + " hat ein Objekt gefunden: " + hit.transform.gameObject.name + ", aber es kann nicht gegriffen werden.");
                 }
@@ -101,7 +111,7 @@ public class RayCaster : MonoBehaviour {
     /// Überprüft, ob im Tile vor dem Objekt(in Bewegungsrichtung) etwas ist, das geschoben werden kann.
     /// </summary>
     /// <returns></returns>
-    public InteractiveObject CheckForPushableObject(Vector2 dir) {
+    public InteractiveObject CheckForPushableObject(Vector2 dir, float distance = 0.3f) {
         InteractiveObject interactableObject = null;
 
         InteractiveObject obj = GetComponent<InteractiveObject>();
@@ -111,13 +121,23 @@ public class RayCaster : MonoBehaviour {
         }
         //Vector2 raycastDirection = obj.direction;
         Vector2 raycastDirection = dir;
-        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, 0.3f, collisionMask);
+        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, distance, collisionMask);
         Debug.DrawRay(raycastOrigin, raycastDirection, Color.blue, 0.3f);
         if (hit) {
             if (hit.collider != myCollider && hit.transform.GetComponent<InteractiveObject>() != null) {
                 if (hit.transform.GetComponent<InteractiveObject>().Movable == true) {
-                    Debug.Log(gameObject.name + " hat ein Objekt zum Schieben gefunden: " + hit.transform.gameObject.name);
-                    interactableObject = hit.transform.GetComponent<InteractiveObject>();
+                    //Debug.Log(gameObject.name + " hat ein Objekt zum Schieben gefunden: " + hit.transform.gameObject.name);
+                    if(hit.transform.GetComponent<WorldObject>()) {
+                        if(GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup != null && GetComponent<WorldObject>().myGroup.objects.Contains(hit.transform.GetComponent<WorldObject>())) {
+                            //Debug.Log("Aber " + hit.transform.gameObject.name + " gehört zu seiner objectGroup und kann daher nicht geschoben werden.");
+                        } else if(hit.transform.GetComponent<WorldObject>().myGroup != null) {
+                            interactableObject = hit.transform.GetComponent<WorldObject>().myGroup.GetComponent<InteractiveObject>();
+                        } else {
+                            interactableObject = hit.transform.GetComponent<InteractiveObject>();
+                        }
+                    } else {
+                        interactableObject = hit.transform.GetComponent<InteractiveObject>();
+                    }
                 }
                 else {
                     Debug.Log(gameObject.name + " hat ein Objekt gefunden: " + hit.transform.gameObject.name + ", aber es kann nicht geschoben werden.");
@@ -126,6 +146,33 @@ public class RayCaster : MonoBehaviour {
         }
 
         return interactableObject;
+    }
+
+    /// <summary>
+    /// Überprüft, ob es in der angegebenen Richtung ein WorldObject gibt.
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <param name="distance"></param>
+    /// <returns></returns>
+    public WorldObject CheckForWorldObject(Vector2 dir, float distance = 0.3f) {
+        WorldObject worldObject = null;
+
+        InteractiveObject obj = GetComponent<InteractiveObject>();
+        raycastOrigin = new Vector2(transform.position.x + (dir.x * 0.6f), transform.position.y + (dir.y * 0.6f));
+        if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            raycastOrigin += obj.direction;
+        }
+        //Vector2 raycastDirection = obj.direction;
+        Vector2 raycastDirection = dir;
+        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, distance, collisionMask);
+        Debug.DrawRay(raycastOrigin, raycastDirection, Color.cyan, 0.3f);
+        if (hit) {
+            if (hit.collider != myCollider && hit.transform.GetComponent<WorldObject>() != null) {
+                worldObject = hit.transform.gameObject.GetComponent<WorldObject>();
+            }
+        }
+
+        return worldObject;
     }
 	
 	// Update is called once per frame

@@ -106,6 +106,23 @@ public class InteractiveObject : MonoBehaviour {
     }
 
     /// <summary>
+    /// Überprüft, ob das Objekt bereit ist, von einem Goal entfernt zu werden.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsReadyForOutput() {
+        if (grabbedBy == null) {
+            if(GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup) {
+                return GetComponent<WorldObject>().myGroup.GetComponent<InteractiveObject>().IsReadyForOutput();
+            } else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Dreht das Objekt um 90° gegen den Uhrzeigersinn.
     /// </summary>
     public void TurnLeft() {
@@ -113,17 +130,13 @@ public class InteractiveObject : MonoBehaviour {
         oldDirection = direction;
         direction = new Vector2(-oldDirection.y, oldDirection.x);
         if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            List<InteractiveObject> grabbedObjects = new List<InteractiveObject>();
             InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
-            //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
-            InteractiveObject pushableObject = grabbedObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
-            if(pushableObject != null) {
-                grabbedObject.Push(pushableObject, direction);
-            }
-            if (grabbedObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(direction)) {
-                Debug.LogError(gameObject.name + " kann sich nicht nach links drehen, weil sein getragenes Objekt kollidieren würde.");
-                direction = oldDirection;
-                oldDirection = temp;
-                return;
+            grabbedObjects.Add(grabbedObject);
+            if(grabbedObject.GetComponent<WorldObjectGroup>()) {
+                foreach(WorldObject obj in grabbedObject.GetComponent<WorldObjectGroup>().objects) {
+                    grabbedObjects.Add(obj.GetComponent<InteractiveObject>());
+                }
             }
             grabbedObject.AdjustRelativePosition("Left");
             grabbedObject.MoveToRelativePosition();
@@ -139,18 +152,13 @@ public class InteractiveObject : MonoBehaviour {
         oldDirection = direction;
         direction = new Vector2(oldDirection.y, -oldDirection.x);
         if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            List<InteractiveObject> grabbedObjects = new List<InteractiveObject>();
             InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
-            
-            //TODO: Jetzt überprüfen, ob das getragene Objekt etwas schiebt.
-            InteractiveObject pushableObject = grabbedObject.gameObject.GetComponent<RayCaster>().CheckForPushableObject(direction);
-            if (pushableObject != null) {
-                grabbedObject.Push(pushableObject, direction);
-            }
-            if (grabbedObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(direction)) {
-                Debug.LogError(gameObject.name + " kann sich nicht nach rechts drehen, weil sein getragenes Objekt kollidieren würde.");
-                direction = oldDirection;
-                oldDirection = temp;
-                return;
+            grabbedObjects.Add(grabbedObject);
+            if (grabbedObject.GetComponent<WorldObjectGroup>()) {
+                foreach (WorldObject obj in grabbedObject.GetComponent<WorldObjectGroup>().objects) {
+                    grabbedObjects.Add(obj.GetComponent<InteractiveObject>());
+                }
             }
             grabbedObject.AdjustRelativePosition("Right");
             grabbedObject.MoveToRelativePosition();
@@ -203,20 +211,22 @@ public class InteractiveObject : MonoBehaviour {
     public void Move(Vector2 moveDir) {
         Debug.Log(gameObject.name + " bewegt sich.");
         if(movable && grabbedBy == null) {
-            RayCaster raycaster = GetComponent<RayCaster>();
-            InteractiveObject interactiveObject = raycaster.CheckForPushableObject(direction);
-            if (interactiveObject != null) {
-                Push(interactiveObject, moveDir);
-            }
-            if(raycaster.CheckForCollisionsInDirection(moveDir)) {
-                Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
-                return;
+            if(GetComponent<RayCaster>()) {
+                RayCaster raycaster = GetComponent<RayCaster>();
+                InteractiveObject interactiveObject = raycaster.CheckForPushableObject(direction);
+                if (interactiveObject != null) {
+                    Push(interactiveObject, moveDir);
+                }
+                if (raycaster.CheckForCollisionsInDirection(moveDir)) {
+                    Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
+                    return;
+                }
             }
             oldX = posX;
             oldY = posY;
             posX += (int)moveDir.x;
             posY += (int)moveDir.y;
-            if(GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            if (GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
                 InteractiveObject grabbedObject = GetComponent<Robot>().GrabbedObject;
                 grabbedObject.MoveToRelativePosition();
             }
@@ -257,11 +267,11 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     /// <param name="grabbingRobot"></param>
     public void OnGrab(Robot grabbingRobot) {
-        Debug.Log(grabbingRobot.gameObject.name + " greift " + gameObject.name);
         grabbedBy = grabbingRobot;
         relativeX = posX - grabbedBy.GetComponent<InteractiveObject>().posX;
         relativeY = posY - grabbedBy.GetComponent<InteractiveObject>().posY;
         relativeDirection = direction - grabbedBy.GetComponent<InteractiveObject>().direction;
+        Debug.Log(grabbingRobot.gameObject.name + " greift " + gameObject.name + " Relative Position: " + relativeX + "/" + relativeY);
     }
 
     /// <summary>
@@ -277,6 +287,10 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     /// <param name="percentage"></param>
     public void AdjustGameObject(float percentage) {
+        if(GetComponent<WorldObject>() && GetComponent<WorldObject>().myGroup != null) {
+            //Wenn das Objekt ein WorldObject is und Teil einer WorldObjectGroup ist, übernimmt die Gruppe die Bewegung.
+            return;
+        }
         if(percentage > 1) {
             percentage = 1;
         }
@@ -297,6 +311,96 @@ public class InteractiveObject : MonoBehaviour {
             Quaternion oldRotation = Quaternion.AngleAxis(GetFacingAngle(oldDirection), Vector3.forward);
             gameObject.transform.rotation = Quaternion.Lerp(oldRotation, currentRotation, percentage);
         }
+        if((oldX != posX || oldY != posY || oldDirection != direction) && GetComponent<WorldObjectGroup>()) {
+            //Wenn das Objekt eine WorldObjectGroup ist, müssen die einzelnen Teile davon auf Pushes und Kollisionen überprüft werden.
+            CheckWorldObjectGroupCollision();
+        }
+    }
+
+    /// <summary>
+    /// Überprüft die einzelnen Teile einer WorldObjectGroup auf Pushes und Kollisionen.
+    /// </summary>
+    private void CheckWorldObjectGroupCollision() {
+        foreach (WorldObject worldObject in GetComponent<WorldObjectGroup>().objects) {
+            Collider2D collider = worldObject.GetComponent<Collider2D>();
+            RayCaster raycaster = worldObject.GetComponent<RayCaster>();
+            Collider2D[] detectedCollider = new Collider2D[1];
+            ContactFilter2D contactFilter = new ContactFilter2D();
+            contactFilter.layerMask = raycaster.collisionMask;
+            contactFilter.useLayerMask = true;
+
+            /*GameObject test = new GameObject();
+            test.layer = LayerMask.NameToLayer("Goals");
+            Debug.Log("!!!!!!!!!" + contactFilter.IsFilteringLayerMask(test));*/
+
+            collider.OverlapCollider(contactFilter, detectedCollider);
+            if(detectedCollider[0] != null && detectedCollider[0].GetComponent<InteractiveObject>()) {
+                Debug.Log("*" + worldObject.gameObject.name + " Overlap mit " + detectedCollider[0].name);
+                InteractiveObject interactiveObject = detectedCollider[0].GetComponent<InteractiveObject>();
+                Vector2 dir = detectedCollider[0].transform.position - worldObject.transform.position;
+                float angleBetweenObjects = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                //Debug.Log("**Winkel dazwischen: " + angleBetweenObjects);
+                Debug.DrawLine(detectedCollider[0].transform.position, worldObject.transform.position, Color.green);
+                Vector2 pushDirection = GetDirectionVectorForRoundedAngle(angleBetweenObjects + 90); //Es werden 90° addiert, weil angleBetweenObjects einen anderen Standard-Winkel hat als der Rest des Spiels.
+                if (CanPushObject(worldObject.GetComponent<InteractiveObject>(), interactiveObject, pushDirection)) {
+                    worldObject.GetComponent<InteractiveObject>().Push(interactiveObject, pushDirection);
+                } else if (interactiveObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(pushDirection)) {
+                    Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
+                }
+                
+            }
+        }
+    }
+
+    /// <summary>
+    /// Überprüf, ob das erste übergebene WorldObject das Zweite schieben darf.
+    /// </summary>
+    /// <param name="pusher"></param>
+    /// <param name="target"></param>
+    /// <param name="pushDirection"></param>
+    /// <returns></returns>
+    private bool CanPushObject(InteractiveObject pusher, InteractiveObject target, Vector2 pushDirection) {
+        if(!target.Movable) {
+            Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil " + target.name + " nicht bewegbar ist.");
+            return false;
+        }
+        if(target.GetComponent<RayCaster>().CheckForCollisionsInDirection(pushDirection)) {
+            Debug.LogError("***" + target.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
+            return false;
+        }
+        if(Vector2.Distance(pusher.transform.position, target.transform.position) >= 0.9f) {
+            Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil die beiden zu weit voneinander entfernt sind.");
+            return false;
+        }
+        if(Vector2.Distance(pusher.transform.position, new Vector2(target.posX + 0.5f, target.posY + 0.5f)) >= 1) {
+            Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil " + pusher.name + " zu weit von " + target.name + "s Zielposition(" + target.posX + "/" + target.posY + ") entfernt ist(Distanz: " + Vector2.Distance(pusher.transform.position, new Vector2(target.posX, target.posY)) + ")");
+            return false;
+        }
+        if(target.posX == pusher.oldX && target.posY == pusher.oldY) {
+            Debug.Log("***" + pusher.name + " kann " + target.name + " nicht schieben, weil es von ihm geschoben wurde.");
+            return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Gibt den Richtungsvektor für den übergebenen Winkel zurück. Der Winkel wird dafür auf die nähesten 90° gerundet.
+    /// </summary>
+    /// <param name="angle"></param>
+    /// <returns></returns>
+    private Vector2 GetDirectionVectorForRoundedAngle(float angle) {
+        float roundedAngle = Mathf.Round(angle / 90) * 90;
+        //Debug.Log("***Gerundeter Winkel: " + roundedAngle);
+        if(roundedAngle == 0) {
+            return new Vector2(0, -1);
+        } else if(roundedAngle == 90 || roundedAngle == -270) {
+            return new Vector2(1, 0);
+        } else if(roundedAngle == 180 || roundedAngle == -180) {
+            return new Vector2(0, 1);
+        } else if(roundedAngle == 270 || roundedAngle == -90) {
+            return new Vector2(-1, 0);
+        }
+        return new Vector2(0, -1);
     }
 
     /// <summary>
@@ -306,5 +410,6 @@ public class InteractiveObject : MonoBehaviour {
         oldDirection = direction;
         oldX = posX;
         oldY = posY;
+        //Debug.Log("Animationsvariablen für '" + gameObject.name + "': oldX-" + oldX + ", oldY-" + oldY + ", oldDirection: " + GetFacingAngle(oldDirection));
     }
 }
