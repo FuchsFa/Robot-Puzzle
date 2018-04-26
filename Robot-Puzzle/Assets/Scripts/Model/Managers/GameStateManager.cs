@@ -1,13 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameStateManager : MonoBehaviour {
 
     public static GameStateManager Instance { get; protected set; }
 
     private RobotManager robotManager;
+    [HideInInspector]
     public WorldObjectManager worldObjectManager;
+
+    public Text playButtonText;
+
+    public Slider speedSlider;
 
     private float timePerTurn = 1;
     private float timer;
@@ -53,14 +59,18 @@ public class GameStateManager : MonoBehaviour {
 
         //GameObject worldObjectIngot = worldObjectManager.CreateWorldObject("Ingot", -4, 2);
 
-        Play();
+        //Play();
+    }
+
+    public void OnSpeedSliderChange() {
+        ChangeTimeMultiplier(speedSlider.value);
     }
 
     /// <summary>
     /// Verändert den timeMultiplier, damit die Spielzeit schneller oder langsamer vergeht.
     /// </summary>
     /// <param name="multiplier"></param>
-    public void ChangeTimeMultiplier(float multiplier) {
+    private void ChangeTimeMultiplier(float multiplier) {
         timeMultiplier = multiplier;
     }
 	
@@ -100,7 +110,7 @@ public class GameStateManager : MonoBehaviour {
         if(currentTurn == 0) {
             robotManager.StartRobotScripts();
         }
-        
+        playButtonText.text = "<b>Pause</b>";
     }
 
     /// <summary>
@@ -109,6 +119,7 @@ public class GameStateManager : MonoBehaviour {
     private void Pause() {
         isPaused = true;
         Debug.Log("Pause!");
+        playButtonText.text = "<b>Play</b>";
     }
 
     /// <summary>
