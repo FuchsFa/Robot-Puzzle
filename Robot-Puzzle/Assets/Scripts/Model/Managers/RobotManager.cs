@@ -1,18 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class RobotManager : MonoBehaviour {
 
     [SerializeField]
     private GameObject robotPrefab;
 
+    [SerializeField]
+    private GameObject previewObject;
+
     private GameStateManager gameStateManager;
 
     private List<GameObject> robots;
 
+    private bool robotPlacementActive;
+
+    [SerializeField]
+    private Tilemap tilemap;
+
 	// Use this for initialization
 	void Start () {
+        robotPlacementActive = false;
         gameStateManager = GetComponent<GameStateManager>();
         robots = new List<GameObject>();
 	}
@@ -146,6 +156,33 @@ public class RobotManager : MonoBehaviour {
     public void AdjustRobotObjects(float percentage) {
         foreach(GameObject robotObject in robots) {
             robotObject.GetComponent<InteractiveObject>().AdjustGameObject(percentage);
+        }
+    }
+
+    public void StartRobotPlacement() {
+        previewObject.SetActive(true);
+        robotPlacementActive = true;
+    }
+
+    private void Update() {
+        if(robotPlacementActive) {
+            if(gameStateManager.isPaused && Input.GetMouseButton(0)) {
+                float xPos = Mathf.Floor(Camera.main.ScreenToWorldPoint(Input.mousePosition).x) + 0.5f;
+                float yPos = Mathf.Floor(Camera.main.ScreenToWorldPoint(Input.mousePosition).y) + 0.5f;
+                previewObject.transform.position = new Vector3(xPos, yPos);
+            } else if(Input.GetMouseButtonUp(0)) {
+                Debug.Log("Stop Robot Placement");
+                int xPos = Mathf.FloorToInt(Camera.main.ScreenToWorldPoint(Input.mousePosition).x);
+                int yPos = Mathf.FloorToInt(Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+                if(tilemap.GetTile<GroundTile>(new Vector3Int(xPos, yPos, 0))) {
+                    Debug.Log("An der Stelle " + xPos + "/" + yPos + " gibt es ein Tile.");
+                    CreateRobot(xPos, yPos);
+                } else {
+                    Debug.Log("An der Stelle " + xPos + "/" + yPos + " gibt es <b>kein</b> Tile.");
+                }
+                robotPlacementActive = false;
+                previewObject.SetActive(false);
+            }
         }
     }
 }
