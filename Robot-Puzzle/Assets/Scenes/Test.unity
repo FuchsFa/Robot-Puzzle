@@ -727,6 +727,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panel: {fileID: 319959453}
+  unequippedNormal:
+    serializedVersion: 2
+    rgba: 2150773298
+  unequippedHighlighted:
+    serializedVersion: 2
+    rgba: 3224515122
+  unequippedPressed:
+    serializedVersion: 2
+    rgba: 4281479730
+  unequippedDisabled:
+    serializedVersion: 2
+    rgba: 1077031474
+  equippedNormal:
+    serializedVersion: 2
+    rgba: 2154062948
+  equippedHighlighted:
+    serializedVersion: 2
+    rgba: 3227804772
+  equippedPressed:
+    serializedVersion: 2
+    rgba: 4284769380
+  equippedDisabled:
+    serializedVersion: 2
+    rgba: 1077031474
+  buttonToolNone: {fileID: 447444143}
+  buttonToolGrab: {fileID: 726615191}
+  buttonToolWeld: {fileID: 568646152}
+  buttonMobilityDefault: {fileID: 1530487316}
+  buttonMobilitySpider: {fileID: 629755780}
+  buttonMobilityBoat: {fileID: 1214359659}
+  buttonSensorDefault: {fileID: 1404723108}
+  buttonSensorGround: {fileID: 870629918}
+  buttonSensorScanner: {fileID: 2123064060}
   explanationText: {fileID: 236218845}
 --- !u!1 &375251508
 GameObject:

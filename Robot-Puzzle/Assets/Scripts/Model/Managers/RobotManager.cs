@@ -5,6 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class RobotManager : MonoBehaviour {
 
+    public static RobotManager Instance { get; protected set; }
+
     [SerializeField]
     private GameObject robotPrefab;
 
@@ -27,6 +29,7 @@ public class RobotManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        Instance = this;
         robotPlacementActive = false;
         gameStateManager = GetComponent<GameStateManager>();
         robots = new List<GameObject>();

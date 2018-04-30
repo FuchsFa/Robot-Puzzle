@@ -195,6 +195,14 @@ public class Robot : MonoBehaviour {
         
     }
 
+    /// <summary>
+    /// Gibt eine Liste mit allen RobotParts, die am Roboter befestigt sind, zurück.
+    /// </summary>
+    /// <returns></returns>
+    public List<RobotPart> GetRobotPartList() {
+        return parts;
+    }
+
     //Aktionen:
 
     //Grundlegende Aktionen
