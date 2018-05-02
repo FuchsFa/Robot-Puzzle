@@ -8,6 +8,9 @@ public class RobotDetailPanelManager : MonoBehaviour {
     [SerializeField]
     private GameObject panel;
 
+    [SerializeField]
+    private Text robotNameText;
+
     //Button-Farben:
     private ColorBlock unequippedColors;
     [SerializeField] private Color32 unequippedNormal;
@@ -24,9 +27,9 @@ public class RobotDetailPanelManager : MonoBehaviour {
     //Buttons:
     private Button[] robotPartButtons;
     //Tools:
-    [SerializeField] private Button buttonToolNone;
     [SerializeField] private Button buttonToolGrab;
     [SerializeField] private Button buttonToolWeld;
+    [SerializeField] private Button buttonToolShredder;
     //Mobillity:
     [SerializeField] private Button buttonMobilityDefault;
     [SerializeField] private Button buttonMobilitySpider;
@@ -45,7 +48,7 @@ public class RobotDetailPanelManager : MonoBehaviour {
     void Start () {
         panel.SetActive(false);
         robotPartButtons = new Button[] {
-            buttonToolNone, buttonToolGrab, buttonToolWeld,
+            buttonToolGrab, buttonToolWeld, buttonToolShredder,
             buttonMobilityDefault, buttonMobilitySpider, buttonMobilityBoat,
             buttonSensorDefault, buttonSensorGround, buttonSensorScanner
         };
@@ -67,6 +70,7 @@ public class RobotDetailPanelManager : MonoBehaviour {
     /// </summary>
     public void OnSelectRobot() {
         panel.SetActive(true);
+        robotNameText.text = RobotManager.Instance.selectedRobot.name;
         AdjustButtonColors();
     }
 
@@ -85,36 +89,57 @@ public class RobotDetailPanelManager : MonoBehaviour {
             btn.colors = unequippedColors;
         }
         parts = RobotManager.Instance.selectedRobot.GetComponent<Robot>().GetRobotPartList();
-        AdjustToolButtonColors();
-        AdjustOtherButtonColors();
-    }
-
-    /// <summary>
-    /// Überprüft alle ausgerüsteten Tools des ausgewählten Roboters und passt die Farben der entsprechenden Buttons an.
-    /// </summary>
-    private void AdjustToolButtonColors() {
-        foreach(RobotPart part in parts) {
-            if(part is BasicArm) {
+        foreach (RobotPart part in parts) {
+            if (part is BasicArm) {
                 buttonToolGrab.colors = equippedColors;
-                return;
             } else if (part is WeldingTool) {
                 buttonToolWeld.colors = equippedColors;
-                return;
-            }
-        }
-        buttonToolNone.colors = equippedColors;
-    }
-
-    /// <summary>
-    /// Überprüft alle ausgerüsteten Teile des ausgewählten Roboters und passt die Farben der entsprechenden Buttons an.
-    /// </summary>
-    private void AdjustOtherButtonColors() {
-        foreach (RobotPart part in parts) {
-            if (part is BasicLeg) {
+            } else if (part is BasicLeg) {
                 buttonMobilityDefault.colors = equippedColors;
             } else if (part is BasicSensor) {
                 buttonSensorDefault.colors = equippedColors;
             }
         }
+    }
+
+    /// <summary>
+    /// Wird aufgerufen, wenn der Spieler auf einen Button klickt, der zu einem Part gehört.
+    /// Fügt das Teil dann zum derzeitig ausgewählten Roboter hinzu und passt die Buttons an.
+    /// </summary>
+    /// <param name="partName"></param>
+    public void PartButtonClick(string partName) {
+        RobotPart partToAdd = CreatePartWithName(partName);
+        AddPartToSelectedRobot(partToAdd);
+        AdjustButtonColors();
+    }
+
+    /// <summary>
+    /// Erstellt ein neues Teil mit den übergebenen Namen.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    private RobotPart CreatePartWithName(string name) {
+        switch (name) {
+            case "BasicArm":
+                return new BasicArm();
+            case "WeldingTool":
+                return new WeldingTool();
+            case "BasicLeg":
+                return new BasicLeg();
+            case "BasicSensor":
+                return new BasicSensor();
+            default:
+                break;
+        }
+        Debug.LogError("Es gibt keinen RobotPart mit dem Namen '" + name + "'.");
+        return null;
+    }
+
+    /// <summary>
+    /// Fügt das übergebene Teil zum derzeitig ausgewählten Roboter hinzu.
+    /// </summary>
+    /// <param name="part"></param>
+    private void AddPartToSelectedRobot(RobotPart part) {
+        RobotManager.Instance.AddPartToRobot(RobotManager.Instance.selectedRobot, part);
     }
 }

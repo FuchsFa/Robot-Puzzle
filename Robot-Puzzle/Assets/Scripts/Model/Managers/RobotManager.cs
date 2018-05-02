@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.EventSystems;
 
 public class RobotManager : MonoBehaviour {
 
@@ -209,33 +210,37 @@ public class RobotManager : MonoBehaviour {
     /// Bearbeitet das Auswählen, Verschieben, Drehen und Löschen von Robotern durch den Spieler.
     /// </summary>
     private void HandleUserInput() {
-        if (gameStateManager.isPaused && Input.GetMouseButtonDown(0)) {
-            RaycastHit2D hit = Physics2D.Raycast(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
-            selectedRobot = null;
-            if (hit) {
-                GameObject selected = hit.transform.gameObject;
-                Debug.Log("Selected " + selected.name);
-                if (selected.GetComponent<Robot>()) {
-                    selectedRobot = selected;
-                    panelManager.OnSelectRobot();
+        if(!EventSystem.current.IsPointerOverGameObject()) {
+            if (gameStateManager.isPaused && Input.GetMouseButtonDown(0)) {
+                RaycastHit2D hit = Physics2D.Raycast(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
+                //selectedRobot = null;
+                if (hit) {
+                    GameObject selected = hit.transform.gameObject;
+                    Debug.Log("Selected " + selected.name);
+                    if (selected.GetComponent<Robot>()) {
+                        selectedRobot = selected;
+                        panelManager.OnSelectRobot();
+                    } else if (hit.transform.gameObject.layer != 5) {
+                        selectedRobot = null;
+                        panelManager.OnDeselectRobot();
+                    }
+
                 } else {
+                    selectedRobot = null;
                     panelManager.OnDeselectRobot();
                 }
-                
-            } else {
-                panelManager.OnDeselectRobot();
+            } else if (gameStateManager.isPaused && Input.GetMouseButton(0)) {
+                if (selectedRobot != null) {
+                    float xPos = Mathf.Floor(Camera.main.ScreenToWorldPoint(Input.mousePosition).x) + 0.5f;
+                    float yPos = Mathf.Floor(Camera.main.ScreenToWorldPoint(Input.mousePosition).y) + 0.5f;
+                    selectedRobot.transform.position = new Vector3(xPos, yPos);
+                    selectedRobot.GetComponent<InteractiveObject>().ChangeStartingPosition(Mathf.FloorToInt(xPos), Mathf.FloorToInt(yPos));
+                }
             }
-        } else if (gameStateManager.isPaused && Input.GetMouseButton(0)) {
-            if (selectedRobot != null) {
-                float xPos = Mathf.Floor(Camera.main.ScreenToWorldPoint(Input.mousePosition).x) + 0.5f;
-                float yPos = Mathf.Floor(Camera.main.ScreenToWorldPoint(Input.mousePosition).y) + 0.5f;
-                selectedRobot.transform.position = new Vector3(xPos, yPos);
-                selectedRobot.GetComponent<InteractiveObject>().ChangeStartingPosition(Mathf.FloorToInt(xPos), Mathf.FloorToInt(yPos));
-            }
-        }
-        if (gameStateManager.isPaused && Input.GetMouseButtonDown(1)) {
-            if (selectedRobot != null) {
-                selectedRobot.GetComponent<InteractiveObject>().TurnStartingDirection();
+            if (gameStateManager.isPaused && Input.GetMouseButtonDown(1)) {
+                if (selectedRobot != null) {
+                    selectedRobot.GetComponent<InteractiveObject>().TurnStartingDirection();
+                }
             }
         }
         if (gameStateManager.isPaused && Input.GetKeyDown(KeyCode.Delete)) {

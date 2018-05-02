@@ -727,6 +727,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panel: {fileID: 319959453}
+  robotNameText: {fileID: 1548048717}
   unequippedNormal:
     serializedVersion: 2
     rgba: 2150773298
@@ -751,9 +752,9 @@ MonoBehaviour:
   equippedDisabled:
     serializedVersion: 2
     rgba: 1077031474
-  buttonToolNone: {fileID: 447444143}
   buttonToolGrab: {fileID: 726615191}
   buttonToolWeld: {fileID: 568646152}
+  buttonToolShredder: {fileID: 447444143}
   buttonMobilityDefault: {fileID: 1530487316}
   buttonMobilitySpider: {fileID: 629755780}
   buttonMobilityBoat: {fileID: 1214359659}
@@ -909,7 +910,7 @@ GameObject:
   - component: {fileID: 447444143}
   - component: {fileID: 447444142}
   m_Layer: 5
-  m_Name: ButtonNone
+  m_Name: ButtonShredder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -928,7 +929,7 @@ RectTransform:
   - {fileID: 496546281}
   - {fileID: 468932074}
   m_Father: {fileID: 1448162177}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -988,7 +989,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 447444144}
   m_OnClick:
     m_PersistentCalls:
@@ -1327,7 +1328,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: None
+  m_Text: Shredder
 --- !u!222 &496546283
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1440,7 +1441,7 @@ RectTransform:
   - {fileID: 1600987541}
   - {fileID: 2090746844}
   m_Father: {fileID: 1448162177}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1504,7 +1505,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 568646153}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 319959457}
+        m_MethodName: PartButtonClick
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: WeldingTool
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &568646153
@@ -3590,7 +3602,7 @@ RectTransform:
   - {fileID: 1508027020}
   - {fileID: 1456138676}
   m_Father: {fileID: 1448162177}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3654,7 +3666,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 726615192}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 319959457}
+        m_MethodName: PartButtonClick
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: BasicArm
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &726615192
@@ -6174,7 +6197,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1404723109}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 319959457}
+        m_MethodName: PartButtonClick
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: BasicSensor
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1404723109
@@ -6311,9 +6345,9 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 447444141}
   - {fileID: 726615189}
   - {fileID: 568646150}
+  - {fileID: 447444141}
   m_Father: {fileID: 1596211423}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6746,7 +6780,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1530487317}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 319959457}
+        m_MethodName: PartButtonClick
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: BasicLeg
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1530487317
