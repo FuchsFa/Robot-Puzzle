@@ -40,7 +40,8 @@ public class RobotDetailPanelManager : MonoBehaviour {
     [SerializeField] private Button buttonSensorScanner;
 
     [SerializeField]
-    private Text explanationText;
+    private Text explanationTextField;
+    private Dictionary<string, TextAsset> explanationTexts;
 
     private List<RobotPart> parts;
 
@@ -63,6 +64,18 @@ public class RobotDetailPanelManager : MonoBehaviour {
         equippedColors.pressedColor = equippedPressed;
         equippedColors.disabledColor = equippedDisabled;
         equippedColors.colorMultiplier = 1;
+        LoadExplanationTexts();
+    }
+
+    /// <summary>
+    /// Lädt alle TextAssets aus dem RobotPartDescriptions Ordner uns speichert sie in einem Dictionary.
+    /// </summary>
+    private void LoadExplanationTexts() {
+        explanationTexts = new Dictionary<string, TextAsset>();
+        TextAsset[] texts = Resources.LoadAll<TextAsset>("Texts/RobotPartDescriptions");
+        foreach(TextAsset t in texts) {
+            explanationTexts.Add(t.name, t);
+        }
     }
 
     /// <summary>
@@ -133,6 +146,19 @@ public class RobotDetailPanelManager : MonoBehaviour {
         }
         Debug.LogError("Es gibt keinen RobotPart mit dem Namen '" + name + "'.");
         return null;
+    }
+
+    /// <summary>
+    /// Lädt den zum übergebenen Teil-Namen passenden Text und zeigt ihn im explanationText-Feld an.
+    /// </summary>
+    /// <param name="partName"></param>
+    public void ShowExplanationTextForPart(string partName) {
+        if(!explanationTexts.ContainsKey(partName)) {
+            explanationTextField.text = "???";
+            return;
+        }
+        string text = explanationTexts[partName].text;
+        explanationTextField.text = text;
     }
 
     /// <summary>

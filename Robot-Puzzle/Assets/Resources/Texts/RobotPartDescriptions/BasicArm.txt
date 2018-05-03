@@ -1,0 +1,3 @@
+<b>Grappler</b>
+
+Allows the robot to grab objects and other robots with the <i>grab()</i> method.
