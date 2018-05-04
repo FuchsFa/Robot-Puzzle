@@ -26,6 +26,9 @@ public class RobotManager : MonoBehaviour {
     private RobotDetailPanelManager panelManager;
 
     [SerializeField]
+    private RobotProgramPanelManager programManager;
+
+    [SerializeField]
     private Tilemap tilemap;
 
 	// Use this for initialization
@@ -220,6 +223,7 @@ public class RobotManager : MonoBehaviour {
                     if (selected.GetComponent<Robot>()) {
                         selectedRobot = selected;
                         panelManager.OnSelectRobot();
+                        programManager.OnSelectRobot();
                     } else if (hit.transform.gameObject.layer != 5) {
                         selectedRobot = null;
                         panelManager.OnDeselectRobot();

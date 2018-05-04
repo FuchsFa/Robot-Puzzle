@@ -99,6 +99,14 @@ public class Robot : MonoBehaviour {
     }
 
     /// <summary>
+    /// Gibt den derzeitigen script code als string zurück.
+    /// </summary>
+    /// <returns></returns>
+    public string GetScriptCode() {
+        return scriptCode;
+    }
+
+    /// <summary>
     /// Ändert das Skript des Roboters.
     /// </summary>
     /// <param name="code"></param>
