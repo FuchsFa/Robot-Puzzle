@@ -18,21 +18,26 @@ public class RobotProgramPanelManager : MonoBehaviour {
     //Der Script code des ausgewählten Roboters ohne Änderungen.
     private string oldScriptCode;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-
     /// <summary>
     /// Wird aufgerufen, wenn der Spieler einen Roboter auswählt.
     /// </summary>
     public void OnSelectRobot() {
         oldScriptCode = RobotManager.Instance.selectedRobot.GetComponent<Robot>().GetScriptCode();
-        editor.textComponent.text = oldScriptCode;
+        editor.text = oldScriptCode;
+    }
+
+    /// <summary>
+    /// Speichert die Änderungen im Code.
+    /// </summary>
+    public void SaveChanges() {
+        oldScriptCode = editor.text;
+        RobotManager.Instance.selectedRobot.GetComponent<Robot>().ChangeScriptCode(oldScriptCode);
     }
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    /// <summary>
+    /// Verwirft die Änderung im Code.
+    /// </summary>
+    public void DiscardChanges() {
+        editor.textComponent.text = oldScriptCode;
+    }
 }
