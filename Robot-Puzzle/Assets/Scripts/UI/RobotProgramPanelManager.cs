@@ -22,7 +22,7 @@ public class RobotProgramPanelManager : MonoBehaviour {
     private Button discardButton;
 
     [SerializeField]
-    private Color highlightedColor;
+    private Color32 highlightedColor;
 
     [SerializeField]
     private List<string> wordsToHighlight;
@@ -51,16 +51,41 @@ public class RobotProgramPanelManager : MonoBehaviour {
         lineNumberText.text = temp;
     }
 
-    public void CheckSyntaxForWholeText() {
-        TMP_TextInfo textInfo = editor.textComponent.textInfo;
-        TMP_WordInfo wordInfo = textInfo.wordInfo[1];
-        TMP_CharacterInfo charInfo;
+    private void Start() {
+        StartCoroutine(CheckSyntaxForWholeText());
+    }
 
-        for (int i = 0; i < wordInfo.characterCount; i++) {
-            charInfo = textInfo.characterInfo[wordInfo.firstCharacterIndex + i];
-            charInfo.color = highlightedColor;
+    IEnumerator CheckSyntaxForWholeText() {
+        TMP_TextInfo textInfo = editor.textComponent.textInfo;
+        int currentCharacter = 0;
+
+        Color32[] newVertexColors;
+        Color32 c0 = editor.textComponent.color;
+
+        while (true) {
+            int characterCount = textInfo.characterCount;
+            if (characterCount == 0) {
+                yield return new WaitForSeconds(0.25f);
+                continue;
+            }
+            int materialIndex = textInfo.characterInfo[currentCharacter].materialReferenceIndex;
+            newVertexColors = textInfo.meshInfo[materialIndex].colors32;
+
+            int vertexIndex = textInfo.characterInfo[currentCharacter].vertexIndex;
+
+            if (textInfo.characterInfo[currentCharacter].isVisible) {
+                c0 = highlightedColor;
+
+                newVertexColors[vertexIndex + 0] = c0;
+                newVertexColors[vertexIndex + 1] = c0;
+                newVertexColors[vertexIndex + 2] = c0;
+                newVertexColors[vertexIndex + 3] = c0;
+
+                editor.textComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
+            }
+
+            yield return new WaitForSeconds(0.05f);
         }
-        editor.textComponent.ForceMeshUpdate();
     }
 
     /// <summary>

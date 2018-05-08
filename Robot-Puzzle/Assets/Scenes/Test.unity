@@ -779,7 +779,9 @@ MonoBehaviour:
   lineNumberScrollRect: {fileID: 822451915}
   saveButton: {fileID: 2080045727}
   discardButton: {fileID: 1306957511}
-  highlightedColor: {r: 0, g: 0, b: 0, a: 0}
+  highlightedColor:
+    serializedVersion: 2
+    rgba: 4283623747
   wordsToHighlight: []
 --- !u!1 &375251508
 GameObject:
@@ -9942,17 +9944,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 319959458}
-        m_MethodName: CheckSyntaxForWholeText
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_TypeName: TMPro.TMP_InputField+OnChangeEvent, TextMeshPro-2017.3-1.0.56-Runtime,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
@@ -9964,7 +9955,7 @@ MonoBehaviour:
   m_ReadOnly: 0
   m_RichText: 1
   m_GlobalFontAsset: {fileID: 11400000, guid: 5eee5421388625242a7daeb81f215706, type: 2}
-  m_OnFocusSelectAll: 1
+  m_OnFocusSelectAll: 0
   m_ResetOnDeActivation: 1
   m_RestoreOriginalTextOnEscape: 1
   m_isRichTextEditingAllowed: 1
