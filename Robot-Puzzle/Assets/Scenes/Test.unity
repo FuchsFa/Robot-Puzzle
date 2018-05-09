@@ -779,10 +779,18 @@ MonoBehaviour:
   lineNumberScrollRect: {fileID: 822451915}
   saveButton: {fileID: 2080045727}
   discardButton: {fileID: 1306957511}
-  highlightedColor:
+  keywordColor:
     serializedVersion: 2
-    rgba: 4283623747
-  wordsToHighlight: []
+    rgba: 4278190335
+  commentColor:
+    serializedVersion: 2
+    rgba: 4278255360
+  stringColor:
+    serializedVersion: 2
+    rgba: 4278255615
+  numberColor:
+    serializedVersion: 2
+    rgba: 4294901760
 --- !u!1 &375251508
 GameObject:
   m_ObjectHideFlags: 0
