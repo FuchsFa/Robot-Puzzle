@@ -37,10 +37,16 @@ public class RobotProgramPanelManager : MonoBehaviour {
     //Der Script code des ausgewählten Roboters ohne Änderungen.
     private string oldScriptCode;
 
+    //Wird auf true gesetzt, wenn ein comment im Skriptcode hervorgehoben wird.
+    private bool singleLineComment;
+    private bool multiLineComment;
+
     /// <summary>
     /// Wird aufgerufen, wenn der Spieler einen Roboter auswählt.
     /// </summary>
     public void OnSelectRobot() {
+        singleLineComment = false;
+        multiLineComment = false;
         oldScriptCode = RobotManager.Instance.selectedRobot.GetComponent<Robot>().GetScriptCode();
         editor.text = oldScriptCode;
     }
@@ -112,10 +118,16 @@ public class RobotProgramPanelManager : MonoBehaviour {
         Color32[] newVertexColors;
         Color32 c0 = editor.textComponent.color;
 
+        if(!singleLineComment && !multiLineComment) {
+            CheckForCommentStart(textInfo, word);
+        }
+
         for (int i = 0; i < word.characterCount; i++) {
             int currentCharacter = word.firstCharacterIndex + i;
             
-            if(Char.IsDigit(textInfo.characterInfo[word.firstCharacterIndex].character) && Char.IsDigit(textInfo.characterInfo[currentCharacter].character)) {
+            if(singleLineComment || multiLineComment) {
+                c0 = commentColor;
+            } else if(Char.IsDigit(textInfo.characterInfo[word.firstCharacterIndex].character) && Char.IsDigit(textInfo.characterInfo[currentCharacter].character)) {
                 c0 = numberColor;
             } else if(keywords.Contains(word.GetWord())) {
                 c0 = keywordColor;
@@ -137,6 +149,34 @@ public class RobotProgramPanelManager : MonoBehaviour {
                 newVertexColors[vertexIndex + 3] = c0;
 
                 editor.textComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
+            }
+        }
+
+        if(singleLineComment || multiLineComment) {
+            CheckForCommentEnd(textInfo, word);
+        }
+    }
+
+    private void CheckForCommentStart(TMP_TextInfo textInfo, TMP_WordInfo word) {
+        if(textInfo.characterInfo[word.firstCharacterIndex].character == '-' && textInfo.characterInfo[word.firstCharacterIndex + 1].character == '-') {
+            if(textInfo.characterInfo[word.firstCharacterIndex + 2].character == '[' && textInfo.characterInfo[word.firstCharacterIndex + 3].character == '[') {
+                multiLineComment = true;
+            } else {
+                singleLineComment = true;
+            }
+        }
+    }
+
+    private void CheckForCommentEnd(TMP_TextInfo textInfo, TMP_WordInfo word) {
+        if(singleLineComment) {
+            if(textInfo.characterInfo[word.lastCharacterIndex + 1].character == '\n') {
+                singleLineComment = false;
+            }
+        } else {
+            if (textInfo.characterInfo[word.firstCharacterIndex].character == '-' && textInfo.characterInfo[word.firstCharacterIndex + 1].character == '-') {
+                if (textInfo.characterInfo[word.firstCharacterIndex - 1].character == ']' && textInfo.characterInfo[word.firstCharacterIndex - 2].character == ']') {
+                    multiLineComment = false;
+                }
             }
         }
     }
