@@ -41,12 +41,16 @@ public class RobotProgramPanelManager : MonoBehaviour {
     private bool singleLineComment;
     private bool multiLineComment;
 
+    //Wird auf true gesetzt, wenn ein string im Skriptcode hervorgehoben wird.
+    private bool highlightString;
+
     /// <summary>
     /// Wird aufgerufen, wenn der Spieler einen Roboter auswählt.
     /// </summary>
     public void OnSelectRobot() {
         singleLineComment = false;
         multiLineComment = false;
+        highlightString = false;
         oldScriptCode = RobotManager.Instance.selectedRobot.GetComponent<Robot>().GetScriptCode();
         editor.text = oldScriptCode;
     }
@@ -104,6 +108,9 @@ public class RobotProgramPanelManager : MonoBehaviour {
                 //Debug.Log(textInfo.wordInfo[i].GetWord());
                 CheckSyntax(textInfo, textInfo.wordInfo[i]);
             }
+            singleLineComment = false;
+            multiLineComment = false;
+            highlightString = false;
             //Debug.Log("**End Syntax Check");
             yield return new WaitForSeconds(0.25f);
         }
@@ -115,24 +122,48 @@ public class RobotProgramPanelManager : MonoBehaviour {
     /// <param name="textInfo"></param>
     /// <param name="word"></param>
     private void CheckSyntax(TMP_TextInfo textInfo, TMP_WordInfo word) {
-        Color32[] newVertexColors;
-        Color32 c0 = editor.textComponent.color;
 
         if(!singleLineComment && !multiLineComment) {
             CheckForCommentStart(textInfo, word);
         }
 
+        if(!highlightString && !singleLineComment && !multiLineComment) {
+            CheckForStringStart(textInfo, word);
+        }
+
+        HighlightWord(textInfo, word);
+
+        if(highlightString) {
+            CheckForStringEnd(textInfo, word);
+        }
+
+        if(singleLineComment || multiLineComment) {
+            CheckForCommentEnd(textInfo, word);
+        }
+    }
+
+    /// <summary>
+    /// Wählt die Farbe, mit der das übergebene Wort hervorgehoben werden soll und färbt es dann ein.
+    /// </summary>
+    /// <param name="textInfo"></param>
+    /// <param name="word"></param>
+    private void HighlightWord(TMP_TextInfo textInfo, TMP_WordInfo word) {
+        Color32[] newVertexColors;
+        Color32 highlightColor = editor.textComponent.color;
+
         for (int i = 0; i < word.characterCount; i++) {
             int currentCharacter = word.firstCharacterIndex + i;
-            
-            if(singleLineComment || multiLineComment) {
-                c0 = commentColor;
-            } else if(Char.IsDigit(textInfo.characterInfo[word.firstCharacterIndex].character) && Char.IsDigit(textInfo.characterInfo[currentCharacter].character)) {
-                c0 = numberColor;
-            } else if(keywords.Contains(word.GetWord())) {
-                c0 = keywordColor;
+
+            if (singleLineComment || multiLineComment) {
+                highlightColor = commentColor;
+            } else if (highlightString) {
+                highlightColor = stringColor;
+            } else if (Char.IsDigit(textInfo.characterInfo[word.firstCharacterIndex].character) && Char.IsDigit(textInfo.characterInfo[currentCharacter].character)) {
+                highlightColor = numberColor;
+            } else if (keywords.Contains(word.GetWord())) {
+                highlightColor = keywordColor;
             } else {
-                c0 = editor.textComponent.color;
+                highlightColor = editor.textComponent.color;
             }
 
             int materialIndex = textInfo.characterInfo[currentCharacter].materialReferenceIndex;
@@ -141,22 +172,23 @@ public class RobotProgramPanelManager : MonoBehaviour {
             int vertexIndex = textInfo.characterInfo[currentCharacter].vertexIndex;
 
             if (textInfo.characterInfo[currentCharacter].isVisible) {
-                
 
-                newVertexColors[vertexIndex + 0] = c0;
-                newVertexColors[vertexIndex + 1] = c0;
-                newVertexColors[vertexIndex + 2] = c0;
-                newVertexColors[vertexIndex + 3] = c0;
+
+                newVertexColors[vertexIndex + 0] = highlightColor;
+                newVertexColors[vertexIndex + 1] = highlightColor;
+                newVertexColors[vertexIndex + 2] = highlightColor;
+                newVertexColors[vertexIndex + 3] = highlightColor;
 
                 editor.textComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
             }
         }
-
-        if(singleLineComment || multiLineComment) {
-            CheckForCommentEnd(textInfo, word);
-        }
     }
 
+    /// <summary>
+    /// Überprüft, ob das übergebene Wort einen Kommentar beginnt.
+    /// </summary>
+    /// <param name="textInfo"></param>
+    /// <param name="word"></param>
     private void CheckForCommentStart(TMP_TextInfo textInfo, TMP_WordInfo word) {
         if(textInfo.characterInfo[word.firstCharacterIndex].character == '-' && textInfo.characterInfo[word.firstCharacterIndex + 1].character == '-') {
             if(textInfo.characterInfo[word.firstCharacterIndex + 2].character == '[' && textInfo.characterInfo[word.firstCharacterIndex + 3].character == '[') {
@@ -167,6 +199,11 @@ public class RobotProgramPanelManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Überprüft, ob das übergebene Wort einen Kommentar abschließt.
+    /// </summary>
+    /// <param name="textInfo"></param>
+    /// <param name="word"></param>
     private void CheckForCommentEnd(TMP_TextInfo textInfo, TMP_WordInfo word) {
         if(singleLineComment) {
             if(textInfo.characterInfo[word.lastCharacterIndex + 1].character == '\n') {
@@ -178,6 +215,31 @@ public class RobotProgramPanelManager : MonoBehaviour {
                     multiLineComment = false;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Überprüft, ob das übergebene Wort einen String beginnt.
+    /// </summary>
+    /// <param name="textInfo"></param>
+    /// <param name="word"></param>
+    private void CheckForStringStart(TMP_TextInfo textInfo, TMP_WordInfo word) {
+        if(word.firstCharacterIndex == 0) {
+            return;
+        }
+        if (textInfo.characterInfo[word.firstCharacterIndex - 1].character == '"') {
+            highlightString = true;
+        }
+    }
+
+    /// <summary>
+    /// Überprüft, ob das übergebene Wort einen String abschließt.
+    /// </summary>
+    /// <param name="textInfo"></param>
+    /// <param name="word"></param>
+    private void CheckForStringEnd(TMP_TextInfo textInfo, TMP_WordInfo word) {
+        if (textInfo.characterInfo[word.lastCharacterIndex + 1].character == '"') {
+            highlightString = false;
         }
     }
 
