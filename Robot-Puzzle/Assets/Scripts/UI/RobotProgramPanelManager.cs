@@ -40,9 +40,11 @@ public class RobotProgramPanelManager : MonoBehaviour {
     //Wird auf true gesetzt, wenn ein comment im Skriptcode hervorgehoben wird.
     private bool singleLineComment;
     private bool multiLineComment;
+    private int commentStartIndex;
 
     //Wird auf true gesetzt, wenn ein string im Skriptcode hervorgehoben wird.
     private bool highlightString;
+    private int stringStartIndex;
 
     /// <summary>
     /// Wird aufgerufen, wenn der Spieler einen Roboter auswählt.
@@ -143,44 +145,54 @@ public class RobotProgramPanelManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Wählt die Farbe, mit der das übergebene Wort hervorgehoben werden soll und färbt es dann ein.
+    /// Geht das Wort Buchstabe für Buchstabe durch und färbt sie ein.
     /// </summary>
     /// <param name="textInfo"></param>
     /// <param name="word"></param>
     private void HighlightWord(TMP_TextInfo textInfo, TMP_WordInfo word) {
-        Color32[] newVertexColors;
-        Color32 highlightColor = editor.textComponent.color;
 
         for (int i = 0; i < word.characterCount; i++) {
             int currentCharacter = word.firstCharacterIndex + i;
 
-            if (singleLineComment || multiLineComment) {
-                highlightColor = commentColor;
-            } else if (highlightString) {
-                highlightColor = stringColor;
-            } else if (Char.IsDigit(textInfo.characterInfo[word.firstCharacterIndex].character) && Char.IsDigit(textInfo.characterInfo[currentCharacter].character)) {
-                highlightColor = numberColor;
-            } else if (keywords.Contains(word.GetWord())) {
-                highlightColor = keywordColor;
-            } else {
-                highlightColor = editor.textComponent.color;
-            }
+            HighlightCharacter(textInfo, word, currentCharacter);
+        }
+    }
 
-            int materialIndex = textInfo.characterInfo[currentCharacter].materialReferenceIndex;
-            newVertexColors = textInfo.meshInfo[materialIndex].colors32;
+    /// <summary>
+    /// Wählt die passende Farbe und hebt das Symbol hervor.
+    /// </summary>
+    /// <param name="textInfo"></param>
+    /// <param name="word"></param>
+    /// <param name="currentCharacterIndex"></param>
+    private void HighlightCharacter(TMP_TextInfo textInfo, TMP_WordInfo word, int currentCharacterIndex) {
+        Color32[] newVertexColors;
+        Color32 highlightColor = editor.textComponent.color;
 
-            int vertexIndex = textInfo.characterInfo[currentCharacter].vertexIndex;
+        if ((singleLineComment || multiLineComment) && !highlightString) {
+            highlightColor = commentColor;
+        } else if (highlightString) {
+            highlightColor = stringColor;
+        } else if (Char.IsDigit(textInfo.characterInfo[word.firstCharacterIndex].character) && Char.IsDigit(textInfo.characterInfo[currentCharacterIndex].character)) {
+            highlightColor = numberColor;
+        } else if (keywords.Contains(word.GetWord())) {
+            highlightColor = keywordColor;
+        } else {
+            highlightColor = editor.textComponent.color;
+        }
 
-            if (textInfo.characterInfo[currentCharacter].isVisible) {
+        int materialIndex = textInfo.characterInfo[currentCharacterIndex].materialReferenceIndex;
+        newVertexColors = textInfo.meshInfo[materialIndex].colors32;
 
+        int vertexIndex = textInfo.characterInfo[currentCharacterIndex].vertexIndex;
 
-                newVertexColors[vertexIndex + 0] = highlightColor;
-                newVertexColors[vertexIndex + 1] = highlightColor;
-                newVertexColors[vertexIndex + 2] = highlightColor;
-                newVertexColors[vertexIndex + 3] = highlightColor;
+        if (textInfo.characterInfo[currentCharacterIndex].isVisible) {
 
-                editor.textComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
-            }
+            newVertexColors[vertexIndex + 0] = highlightColor;
+            newVertexColors[vertexIndex + 1] = highlightColor;
+            newVertexColors[vertexIndex + 2] = highlightColor;
+            newVertexColors[vertexIndex + 3] = highlightColor;
+
+            editor.textComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
         }
     }
 
@@ -193,9 +205,12 @@ public class RobotProgramPanelManager : MonoBehaviour {
         if(textInfo.characterInfo[word.firstCharacterIndex].character == '-' && textInfo.characterInfo[word.firstCharacterIndex + 1].character == '-') {
             if(textInfo.characterInfo[word.firstCharacterIndex + 2].character == '[' && textInfo.characterInfo[word.firstCharacterIndex + 3].character == '[') {
                 multiLineComment = true;
+                HighlightCharacter(textInfo, word, word.firstCharacterIndex + 2);
+                HighlightCharacter(textInfo, word, word.firstCharacterIndex + 3);
             } else {
                 singleLineComment = true;
             }
+            commentStartIndex = word.firstCharacterIndex;
         }
     }
 
@@ -207,14 +222,30 @@ public class RobotProgramPanelManager : MonoBehaviour {
     private void CheckForCommentEnd(TMP_TextInfo textInfo, TMP_WordInfo word) {
         if(singleLineComment) {
             if(textInfo.characterInfo[word.lastCharacterIndex + 1].character == '\n') {
+                HighlightAllCommentCharacters(textInfo, word, word.lastCharacterIndex);
                 singleLineComment = false;
             }
         } else {
             if (textInfo.characterInfo[word.firstCharacterIndex].character == '-' && textInfo.characterInfo[word.firstCharacterIndex + 1].character == '-') {
                 if (textInfo.characterInfo[word.firstCharacterIndex - 1].character == ']' && textInfo.characterInfo[word.firstCharacterIndex - 2].character == ']') {
+                    HighlightCharacter(textInfo, word, word.firstCharacterIndex - 1);
+                    HighlightCharacter(textInfo, word, word.firstCharacterIndex - 2);
+                    HighlightAllCommentCharacters(textInfo, word, word.lastCharacterIndex);
                     multiLineComment = false;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Hebt alle Symbole in einem Kommentar hervor.
+    /// </summary>
+    /// <param name="textInfo"></param>
+    /// <param name="word"></param>
+    /// <param name="commentEndIndex"></param>
+    private void HighlightAllCommentCharacters(TMP_TextInfo textInfo, TMP_WordInfo word, int commentEndIndex) {
+        for (int i = commentStartIndex; i < commentEndIndex; i++) {
+            HighlightCharacter(textInfo, word, i);
         }
     }
 
@@ -229,6 +260,7 @@ public class RobotProgramPanelManager : MonoBehaviour {
         }
         if (textInfo.characterInfo[word.firstCharacterIndex - 1].character == '"') {
             highlightString = true;
+            HighlightCharacter(textInfo, word, word.firstCharacterIndex - 1);
         }
     }
 
@@ -239,6 +271,7 @@ public class RobotProgramPanelManager : MonoBehaviour {
     /// <param name="word"></param>
     private void CheckForStringEnd(TMP_TextInfo textInfo, TMP_WordInfo word) {
         if (textInfo.characterInfo[word.lastCharacterIndex + 1].character == '"') {
+            HighlightCharacter(textInfo, word, word.lastCharacterIndex + 1);
             highlightString = false;
         }
     }
@@ -260,6 +293,9 @@ public class RobotProgramPanelManager : MonoBehaviour {
 
     private void Update() {
         AdjustLineNumberScrollPosition();
+        if(editor.isFocused && Input.GetKeyDown(KeyCode.Tab)) {
+            Debug.Log("Tab pressed");
+        }
     }
 
     /// <summary>
