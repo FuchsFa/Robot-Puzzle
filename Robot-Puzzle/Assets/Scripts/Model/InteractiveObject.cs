@@ -86,6 +86,7 @@ public class InteractiveObject : MonoBehaviour {
     /// <param name="dir"></param>
     public void ChangeStartingDirection(Vector2 dir) {
         direction = oldDirection = startDirection = dir;
+        gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
     }
 
     /// <summary>

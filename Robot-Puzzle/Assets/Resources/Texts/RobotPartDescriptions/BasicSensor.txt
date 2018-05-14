@@ -1,0 +1,3 @@
+<b>Default Sensor</b>
+
+Allows the robot to recognize Objects and Wolls in front of itself with the <i>sense()</i> method.

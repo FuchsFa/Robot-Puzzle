@@ -99,6 +99,14 @@ public class Robot : MonoBehaviour {
     }
 
     /// <summary>
+    /// Gibt den derzeitigen script code als string zurück.
+    /// </summary>
+    /// <returns></returns>
+    public string GetScriptCode() {
+        return scriptCode;
+    }
+
+    /// <summary>
     /// Ändert das Skript des Roboters.
     /// </summary>
     /// <param name="code"></param>
@@ -193,6 +201,14 @@ public class Robot : MonoBehaviour {
             Debug.LogError("Das Teil kann nicht vom Roboter entfernt werden, weil es nicht ein Teil von dessen Teileliste ist.");
         }
         
+    }
+
+    /// <summary>
+    /// Gibt eine Liste mit allen RobotParts, die am Roboter befestigt sind, zurück.
+    /// </summary>
+    /// <returns></returns>
+    public List<RobotPart> GetRobotPartList() {
+        return parts;
     }
 
     //Aktionen:

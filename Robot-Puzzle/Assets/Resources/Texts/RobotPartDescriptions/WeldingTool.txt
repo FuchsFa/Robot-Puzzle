@@ -1,0 +1,5 @@
+<b>Welding Tool</b>
+
+Allows the robot to connect two or more objects in front of itself with the <i>weld()</i> method.
+
+<i>(In order to connect two objects, both  have to be welded, although not necessarily by the same robot.)</i>

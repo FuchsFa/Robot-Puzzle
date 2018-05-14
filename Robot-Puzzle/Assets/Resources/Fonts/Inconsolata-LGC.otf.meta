@@ -1,0 +1,26 @@
+fileFormatVersion: 2
+guid: f2a414834ffe683479ebb1d98b3e3e36
+timeCreated: 1525513961
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Inconsolata LGC
+  fontNames:
+  - Inconsolata LGC
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 96bbe0a15e1e0c14496d84f7050af3ab, type: 3}
+  - {fileID: 12800000, guid: 7240e1e1ba6aebe46bc610ec4ddfc0d1, type: 3}
+  - {fileID: 12800000, guid: dac8556787b622d479de50ee80ea5cbb, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
