@@ -781,16 +781,16 @@ MonoBehaviour:
   discardButton: {fileID: 1306957511}
   keywordColor:
     serializedVersion: 2
-    rgba: 4278190335
+    rgba: 4290869056
   commentColor:
     serializedVersion: 2
-    rgba: 4278255360
+    rgba: 4284724311
   stringColor:
     serializedVersion: 2
-    rgba: 4278255615
+    rgba: 4285306597
   numberColor:
     serializedVersion: 2
-    rgba: 4294901760
+    rgba: 4291854440
 --- !u!1 &375251508
 GameObject:
   m_ObjectHideFlags: 0
