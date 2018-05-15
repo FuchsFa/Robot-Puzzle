@@ -1,0 +1,5 @@
+<b>Shredder</b>
+
+Allows the robot to destroy an object in front of itself with the <i>shred()</i> method.
+
+<i>(Robots and walls can' be destroyed this way, only other objects.)</i>

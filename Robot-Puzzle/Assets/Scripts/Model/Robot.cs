@@ -72,6 +72,7 @@ public class Robot : MonoBehaviour {
         actionDictionary.Add("walk", Walk);
         actionDictionary.Add("sense", Sense);
         actionDictionary.Add("weld", Weld);
+        actionDictionary.Add("shred", Shred);
     }
 
     /// <summary>
@@ -279,6 +280,19 @@ public class Robot : MonoBehaviour {
         WorldObject objectToWeld = GetComponent<RayCaster>().CheckForWorldObject(GetComponent<InteractiveObject>().direction);
         if(objectToWeld != null) {
             objectToWeld.OpenForConnections(true);
+        }
+        return DynValue.NewYieldReq(new DynValue[] { coroutine });
+    }
+
+    /// <summary>
+    /// Versucht ein Objekt vor sich zu zerstören.
+    /// </summary>
+    /// <returns></returns>
+    public DynValue Shred() {
+        Debug.Log(name + " versucht, etwas zu zerstören.");
+        WorldObject objectToDestroy = GetComponent<RayCaster>().CheckForWorldObject(GetComponent<InteractiveObject>().direction);
+        if(objectToDestroy != null) {
+            WorldObjectManager.Instance.RemoveWorldObject(objectToDestroy.gameObject);
         }
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }

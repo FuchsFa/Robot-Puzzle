@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WorldObjectManager : MonoBehaviour {
 
+    public static WorldObjectManager Instance { get; protected set; }
+
     [SerializeField]
     private Dictionary<string, GameObject> prefabDictionary;
 
@@ -18,6 +20,7 @@ public class WorldObjectManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        Instance = this;
         gameStateManager = GetComponent<GameStateManager>();
         worldObjects = new List<GameObject>();
         worldObjectGroups = new List<GameObject>();

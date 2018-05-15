@@ -137,6 +137,8 @@ public class RobotDetailPanelManager : MonoBehaviour {
                 return new BasicArm();
             case "WeldingTool":
                 return new WeldingTool();
+            case "ShreddingTool":
+                return new ShreddingTool();
             case "BasicLeg":
                 return new BasicLeg();
             case "BasicSensor":
