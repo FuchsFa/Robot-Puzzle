@@ -141,6 +141,8 @@ public class RobotDetailPanelManager : MonoBehaviour {
                 return new ShreddingTool();
             case "BasicLeg":
                 return new BasicLeg();
+            case "SpiderLeg":
+                return new SpiderLeg();
             case "BasicSensor":
                 return new BasicSensor();
             default:

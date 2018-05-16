@@ -93,9 +93,13 @@ public class Robot : MonoBehaviour {
         script = new Script(CoreModules.Preset_HardSandbox);
         script.Options.DebugPrint = s => { Debug.Log(s); };//TODO: Debug-Nachrichten auf eine in-game lesbare Konsole schreiben.
 
+        //ActionDictionary Globals
         foreach(string key in actionDictionary.Keys) {
             script.Globals[key] = (System.Func<DynValue>)actionDictionary[key];
         }
+        //Sonstige Globals
+        script.Globals["move"] = (System.Func<string, DynValue>)Move;
+
         scriptCode = "";
     }
 
@@ -305,6 +309,35 @@ public class Robot : MonoBehaviour {
     public DynValue Walk() {
         Debug.Log(gameObject.name + " walks.");
         myInteractiveObject.Move(myInteractiveObject.direction);
+        return DynValue.NewYieldReq(new DynValue[] { coroutine });
+    }
+
+    /// <summary>
+    /// Läss den Roboter einen Schritt in die angegebene Richtung gehen.
+    /// </summary>
+    /// <param name="directionName"></param>
+    /// <returns></returns>
+    public DynValue Move(string directionName) {
+        Debug.Log(gameObject.name + " moves " + directionName);
+        //TODO: Bewegen
+        Vector2 direction = new Vector2();
+        switch (directionName) {
+            case "north":
+                direction = new Vector2(0, 1);
+                break;
+            case "east":
+                direction = new Vector2(1, 0);
+                break;
+            case "south":
+                direction = new Vector2(0, -1);
+                break;
+            case "west":
+                direction = new Vector2(-1, 0);
+                break;
+            default:
+                break;
+        }
+        myInteractiveObject.Move(direction);
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
