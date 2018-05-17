@@ -4,12 +4,25 @@ using UnityEngine;
 
 public class SpiderLeg : RobotPart {
 
+    GroundTile.TerrainType terrainCompatability;
+
+    public GroundTile.TerrainType TerrainCompatability {
+        get {
+            return terrainCompatability;
+        }
+
+        protected set {
+            terrainCompatability = value;
+        }
+    }
+
     /// <summary>
     /// Erstellt die Beine und fügt sie gleich zum Roboter hinzu.
     /// </summary>
     /// <param name="robot"></param>
     public SpiderLeg(Robot robot) {
         type = PartType.Mobility;
+        terrainCompatability = GroundTile.TerrainType.solid;
         robot.AddPart(this);
     }
 
@@ -18,6 +31,7 @@ public class SpiderLeg : RobotPart {
     /// </summary>
     public SpiderLeg() {
         type = PartType.Mobility;
+        terrainCompatability = GroundTile.TerrainType.solid;
     }
 
     /// <summary>
@@ -33,7 +47,7 @@ public class SpiderLeg : RobotPart {
     /// </summary>
     /// <returns></returns>
     public override List<string> GetActionList() {
-        return new List<string>(new string[] { "shred" });
+        return new List<string>(new string[] { "move" });
     }
 
     /// <summary>

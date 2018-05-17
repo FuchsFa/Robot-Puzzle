@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class WorldObjectManager : MonoBehaviour {
 
@@ -11,6 +12,9 @@ public class WorldObjectManager : MonoBehaviour {
 
     [SerializeField]
     private GameObject groupObjectPrefab;
+
+    [SerializeField]
+    private Tilemap groundTilemap;
 
     private GameStateManager gameStateManager;
 
@@ -104,6 +108,22 @@ public class WorldObjectManager : MonoBehaviour {
         }
         foreach (GameObject worldObject in worldObjects) {
             worldObject.GetComponent<InteractiveObject>().AdjustAnimationVariables();
+        }
+    }
+
+    /// <summary>
+    /// Überprüft, ob jedes WorldObject auch auf dem Tile stehen darf, auf dem es gerade steht.
+    /// </summary>
+    public void CheckForWorldObjectTerrainCompatability() {
+        foreach (GameObject worldObject in worldObjects) {
+            WorldObject obj = worldObject.GetComponent<WorldObject>();
+            int x = worldObject.GetComponent<InteractiveObject>().posX;
+            int y = worldObject.GetComponent<InteractiveObject>().posY;
+            if (!obj.CanWalkOn(groundTilemap.GetTile<GroundTile>(new Vector3Int(x, y, 0)))) {
+                Debug.LogError(worldObject.name + " darf nicht auf dem Tile stehen, auf dem es gerade steht!");
+                gameStateManager.Stop();
+                return;
+            }
         }
     }
 

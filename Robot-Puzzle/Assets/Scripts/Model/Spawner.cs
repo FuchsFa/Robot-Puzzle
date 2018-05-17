@@ -66,6 +66,7 @@ public class Spawner : MonoBehaviour {
         RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, 0.3f, collisionMask);
         Debug.DrawRay(raycastOrigin, raycastDirection, Color.green, 0.5f);
         if (hit) {
+            Debug.Log(name + " versucht ein Objekt zu spawnen, aber es ist kein Platz wegen " + hit.transform.name);
             temp = false;
         }
 

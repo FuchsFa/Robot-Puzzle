@@ -104,6 +104,8 @@ public class InteractiveObject : MonoBehaviour {
         posX = oldX = startX;
         posY = oldY = startY;
         direction = oldDirection = startDirection;
+        gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
+        gameObject.transform.rotation = Quaternion.AngleAxis(GetFacingAngle(direction), Vector3.forward);
     }
 
     /// <summary>

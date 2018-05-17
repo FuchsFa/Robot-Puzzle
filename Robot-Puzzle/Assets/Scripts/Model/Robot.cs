@@ -356,6 +356,12 @@ public class Robot : MonoBehaviour {
                     canWalk = true;
                     break;
                 }
+            } else if(part is SpiderLeg) {
+                SpiderLeg leg = part as SpiderLeg;
+                if(leg.TerrainCompatability == tile.terrainType) {
+                    canWalk = true;
+                    break;
+                }
             }
         }
         return canWalk;

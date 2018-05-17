@@ -46,11 +46,11 @@ public class GameStateManager : MonoBehaviour {
         string scriptCode = text.text;
         robotObject.GetComponent<Robot>().ChangeScriptCode(scriptCode);
 
-        GameObject worldObjectOne = worldObjectManager.CreateWorldObject("Ore", 0, -1);
+        /*GameObject worldObjectOne = worldObjectManager.CreateWorldObject("Ore", 0, -1);
         worldObjectOne.name = "Ore A";
         //worldObjectOne.GetComponent<WorldObject>().OpenForConnections();
         GameObject worldObjectTwo = worldObjectManager.CreateWorldObject("Ore", -1, -1);
-        worldObjectTwo.name = "Ore B";
+        worldObjectTwo.name = "Ore B";*/
         //worldObjectTwo.GetComponent<WorldObject>().OpenForConnections();
         //worldObjectManager.ConnectWorldObjects(worldObjectOne.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());
         /*GameObject worldObjectThree = worldObjectManager.CreateWorldObject("Ore", -2, -1);
@@ -133,6 +133,7 @@ public class GameStateManager : MonoBehaviour {
         timer = 0;
         currentTurn = 0;
         //TODO: Jetzt die Roboter und Objekte zurücksetzen.
+        robotManager.ResetRobots();
         Object[] objects = FindObjectsOfType<GameObject>();
         foreach (GameObject go in objects) {
             go.SendMessage("OnStop", SendMessageOptions.DontRequireReceiver);
@@ -160,7 +161,9 @@ public class GameStateManager : MonoBehaviour {
         worldObjectManager.ConnectAllAvailableWorldObjects();
         robotManager.PerformRobotActionsForTurn();
         worldObjectManager.PerformWorldObjectActionsForTurn();
-        if(CheckForVictory()) {
+        robotManager.CheckForRobotTerrainCompatability();
+        worldObjectManager.CheckForWorldObjectTerrainCompatability();
+        if (CheckForVictory()) {
             Debug.Log("Gewonnen!");
             Pause();
         }

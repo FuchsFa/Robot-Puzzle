@@ -139,6 +139,22 @@ public class RobotManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// Überprüft, ob alle Roboter auch auf dem Tile stehen dürfen, auf dem sie gerade stehen.
+    /// </summary>
+    public void CheckForRobotTerrainCompatability() {
+        foreach(GameObject robotObject in robots) {
+            Robot bot = robotObject.GetComponent<Robot>();
+            int x = robotObject.GetComponent<InteractiveObject>().posX;
+            int y = robotObject.GetComponent<InteractiveObject>().posY;
+            if(!bot.CanWalkOn(tilemap.GetTile<GroundTile>(new Vector3Int(x, y, 0)))) {
+                Debug.LogError(robotObject.name + " darf nicht auf dem Tile stehen, auf dem es gerade steht.");
+                gameStateManager.Stop();
+                return;
+            }
+        }
+    }
+
+    /// <summary>
     /// Führt das Lua-Skript jedes Roboters weiter aus, bis es wieder yield zurückgibt.
     /// Wird zu Beginn jeder Runde aufgerufen.
     /// </summary>

@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 223892089219748740}
   - component: {fileID: 114824959482355070}
   - component: {fileID: 114567737076235438}
-  m_Layer: 16
+  m_Layer: 15
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 114762034945198340}
   - component: {fileID: 212754495774958030}
   - component: {fileID: 58345568977966192}
-  m_Layer: 16
+  m_Layer: 15
   m_Name: Spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,7 +57,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4009179993372296}
   - component: {fileID: 212988159944582140}
-  m_Layer: 16
+  m_Layer: 15
   m_Name: Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ GameObject:
   - component: {fileID: 224276750531625872}
   - component: {fileID: 222874868046656752}
   - component: {fileID: 114450196661638558}
-  m_Layer: 16
+  m_Layer: 15
   m_Name: CounterText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1328924498155146}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.5, y: 3.5, z: 0}
+  m_LocalPosition: {x: -5.5, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4009179993372296}
@@ -261,7 +261,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1987882343
-  m_SortingLayer: 4
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300004, guid: 2fa09424e3a6630449db96e3b9c7ab1a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -305,7 +305,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1987882343
-  m_SortingLayer: 4
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300016, guid: 2fa09424e3a6630449db96e3b9c7ab1a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.5019608}
