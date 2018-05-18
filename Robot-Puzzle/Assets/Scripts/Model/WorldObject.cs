@@ -299,11 +299,14 @@ public class WorldObject : MonoBehaviour {
 
     /// <summary>
     /// Überprüft alle RobotParts auf ihre TerrainCompatability.
-    /// Wenn die TerrainTypen mit dem TerrainTypen des übergebenen tiles übereinstimmen, wird true, sonst wird false zurückgegeben.
+    /// Wenn die TerrainTypen mit dem TerrainTypen des übergebenen tiles übereinstimmen oder das Objekt getragen wird, wird true, sonst wird false zurückgegeben.
     /// </summary>
     /// <param name="tile"></param>
     /// <returns></returns>
     public bool CanWalkOn(GroundTile tile) {
+        if(GetComponent<InteractiveObject>().grabbedBy != null) {
+            return true;
+        }
         bool canWalk = false;
         foreach (GroundTile.TerrainType type in terrainCompatability) {
             if(type == tile.terrainType) {

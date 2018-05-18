@@ -89,6 +89,20 @@ public class WorldObjectManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// Entfernt alle WorldObjects und alle WorldObjectGroups;
+    /// </summary>
+    public void RemoveAllWorldObjects() {
+        List<GameObject> tempObjects = new List<GameObject>(worldObjects);
+        List<GameObject> tempGroups = new List<GameObject>(worldObjectGroups);
+        foreach(GameObject group in tempGroups) {
+            RemoveWorldObjectGroup(group.GetComponent<WorldObjectGroup>());
+        }
+        foreach(GameObject obj in tempObjects) {
+            RemoveWorldObject(obj);
+        }
+    }
+
+    /// <summary>
     /// Ruft die StartLuaScript Funktion jedes WorldObjects auf, damit diese ihre Aktionen ausführen können.
     /// Wird aufgerufen, wenn der Spieler auf 'Play' drückt.
     /// </summary>
