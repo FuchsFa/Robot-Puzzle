@@ -1,0 +1,5 @@
+<b>Spider Legs</b>
+
+Allow the robot to walk in any direction, regardless of the direction it's facing using the <i>move([direction])</i> method.
+
+<i>([direction] is a string that can be either "north", "south", "east" or "west".)</i>

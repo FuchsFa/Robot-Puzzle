@@ -1,0 +1,3 @@
+<b>Boat</b>
+
+Allow the robot to move on water in the direction it's facing using the <i>walk()</i> method.
