@@ -107,8 +107,14 @@ public class RobotDetailPanelManager : MonoBehaviour {
                 buttonToolGrab.colors = equippedColors;
             } else if (part is WeldingTool) {
                 buttonToolWeld.colors = equippedColors;
+            } else if (part is ShreddingTool) {
+                buttonToolShredder.colors = equippedColors;
             } else if (part is BasicLeg) {
                 buttonMobilityDefault.colors = equippedColors;
+            } else if (part is SpiderLeg) {
+                buttonMobilitySpider.colors = equippedColors;
+            } else if (part is Boat) {
+                buttonMobilityBoat.colors = equippedColors;
             } else if (part is BasicSensor) {
                 buttonSensorDefault.colors = equippedColors;
             }
@@ -143,6 +149,8 @@ public class RobotDetailPanelManager : MonoBehaviour {
                 return new BasicLeg();
             case "SpiderLeg":
                 return new SpiderLeg();
+            case "Boat":
+                return new Boat();
             case "BasicSensor":
                 return new BasicSensor();
             default:

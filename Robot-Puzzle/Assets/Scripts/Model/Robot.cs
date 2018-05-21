@@ -362,6 +362,12 @@ public class Robot : MonoBehaviour {
                     canWalk = true;
                     break;
                 }
+            } else if (part is Boat) {
+                Boat leg = part as Boat;
+                if (leg.TerrainCompatability == tile.terrainType) {
+                    canWalk = true;
+                    break;
+                }
             }
         }
         return canWalk;
