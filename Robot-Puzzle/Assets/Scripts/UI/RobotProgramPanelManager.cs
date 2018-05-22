@@ -55,6 +55,7 @@ public class RobotProgramPanelManager : MonoBehaviour {
         highlightString = false;
         oldScriptCode = RobotManager.Instance.selectedRobot.GetComponent<Robot>().GetScriptCode();
         editor.text = oldScriptCode;
+        StartCoroutine(CheckSyntaxForWholeText());
     }
 
     /// <summary>
@@ -91,15 +92,15 @@ public class RobotProgramPanelManager : MonoBehaviour {
     /// <returns></returns>
     IEnumerator CheckSyntaxForWholeText() {
         //Debug.Log("**Start Syntax Check");
-        TMP_TextInfo textInfo = editor.textComponent.textInfo;
-
         while (true) {
+            TMP_TextInfo textInfo = editor.textComponent.textInfo;
             int characterCount = textInfo.characterCount;
+            
             if (characterCount == 0) {
                 yield return new WaitForSeconds(0.25f);
                 continue;
             }
-
+            
             int wordCount = textInfo.wordCount;
             
             for (int i = 0; i < wordCount; i++) {
@@ -124,7 +125,7 @@ public class RobotProgramPanelManager : MonoBehaviour {
     /// <param name="textInfo"></param>
     /// <param name="word"></param>
     private void CheckSyntax(TMP_TextInfo textInfo, TMP_WordInfo word) {
-
+        
         if(!singleLineComment && !multiLineComment) {
             CheckForCommentStart(textInfo, word);
         }

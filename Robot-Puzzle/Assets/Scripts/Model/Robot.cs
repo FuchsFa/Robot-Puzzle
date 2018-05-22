@@ -160,6 +160,9 @@ public class Robot : MonoBehaviour {
     /// Löscht die derzeitige Instanz der Coroutine für das Skript des Roboters und erstellt eine danach eine neue Coroutine.
     /// </summary>
     public void RestartLuaScript() {
+        if(scriptCode == "") {
+            return;
+        }
         coroutine = null;
         DynValue function = script.Globals.Get("action");
         coroutine = script.CreateCoroutine(function);
