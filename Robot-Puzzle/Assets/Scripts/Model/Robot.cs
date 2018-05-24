@@ -34,7 +34,7 @@ public class Robot : MonoBehaviour {
     }
 
     //Für Sense()
-    private InteractiveObject sensedObject;
+    //private InteractiveObject sensedObject;
 
     /// <summary>
     /// Initialisiert den Roboter mit den übergebenen Parametern.
@@ -70,7 +70,7 @@ public class Robot : MonoBehaviour {
         actionDictionary.Add("grab", GrabObject);
         actionDictionary.Add("release", ReleaseObject);
         actionDictionary.Add("walk", Walk);
-        actionDictionary.Add("sense", Sense);
+        actionDictionary.Add("sense", CheckForInteractiveObjectInFront);
         actionDictionary.Add("weld", Weld);
         actionDictionary.Add("shred", Shred);
     }
@@ -381,10 +381,37 @@ public class Robot : MonoBehaviour {
     /// <summary>
     /// Überprüft, ob auf dem Feld vor dem Roboter ein interaktives Objekt liegt.
     /// </summary>
-    public DynValue Sense() {
+    public DynValue CheckForInteractiveObjectInFront() {
         Debug.Log(gameObject.name + " activates its sensor.");
-        //TODO: implementieren
-        return DynValue.NewYieldReq(new DynValue[] { coroutine });
+        Table table = new Table(script);
+
+        InteractiveObject temp = GetComponent<RayCaster>().CheckForInteractiveObject(myInteractiveObject.direction);
+        if(temp != null) {
+            table["x"] = temp.posX;
+            table["y"] = temp.posY;
+            table["direction"] = temp.GetFacingAngle(temp.direction);
+            table["movable"] = temp.Movable;
+            table["grabable"] = temp.Grabable;
+            if(temp.grabbedBy != null) {
+                table["grabbedBy"] = temp.grabbedBy.name;
+            } else {
+                table["grabbedBy"] = "none";
+            }
+            
+        }
+
+        Robot tempBot = temp.GetComponent<Robot>();
+        if(tempBot != null) {
+            table["type"] = "Robot";
+        }
+
+        WorldObject tempObj = temp.GetComponent<WorldObject>();
+        if(tempObj != null) {
+            table["type"] = tempObj.objectType;
+        }
+
+        return DynValue.NewTable(table);
+        //return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
 }

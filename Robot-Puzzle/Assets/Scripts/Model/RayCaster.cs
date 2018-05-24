@@ -174,6 +174,32 @@ public class RayCaster : MonoBehaviour {
 
         return worldObject;
     }
+
+    /// <summary>
+    /// Überprüft, ob es in der angegebenen Richtung ein InteractiveObject gibt.
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <param name="distance"></param>
+    /// <returns></returns>
+    public InteractiveObject CheckForInteractiveObject(Vector2 dir, float distance = 0.3f) {
+        InteractiveObject interactiveObject = null;
+
+        InteractiveObject obj = GetComponent<InteractiveObject>();
+        raycastOrigin = new Vector2(transform.position.x + (dir.x * 0.6f), transform.position.y + (dir.y * 0.6f));
+        if(GetComponent<Robot>() && GetComponent<Robot>().GrabbedObject != null) {
+            raycastOrigin += obj.direction;
+        }
+        Vector2 raycastDirection = dir;
+        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, distance, collisionMask);
+        Debug.DrawRay(raycastOrigin, raycastDirection, Color.magenta, 0.3f);
+        if(hit) {
+            if(hit.collider != myCollider && hit.transform.GetComponent<InteractiveObject>() != null) {
+                interactiveObject = hit.transform.gameObject.GetComponent<InteractiveObject>();
+            }
+        }
+
+        return interactiveObject;
+    }
 	
 	// Update is called once per frame
 	void Update () {

@@ -6,7 +6,7 @@ using MoonSharp.Interpreter;
 public class WorldObject : MonoBehaviour {
 
     [SerializeField]
-    private string objectType;
+    public string objectType;
 
     public TextAsset scriptText;
     private string scriptCode;

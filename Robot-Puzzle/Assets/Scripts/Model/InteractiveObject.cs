@@ -191,7 +191,7 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     /// <param name="dir"></param>
     /// <returns></returns>
-    private float GetFacingAngle(Vector2 dir) {
+    public float GetFacingAngle(Vector2 dir) {
         if (dir.y == 1) {
             return 180;
         }
