@@ -132,7 +132,6 @@ public class GameStateManager : MonoBehaviour {
         }
         timer = 0;
         currentTurn = 0;
-        //TODO: Jetzt die Roboter und Objekte zurücksetzen.
         Object[] objects = FindObjectsOfType<GameObject>();
         foreach (GameObject go in objects) {
             go.SendMessage("OnStop", SendMessageOptions.DontRequireReceiver);

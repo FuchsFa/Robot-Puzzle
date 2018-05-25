@@ -28,8 +28,7 @@ public class RobotManager : MonoBehaviour {
     [SerializeField]
     private RobotProgramPanelManager programManager;
 
-    [SerializeField]
-    private Tilemap tilemap;
+    public Tilemap tilemap;
 
 	// Use this for initialization
 	void Start () {

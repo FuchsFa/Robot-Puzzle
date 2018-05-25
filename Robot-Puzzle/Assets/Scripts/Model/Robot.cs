@@ -73,6 +73,7 @@ public class Robot : MonoBehaviour {
         actionDictionary.Add("sense", CheckForInteractiveObjectInFront);
         actionDictionary.Add("weld", Weld);
         actionDictionary.Add("shred", Shred);
+        actionDictionary.Add("checkGround", CheckGroundTileInFront);
     }
 
     /// <summary>
@@ -383,35 +384,75 @@ public class Robot : MonoBehaviour {
     /// </summary>
     public DynValue CheckForInteractiveObjectInFront() {
         Debug.Log(gameObject.name + " activates its sensor.");
-        Table table = new Table(script);
+        Table sensedData = new Table(script);
 
         InteractiveObject temp = GetComponent<RayCaster>().CheckForInteractiveObject(myInteractiveObject.direction);
         if(temp != null) {
-            table["x"] = temp.posX;
-            table["y"] = temp.posY;
-            table["direction"] = temp.GetFacingAngle(temp.direction);
-            table["movable"] = temp.Movable;
-            table["grabable"] = temp.Grabable;
+            //Wenn ein Interaktives Objekt vor dem Roboter steht wird es analysiert.
+            sensedData["x"] = temp.posX;
+            sensedData["y"] = temp.posY;
+            sensedData["direction"] = temp.GetFacingAngle(temp.direction);
+            sensedData["movable"] = temp.Movable;
+            sensedData["grabable"] = temp.Grabable;
             if(temp.grabbedBy != null) {
-                table["grabbedBy"] = temp.grabbedBy.name;
+                sensedData["grabbedBy"] = temp.grabbedBy.name;
             } else {
-                table["grabbedBy"] = "none";
+                sensedData["grabbedBy"] = "none";
             }
-            
+
+            Robot tempBot = temp.GetComponent<Robot>();
+            if (tempBot != null) {
+                sensedData["type"] = "Robot";
+            }
+
+            WorldObject tempObj = temp.GetComponent<WorldObject>();
+            if (tempObj != null) {
+                sensedData["type"] = tempObj.objectType;
+            }
+        } else if(GetComponent<RayCaster>().CheckForCollisionsInDirection(myInteractiveObject.direction)) {
+            //Wenn kein Interaktives Objekt vor dem Roboter steht, er aber trotzdem kollidieren würde, muss eine Wand vor ihm sein.
+            sensedData["type"] = "Wall";
+            sensedData["movable"] = false;
+            sensedData["grabable"] = false;
+            sensedData["grabbedBy"] = "none";
+            sensedData["direction"] = -1;
+            sensedData["x"] = myInteractiveObject.posX + myInteractiveObject.direction.x;
+            sensedData["y"] = myInteractiveObject.posY + myInteractiveObject.direction.y;
+        } else {
+            //Wenn auch keine Kollision stattfinden würde, ist das Tile vor dem Roboter leer.
+            sensedData["type"] = "Nothing";
+            sensedData["movable"] = false;
+            sensedData["grabable"] = false;
+            sensedData["grabbedBy"] = "none";
+            sensedData["direction"] = -1;
+            sensedData["x"] = myInteractiveObject.posX + myInteractiveObject.direction.x;
+            sensedData["y"] = myInteractiveObject.posY + myInteractiveObject.direction.y;
         }
 
-        Robot tempBot = temp.GetComponent<Robot>();
-        if(tempBot != null) {
-            table["type"] = "Robot";
+        return DynValue.NewTable(sensedData);
+    }
+
+    /// <summary>
+    /// Überprüft das Groundtile vor dem Roboter.
+    /// </summary>
+    /// <returns></returns>
+    public DynValue CheckGroundTileInFront() {
+        Debug.Log(name + " checks the Ground Tile in its front.");
+        Table sensedData = new Table(script);
+
+        int x = myInteractiveObject.posX + (int)myInteractiveObject.direction.x;
+        int y = myInteractiveObject.posY + (int)myInteractiveObject.direction.y;
+        GroundTile groundTile = RobotManager.Instance.tilemap.GetTile<GroundTile>(new Vector3Int(x, y, 0));
+        if(groundTile != null) {
+            sensedData["terrainType"] = groundTile.terrainType.ToString();
+            Table tagTable = new Table(script);
+            foreach(string tag in groundTile.tags) {
+                tagTable.Append(DynValue.NewString(tag));
+            }
+            sensedData["tags"] = tagTable;
         }
 
-        WorldObject tempObj = temp.GetComponent<WorldObject>();
-        if(tempObj != null) {
-            table["type"] = tempObj.objectType;
-        }
-
-        return DynValue.NewTable(table);
-        //return DynValue.NewYieldReq(new DynValue[] { coroutine });
+        return DynValue.NewTable(sensedData);
     }
 
 }
