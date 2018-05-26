@@ -103,6 +103,18 @@ public class WorldObjectManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// Gibt eine Liste mit allen WorldObjects zurück.
+    /// </summary>
+    /// <returns></returns>
+    public List<WorldObject> GetWorldObjectList() {
+        List<WorldObject> worldObjectList = new List<WorldObject>();
+        foreach(GameObject obj in worldObjects) {
+            worldObjectList.Add(obj.GetComponent<WorldObject>());
+        }
+        return worldObjectList;
+    }
+
+    /// <summary>
     /// Ruft die StartLuaScript Funktion jedes WorldObjects auf, damit diese ihre Aktionen ausführen können.
     /// Wird aufgerufen, wenn der Spieler auf 'Play' drückt.
     /// </summary>

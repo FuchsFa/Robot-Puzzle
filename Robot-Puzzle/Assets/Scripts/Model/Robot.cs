@@ -74,6 +74,7 @@ public class Robot : MonoBehaviour {
         actionDictionary.Add("weld", Weld);
         actionDictionary.Add("shred", Shred);
         actionDictionary.Add("checkGround", CheckGroundTileInFront);
+        actionDictionary.Add("scanSurroundings", ScanSurroundings);
     }
 
     /// <summary>
@@ -450,6 +451,35 @@ public class Robot : MonoBehaviour {
                 tagTable.Append(DynValue.NewString(tag));
             }
             sensedData["tags"] = tagTable;
+        }
+
+        return DynValue.NewTable(sensedData);
+    }
+
+    /// <summary>
+    /// Gibt eine Liste mit den Positionen und Typen aller (Roboter und) WorldObjects auf der Karte zurück.
+    /// </summary>
+    /// <returns></returns>
+    public DynValue ScanSurroundings() {
+        Debug.Log(name + " scans its surroundings.");
+        Table sensedData = new Table(script);
+
+        List<WorldObject> temp = WorldObjectManager.Instance.GetWorldObjectList();
+        foreach(WorldObject worldObject in temp) {
+            Table worldObjectInfo = new Table(script);
+            InteractiveObject interactiveObject = worldObject.GetComponent<InteractiveObject>();
+            worldObjectInfo["type"] = worldObject.objectType;
+            worldObjectInfo["movable"] = interactiveObject.Movable;
+            worldObjectInfo["grabable"] = interactiveObject.Grabable;
+            if(interactiveObject.grabbedBy != null) {
+                worldObjectInfo["grabbedBy"] = interactiveObject.grabbedBy.name;
+            } else {
+                worldObjectInfo["grabbedBy"] = "none";
+            }
+            worldObjectInfo["direction"] = interactiveObject.GetFacingAngle(interactiveObject.direction);
+            worldObjectInfo["x"] = interactiveObject.posX;
+            worldObjectInfo["y"] = interactiveObject.posY;
+            sensedData.Append(DynValue.NewTable(worldObjectInfo));
         }
 
         return DynValue.NewTable(sensedData);

@@ -117,6 +117,10 @@ public class RobotDetailPanelManager : MonoBehaviour {
                 buttonMobilityBoat.colors = equippedColors;
             } else if (part is BasicSensor) {
                 buttonSensorDefault.colors = equippedColors;
+            } else if (part is GroundSensor) {
+                buttonSensorGround.colors = equippedColors;
+            } else if (part is Scanner) {
+                buttonSensorScanner.colors = equippedColors;
             }
         }
     }
@@ -153,6 +157,10 @@ public class RobotDetailPanelManager : MonoBehaviour {
                 return new Boat();
             case "BasicSensor":
                 return new BasicSensor();
+            case "GroundSensor":
+                return new GroundSensor();
+            case "Scanner":
+                return new Scanner();
             default:
                 break;
         }
