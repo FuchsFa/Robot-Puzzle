@@ -1,0 +1,7 @@
+<b>Ground-Sensor</b>
+
+Allows the robot to detect the type of terrain in front of it using the <i>checkGround()</i> method.
+
+<i>(The sensor gathers the following information about the tile in front:
+"terrainType" - the type of the tile
+"tags" - a list of tags that apply to the tile)</i>

@@ -1,0 +1,6 @@
+<b>Scanner</b>
+
+Allows the robot to detect the type and position of all nearby objects using the <i>scanSurroundings()</i> method.
+
+<i>(The scanner saves the information about the objects in a table where each object can be accessed via its index.
+The scanner saves the same information about each object as the default sensor.)</i>

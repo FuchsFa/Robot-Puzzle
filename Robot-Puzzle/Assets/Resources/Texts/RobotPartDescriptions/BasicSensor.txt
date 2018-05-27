@@ -1,3 +1,12 @@
 <b>Default Sensor</b>
 
-Allows the robot to recognize Objects and Wolls in front of itself with the <i>sense()</i> method.
+Allows the robot to recognize objects and walls in front of itself with the <i>sense()</i> method.
+
+<i>(The sensor gathers the following information about the object in front:
+"type" - the type of the objec.
+"movable" - whether the object can be pushed
+"grabable" - whether the objec can be grabbed
+"grabbedBy" - the name of the robot that's grabbing the object
+"x" - the horizontal position of the object
+"y" - the vertical position of the object
+"direction" - the direction the object is facing)</i>
