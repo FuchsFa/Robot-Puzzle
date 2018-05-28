@@ -294,9 +294,9 @@ public class RobotProgramPanelManager : MonoBehaviour {
 
     private void Update() {
         AdjustLineNumberScrollPosition();
-        if(editor.isFocused && Input.GetKeyDown(KeyCode.Tab)) {
+        /*if(editor.isFocused && Input.GetKeyDown(KeyCode.Tab)) {
             Debug.Log("Tab pressed");
-        }
+        }*/
     }
 
     /// <summary>

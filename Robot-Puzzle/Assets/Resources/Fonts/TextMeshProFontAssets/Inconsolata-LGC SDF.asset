@@ -33,7 +33,7 @@ MonoBehaviour:
     UnderlineThickness: 3.5644531
     strikethrough: 22.25
     strikethroughThickness: 3.5644531
-    TabWidth: 436.875
+    TabWidth: 174.75
     Padding: 5
     AtlasWidth: 512
     AtlasHeight: 512
@@ -967,7 +967,7 @@ MonoBehaviour:
   boldStyle: 0.75
   boldSpacing: 7
   italicStyle: 35
-  tabSize: 10
+  tabSize: 4
 --- !u!21 &21056182752877472
 Material:
   serializedVersion: 6
