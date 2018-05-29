@@ -10,6 +10,7 @@ public class GameStateManager : MonoBehaviour {
     private RobotManager robotManager;
     [HideInInspector]
     public WorldObjectManager worldObjectManager;
+    public VictoryPanelManager victoryPanelManager;
 
     public Text playButtonText;
 
@@ -165,6 +166,7 @@ public class GameStateManager : MonoBehaviour {
         if (CheckForVictory()) {
             Debug.Log("Gewonnen!");
             Pause();
+            victoryPanelManager.OnVictory();
         }
     }
 

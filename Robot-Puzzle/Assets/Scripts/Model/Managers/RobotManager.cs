@@ -270,4 +270,22 @@ public class RobotManager : MonoBehaviour {
             }
         }
     }
+
+    /// <summary>
+    /// Gibt die gesamten Kosten für alle Roboter und Roboterteile zurück.
+    /// </summary>
+    /// <returns></returns>
+    public int GetTotalRobotCost() {
+        //TODO: implementieren
+        return 0;
+    }
+
+    /// <summary>
+    /// Gibt die gesamte Länge aller Roboter-Skripte zurück.
+    /// </summary>
+    /// <returns></returns>
+    public int GetTotalCodeLength() {
+        //TODO: implementieren
+        return 0;
+    }
 }
