@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ShreddingTool : RobotPart {
+    private const int myCost = 100;
 
     /// <summary>
     /// Erstellt den Shredder und fügt es gleich zum Roboter hinzu.
@@ -11,6 +12,7 @@ public class ShreddingTool : RobotPart {
     public ShreddingTool(Robot robot) {
         type = PartType.Tool;
         robot.AddPart(this);
+        cost = myCost;
     }
 
     /// <summary>
@@ -18,6 +20,7 @@ public class ShreddingTool : RobotPart {
     /// </summary>
     public ShreddingTool() {
         type = PartType.Tool;
+        cost = myCost;
     }
 
     /// <summary>

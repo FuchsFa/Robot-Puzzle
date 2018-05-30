@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class RobotPart {
+    public int cost;
     /// <summary>
     /// Der Roboter an dem dieses Teil befestigt ist.
     /// </summary>

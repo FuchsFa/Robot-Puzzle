@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WeldingTool : RobotPart {
+    private const int myCost = 75;
 
     /// <summary>
     /// Erstellt das Schweißgerät und fügt es gleich zum Roboter hinzu.
@@ -11,6 +12,7 @@ public class WeldingTool : RobotPart {
     public WeldingTool(Robot robot) {
         type = PartType.Tool;
         robot.AddPart(this);
+        cost = myCost;
     }
 
     /// <summary>
@@ -18,6 +20,7 @@ public class WeldingTool : RobotPart {
     /// </summary>
     public WeldingTool() {
         type = PartType.Tool;
+        cost = myCost;
     }
 
     /// <summary>

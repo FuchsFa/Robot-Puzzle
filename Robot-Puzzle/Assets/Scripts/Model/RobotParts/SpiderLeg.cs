@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SpiderLeg : RobotPart {
+    private const int myCost = 75;
 
     GroundTile.TerrainType terrainCompatability;
 
@@ -24,6 +25,7 @@ public class SpiderLeg : RobotPart {
         type = PartType.Mobility;
         terrainCompatability = GroundTile.TerrainType.solid;
         robot.AddPart(this);
+        cost = myCost;
     }
 
     /// <summary>
@@ -32,6 +34,7 @@ public class SpiderLeg : RobotPart {
     public SpiderLeg() {
         type = PartType.Mobility;
         terrainCompatability = GroundTile.TerrainType.solid;
+        cost = myCost;
     }
 
     /// <summary>

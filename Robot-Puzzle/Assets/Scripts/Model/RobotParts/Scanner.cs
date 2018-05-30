@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Scanner : RobotPart {
+    private const int myCost = 150;
 
     /// <summary>
     /// Erstellt den Scanner und fügt ihn dem angegebenen Roboter hinzu.
@@ -11,6 +12,7 @@ public class Scanner : RobotPart {
     public Scanner(Robot robot) {
         type = PartType.Sensor;
         robot.AddPart(this);
+        cost = myCost;
     }
 
     /// <summary>
@@ -18,6 +20,7 @@ public class Scanner : RobotPart {
     /// </summary>
     public Scanner() {
         type = PartType.Sensor;
+        cost = myCost;
     }
 
     /// <summary>

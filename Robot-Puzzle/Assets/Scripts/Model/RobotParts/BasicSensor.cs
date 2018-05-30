@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BasicSensor : RobotPart {
+    private const int myCost = 50;
 
     /// <summary>
     /// Erstellt den Sensor und fügt ihn dem angegebenen Roboter hinzu.
@@ -12,6 +13,7 @@ public class BasicSensor : RobotPart {
     public BasicSensor(Robot robot) {
         type = PartType.Sensor;
         robot.AddPart(this);
+        cost = myCost;
     }
 
     /// <summary>
@@ -19,6 +21,7 @@ public class BasicSensor : RobotPart {
     /// </summary>
     public BasicSensor() {
         type = PartType.Sensor;
+        cost = myCost;
     }
 
     /// <summary>

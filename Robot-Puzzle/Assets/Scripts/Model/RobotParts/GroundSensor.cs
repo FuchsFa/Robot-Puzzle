@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GroundSensor : RobotPart {
+    private const int myCost = 50;
 
     /// <summary>
     /// Erstellt den Sensor und fügt ihn dem angegebenen Roboter hinzu.
@@ -11,6 +12,7 @@ public class GroundSensor : RobotPart {
     public GroundSensor(Robot robot) {
         type = PartType.Sensor;
         robot.AddPart(this);
+        cost = myCost;
     }
 
     /// <summary>
@@ -18,6 +20,7 @@ public class GroundSensor : RobotPart {
     /// </summary>
     public GroundSensor() {
         type = PartType.Sensor;
+        cost = myCost;
     }
 
     /// <summary>

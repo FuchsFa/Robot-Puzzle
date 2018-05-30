@@ -55,6 +55,7 @@ public class VictoryPanelManager : MonoBehaviour {
                 break;
             }
         }
+        Debug.Log("Speed Score: " + scoreSpeed);
         int cost = RobotManager.Instance.GetTotalRobotCost();
         for (int i = 0; i < targetRobotCost.Length; i++) {
             if(cost <= targetRobotCost[i]) {
@@ -62,6 +63,7 @@ public class VictoryPanelManager : MonoBehaviour {
                 break;
             }
         }
+        Debug.Log("Cost Score: " + scoreCost);
         int codeLength = RobotManager.Instance.GetTotalCodeLength();
         for (int i = 0; i < targetCodeLength.Length; i++) {
             if(codeLength <= targetCodeLength[i]) {
@@ -69,6 +71,7 @@ public class VictoryPanelManager : MonoBehaviour {
                 break;
             }
         }
+        Debug.Log("Code Score: " + scoreCode);
     }
 
     /// <summary>
@@ -77,9 +80,9 @@ public class VictoryPanelManager : MonoBehaviour {
     private void ChangeScoreText() {
         string temp = "";
 
-        temp += "Speed: \t" + GetStarText(scoreSpeed) + "\n";
-        temp += "Cost: \t" + GetStarText(scoreCost) + "\n";
-        temp += "Code length: \t" + GetStarText(scoreCode);
+        temp += "Speed: \n" + GetStarText(scoreSpeed) + "\n";
+        temp += "Cost: \n" + GetStarText(scoreCost) + "\n";
+        temp += "Code length: \n" + GetStarText(scoreCode);
 
         scoreText.text = temp;
     }
@@ -105,6 +108,6 @@ public class VictoryPanelManager : MonoBehaviour {
     }
 
     private void ShowScorePanel() {
-
+        panelObject.SetActive(true);
     }
 }

@@ -11,6 +11,8 @@ public class RobotManager : MonoBehaviour {
     [SerializeField]
     private GameObject robotPrefab;
 
+    public const int robotCost = 100;
+
     [SerializeField]
     private GameObject previewObject;
 
@@ -276,8 +278,17 @@ public class RobotManager : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public int GetTotalRobotCost() {
-        //TODO: implementieren
-        return 0;
+        int tempCost = 0;
+
+        foreach(GameObject roboObj in robots) {
+            tempCost += robotCost;
+            Robot robo = roboObj.GetComponent<Robot>();
+            foreach(RobotPart part in robo.GetRobotPartList()) {
+                tempCost += part.cost;
+            }
+        }
+
+        return tempCost;
     }
 
     /// <summary>
@@ -285,7 +296,14 @@ public class RobotManager : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public int GetTotalCodeLength() {
-        //TODO: implementieren
-        return 0;
+        int temp = 0;
+
+        foreach (GameObject roboObj in robots) {
+            Robot robo = roboObj.GetComponent<Robot>();
+            int scriptLength = robo.GetScriptCode().Split('\n').Length;
+            temp += scriptLength;
+        }
+
+        return temp;
     }
 }

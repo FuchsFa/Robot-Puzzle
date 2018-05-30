@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Boat : RobotPart {
+    private const int myCost = 100;
 
     GroundTile.TerrainType terrainCompatability;
 
@@ -24,6 +25,7 @@ public class Boat : RobotPart {
         type = PartType.Mobility;
         terrainCompatability = GroundTile.TerrainType.liquid;
         robot.AddPart(this);
+        cost = myCost;
     }
 
     /// <summary>
@@ -32,6 +34,7 @@ public class Boat : RobotPart {
     public Boat() {
         type = PartType.Mobility;
         terrainCompatability = GroundTile.TerrainType.liquid;
+        cost = myCost;
     }
 
     /// <summary>

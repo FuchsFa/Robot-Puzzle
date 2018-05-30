@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BasicArm : RobotPart {
-
+    private const int myCost = 50;
     /// <summary>
     /// Erstellt den neuen Arm und fügt ihn gleich zum angegebenen Roboter hinzu.
     /// </summary>
@@ -12,6 +12,7 @@ public class BasicArm : RobotPart {
     public BasicArm(Robot robot) {
         type = PartType.Tool;
         robot.AddPart(this);
+        cost = myCost;
     }
 
     /// <summary>
@@ -19,6 +20,7 @@ public class BasicArm : RobotPart {
     /// </summary>
     public BasicArm() {
         type = PartType.Tool;
+        cost = myCost;
     }
 
     /// <summary>
