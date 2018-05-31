@@ -124,9 +124,16 @@ public class RobotManager : MonoBehaviour {
     /// Wird aufgerufen, wenn der Spieler auf 'Play' drückt.
     /// </summary>
     public void StartRobotScripts() {
+        bool scriptNotValid = false;
         foreach(GameObject robotObject in robots) {
             Robot bot = robotObject.GetComponent<Robot>();
+            if(!bot.IsLuaScriptValid(bot.GetScriptCode())) {
+                scriptNotValid = true;
+            }
             bot.StartLuaScript();
+        }
+        if(scriptNotValid) {
+            gameStateManager.Stop();
         }
     }
 

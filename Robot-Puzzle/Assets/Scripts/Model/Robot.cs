@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Text;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoonSharp.Interpreter;
@@ -82,6 +83,8 @@ public class Robot : MonoBehaviour {
     /// </summary>
     private void GetAllowedActionNames() {
         allowedActionNames = new List<string>();
+        allowedActionNames.Add("turnLeft");
+        allowedActionNames.Add("turnRight");
         foreach(RobotPart part in parts) {
             allowedActionNames.AddRange(part.GetActionList());
         }
@@ -135,6 +138,39 @@ public class Robot : MonoBehaviour {
         coroutine = null;
         DynValue function = script.Globals.Get("action");
         coroutine = script.CreateCoroutine(function);
+    }
+
+    /// <summary>
+    /// Überprüft, ob der Roboter auch die benötigten Teil hat, um das Skript auszuführen.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsLuaScriptValid(string code) {
+        bool valid = true;
+        GetAllowedActionNames();
+        string temp = RemoveSpecialCharactersAndNumbers(code);
+        string[] words = temp.Split(new char[] { ' ', '\n' });
+        foreach(string word in words) {
+            if((actionDictionary.ContainsKey(word) || word == "move") && !allowedActionNames.Contains(word)) {
+                valid = false;
+            }
+        }
+
+        return valid;
+    }
+
+    /// <summary>
+    /// Entfernt alle Sonderzeichen und zahlen aus einem Text.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    private string RemoveSpecialCharactersAndNumbers(string text) {
+        StringBuilder sb = new StringBuilder();
+        foreach(char c in text) {
+            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == ' ') || (c == '\n')) {
+                sb.Append(c);
+            }
+        }
+        return sb.ToString();
     }
 
     /// <summary>

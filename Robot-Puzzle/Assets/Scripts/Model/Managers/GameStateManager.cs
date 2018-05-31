@@ -108,10 +108,10 @@ public class GameStateManager : MonoBehaviour {
     private void Play() {
         Debug.Log("Play!");
         isPaused = false;
-        if(currentTurn == 0) {
+        playButtonText.text = "<b>Pause</b>";
+        if (currentTurn == 0) {
             robotManager.StartRobotScripts();
         }
-        playButtonText.text = "<b>Pause</b>";
     }
 
     /// <summary>
