@@ -11,6 +11,9 @@ public class RobotDetailPanelManager : MonoBehaviour {
     [SerializeField]
     private Text robotNameText;
 
+    [SerializeField]
+    private Text totalCostDisplaytext;
+
     //Button-Farben:
     private ColorBlock unequippedColors;
     [SerializeField] private Color32 unequippedNormal;
@@ -187,5 +190,6 @@ public class RobotDetailPanelManager : MonoBehaviour {
     /// <param name="part"></param>
     private void AddPartToSelectedRobot(RobotPart part) {
         RobotManager.Instance.AddPartToRobot(RobotManager.Instance.selectedRobot, part);
+        totalCostDisplaytext.text = "Total Cost:\n<color=yellow>" + RobotManager.Instance.GetTotalRobotCost() + "$</color>";
     }
 }

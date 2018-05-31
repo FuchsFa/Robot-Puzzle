@@ -51,6 +51,7 @@ public class RobotManager : MonoBehaviour {
         bot.InitializeRobot(new Vector2(0, -1), x, y);
         robotObject.transform.position = new Vector3(x + 0.5f, y + 0.5f);
         robots.Add(robotObject);
+        robotObject.name = "Robot " + robots.Count;
         return robotObject;
     }
 
