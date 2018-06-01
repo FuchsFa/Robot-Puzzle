@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class RobotDetailPanelManager : MonoBehaviour {
 
+    public static RobotDetailPanelManager Instance { get; protected set; }
+
     [SerializeField]
     private GameObject panel;
 
@@ -50,6 +52,7 @@ public class RobotDetailPanelManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        Instance = this;
         panel.SetActive(false);
         robotPartButtons = new Button[] {
             buttonToolGrab, buttonToolWeld, buttonToolShredder,
@@ -134,8 +137,14 @@ public class RobotDetailPanelManager : MonoBehaviour {
     /// </summary>
     /// <param name="partName"></param>
     public void PartButtonClick(string partName) {
+        Robot robot = RobotManager.Instance.selectedRobot.GetComponent<Robot>();
         RobotPart partToAdd = CreatePartWithName(partName);
-        AddPartToSelectedRobot(partToAdd);
+        if(robot.AlreadyHasPartOfClass(partToAdd) != null) {
+            RobotManager.Instance.RemovePartFromRobot(robot.gameObject, robot.AlreadyHasPartOfClass(partToAdd));
+            AdjustTotalCostDisplay();
+        } else {
+            AddPartToSelectedRobot(partToAdd);
+        }
         AdjustButtonColors();
     }
 
@@ -190,6 +199,13 @@ public class RobotDetailPanelManager : MonoBehaviour {
     /// <param name="part"></param>
     private void AddPartToSelectedRobot(RobotPart part) {
         RobotManager.Instance.AddPartToRobot(RobotManager.Instance.selectedRobot, part);
+        AdjustTotalCostDisplay();
+    }
+
+    /// <summary>
+    /// Passt die Kostenanzeige an die neuen Gesamtkosten an.
+    /// </summary>
+    public void AdjustTotalCostDisplay() {
         totalCostDisplaytext.text = "Total Cost:\n<color=yellow>" + RobotManager.Instance.GetTotalRobotCost() + "$</color>";
     }
 }

@@ -228,6 +228,7 @@ public class RobotManager : MonoBehaviour {
             if (tilemap.GetTile<GroundTile>(new Vector3Int(xPos, yPos, 0))) {
                 //Debug.Log("An der Stelle " + xPos + "/" + yPos + " gibt es ein Tile.");
                 CreateRobot(xPos, yPos);
+                RobotDetailPanelManager.Instance.AdjustTotalCostDisplay();
             }
             robotPlacementActive = false;
             previewObject.SetActive(false);
@@ -277,6 +278,7 @@ public class RobotManager : MonoBehaviour {
                 RemoveRobot(selectedRobot);
                 selectedRobot = null;
                 panelManager.OnDeselectRobot();
+                RobotDetailPanelManager.Instance.AdjustTotalCostDisplay();
             }
         }
     }

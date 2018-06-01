@@ -215,8 +215,24 @@ public class Robot : MonoBehaviour {
         if(part.type != RobotPart.PartType.Sensor) {
             RemovePartsOfSameType(part.type);
         }
-        parts.Add(part);
-        part.AddTo(this);
+        if(AlreadyHasPartOfClass(part) == null) {
+            parts.Add(part);
+            part.AddTo(this);
+        }
+    }
+
+    /// <summary>
+    /// Überprüft, ob der Roboter bereits ein Teil mit der selben Klasse(z.B. Welder oder Boat) hat.
+    /// </summary>
+    /// <param name="partToCheck"></param>
+    /// <returns></returns>
+    public RobotPart AlreadyHasPartOfClass(RobotPart partToCheck) {
+        foreach(RobotPart part in parts) {
+            if(partToCheck.GetType() == part.GetType()) {
+                return part;
+            }
+        }
+        return null;
     }
 
     /// <summary>
