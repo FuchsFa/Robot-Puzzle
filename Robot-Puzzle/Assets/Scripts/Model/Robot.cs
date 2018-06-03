@@ -96,7 +96,7 @@ public class Robot : MonoBehaviour {
     /// </summary>
     private void InitializeScript() {
         script = new Script(CoreModules.Preset_HardSandbox);
-        script.Options.DebugPrint = s => { Debug.Log(s); };//TODO: Debug-Nachrichten auf eine in-game lesbare Konsole schreiben.
+        script.Options.DebugPrint = s => { ConsolePanelManager.Instance.LogStringToInGameConsole(s); };
 
         //ActionDictionary Globals
         foreach(string key in actionDictionary.Keys) {
