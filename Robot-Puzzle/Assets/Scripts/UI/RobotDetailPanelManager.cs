@@ -88,6 +88,7 @@ public class RobotDetailPanelManager : MonoBehaviour {
     /// Wird aufgerufen, wenn der Spieler einen Roboter auswählt.
     /// </summary>
     public void OnSelectRobot() {
+        ConsolePanelManager.Instance.HideConsolePanel();
         panel.SetActive(true);
         robotNameText.text = RobotManager.Instance.selectedRobot.name;
         AdjustButtonColors();
@@ -98,6 +99,7 @@ public class RobotDetailPanelManager : MonoBehaviour {
     /// </summary>
     public void OnDeselectRobot() {
         panel.SetActive(false);
+        ConsolePanelManager.Instance.ShowConsolePanel();
     }
 
     /// <summary>
