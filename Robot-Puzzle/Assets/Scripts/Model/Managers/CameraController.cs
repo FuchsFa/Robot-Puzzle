@@ -19,8 +19,8 @@ public class CameraController : MonoBehaviour {
 	void LateUpdate () {
 		if(RobotManager.Instance.selectedRobot == null) {
             HandleMouseDrag();
+            MoveCamera();
         }
-        MoveCamera();
 	}
 
     /// <summary>

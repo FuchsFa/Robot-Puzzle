@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class Spawner : MonoBehaviour {
 
     [SerializeField]
-    private string worldObjectType;
+    private List<string> worldObjectTypes;
 
-    private GameObject worldObjectPrefab;
+    private Dictionary<string, GameObject> prefabDictionary;
 
     [SerializeField]
     private SpriteRenderer worldObjectPreview;
@@ -23,14 +23,37 @@ public class Spawner : MonoBehaviour {
     [SerializeField]
     private LayerMask collisionMask;
 
+    private Queue<string> spawnQueue;
+
 	// Use this for initialization
 	void Start () {
         counter = spawnInterval - 1;
-        worldObjectPrefab = GameStateManager.Instance.worldObjectManager.GetPrefabFromDictionary(worldObjectType);
-        worldObjectPreview.sprite = worldObjectPrefab.GetComponent<SpriteRenderer>().sprite;
+        InitializePrefabDictionary();
+        spawnQueue = new Queue<string>(worldObjectTypes);
+        PreviewNextSpawn();
         counterDisplay.text = "" + spawnInterval;
         GetComponent<InteractiveObject>().SetStartingPositionAndRotation((int)(transform.position.x - 0.5f), (int)(transform.position.y - 0.5f), new Vector2(0, -1));
 	}
+
+    /// <summary>
+    /// Füllt das Prefab Dictionary mit allen WorldObjects, die in worlObjectTypes angegeben sind.
+    /// </summary>
+    private void InitializePrefabDictionary() {
+        prefabDictionary = new Dictionary<string, GameObject>();
+        foreach(string type in worldObjectTypes) {
+            GameObject worldObjectPrefab = GameStateManager.Instance.worldObjectManager.GetPrefabFromDictionary(type);
+            prefabDictionary.Add(type, worldObjectPrefab);
+        }
+    }
+
+    /// <summary>
+    /// Zeigt den Sprite des WorldObjects, das als nächstes erstellt wird.
+    /// </summary>
+    private void PreviewNextSpawn() {
+        string nextType = spawnQueue.Peek();
+        GameObject prefab = prefabDictionary[nextType];
+        worldObjectPreview.sprite = prefab.GetComponent<SpriteRenderer>().sprite;
+    }
 
     /// <summary>
     /// Erhöht den Zähler um eins. Wenn der Zähler den Grenzwert erreicht hat, wird er auf 0 zurückgesetzt und eine Kopie des Prefabs wird auf dem Feld des Spawners erstellt.
@@ -41,9 +64,19 @@ public class Spawner : MonoBehaviour {
         if(counter >= spawnInterval) {
             counter = 0;
             if(IsSpaceFree()) {
-                GameStateManager.Instance.worldObjectManager.CreateWorldObject(worldObjectType, (int)(transform.position.x - 0.5f), (int)(transform.position.y - 0.5f));
+                SpawnNextWorldObject();
             }
         }
+    }
+
+    /// <summary>
+    /// Holt den Typen des nächsten WorldObjects aus der spawnQueue und erstellt eine Kopie davon.
+    /// </summary>
+    private void SpawnNextWorldObject() {
+        string type = spawnQueue.Dequeue();
+        GameStateManager.Instance.worldObjectManager.CreateWorldObject(type, (int)(transform.position.x - 0.5f), (int)(transform.position.y - 0.5f));
+        spawnQueue.Enqueue(type);
+        PreviewNextSpawn();
     }
 
     /// <summary>
@@ -52,6 +85,8 @@ public class Spawner : MonoBehaviour {
     public void OnStop() {
         counter = spawnInterval - 1;
         counterDisplay.text = "" + spawnInterval;
+        spawnQueue = new Queue<string>(worldObjectTypes);
+        PreviewNextSpawn();
     }
 
     /// <summary>
