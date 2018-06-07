@@ -27,6 +27,11 @@ public class Goal : MonoBehaviour {
     private bool connectionWest;
 
     [SerializeField]
+    private bool colorMatters;
+    [SerializeField]
+    private Color worldObjectColor;
+
+    [SerializeField]
     private SpriteRenderer worldObjectPreview;
 
     private int currentAmount;
@@ -56,7 +61,9 @@ public class Goal : MonoBehaviour {
         worldObjectReference = Instantiate(GameStateManager.Instance.worldObjectManager.GetPrefabFromDictionary(worldObjectType));
         worldObjectReference.transform.parent = this.transform;
         worldObjectReference.transform.position = new Vector3(1000, 0);
+        worldObjectReference.GetComponent<WorldObject>().objectColor = worldObjectColor;
         worldObjectPreview.sprite = worldObjectReference.GetComponent<SpriteRenderer>().sprite;
+        worldObjectPreview.GetComponent<SpriteRenderer>().color = worldObjectColor;
         GetComponent<InteractiveObject>().SetStartingPositionAndRotation((int)(transform.position.x - 0.5f), (int)(transform.position.y - 0.5f), new Vector2(0, -1));
     }
 
@@ -109,6 +116,7 @@ public class Goal : MonoBehaviour {
     /// <param name="obj"></param>
     /// <returns></returns>
     private bool CompareToReference(GameObject obj) {
+        bool isEqual = true;
         if(obj.GetComponent<WorldObject>() == null) {
             Debug.Log("Das Objekt '" + obj.name + "' ist kein WorldObject.");
             return false;
@@ -122,9 +130,12 @@ public class Goal : MonoBehaviour {
         }
         if(connectionsMatter) {
             bool[] temp = obj.GetComponent<WorldObject>().GetAbsoluteConnectionDirections();
-            return (connectionNorth == temp[0]) && (connectionEast == temp[1]) && (connectionSouth == temp[2]) && (connectionWest == temp[3]);
+            isEqual = ((connectionNorth == temp[0]) && (connectionEast == temp[1]) && (connectionSouth == temp[2]) && (connectionWest == temp[3]));
         }
-        return true;
+        if(isEqual && colorMatters) {
+            isEqual = (obj.GetComponent<WorldObject>().objectColor == worldObjectReference.GetComponent<WorldObject>().objectColor);
+        }
+        return isEqual;
     }
 
     /// <summary>

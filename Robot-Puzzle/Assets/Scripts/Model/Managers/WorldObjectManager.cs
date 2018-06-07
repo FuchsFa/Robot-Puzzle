@@ -20,6 +20,8 @@ public class WorldObjectManager : MonoBehaviour {
 
     private List<GameObject> worldObjects;
 
+    private List<GameObject> startWorldObjects;
+
     private List<GameObject> worldObjectGroups;
 
     // Use this for initialization
@@ -29,7 +31,24 @@ public class WorldObjectManager : MonoBehaviour {
         worldObjects = new List<GameObject>();
         worldObjectGroups = new List<GameObject>();
         InitializePrefabDictionary();
+        InitializeStartingWorldObjects();
 	}
+
+    /// <summary>
+    /// Sucht alle WorldObjects, die zu Beginn des Spiels auf dem Spielfeld sind und fügt sie in die worldObjects-Liste ein.
+    /// </summary>
+    private void InitializeStartingWorldObjects() {
+        startWorldObjects = new List<GameObject>();
+        WorldObject[] startingWorldObjects = FindObjectsOfType<WorldObject>();
+        foreach(WorldObject obj in startingWorldObjects) {
+            worldObjects.Add(obj.gameObject);
+            startWorldObjects.Add(obj.gameObject);
+            Vector2 startingDirection = obj.GetComponent<InteractiveObject>().direction;
+            int startX = (int)(obj.transform.position.x - 0.5f);
+            int startY = (int)(obj.transform.position.y - 0.5f);
+            obj.InitializeWorldObject(startingDirection, startX, startY);
+        }
+    }
 
     /// <summary>
     /// Lädt alle Prefabs im Prefabs/WorldObjects Ordner ins prefabDictionary.
@@ -82,7 +101,7 @@ public class WorldObjectManager : MonoBehaviour {
     /// </summary>
     /// <param name="worldObject"></param>
     public void RemoveWorldObject(GameObject worldObject) {
-        if(worldObjects.Contains(worldObject)) {
+        if(worldObjects.Contains(worldObject) && !startWorldObjects.Contains(worldObject)) {
             worldObjects.Remove(worldObject);
             Destroy(worldObject);
         }

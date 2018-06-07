@@ -33,6 +33,8 @@ public class WorldObject : MonoBehaviour {
     [SerializeField]
     private GroundTile.TerrainType[] terrainCompatability;
 
+    public Color objectColor = Color.white;
+
     /// <summary>
     /// Initialisiert das WorldObject mit den übergebenen Parametern.
     /// </summary>
@@ -63,7 +65,8 @@ public class WorldObject : MonoBehaviour {
             { "turnLeft", TurnLeft },
             { "turnRight", TurnRight },
             { "walk", Walk },
-            { "wait", Wait }
+            { "wait", Wait },
+            { "sense", CheckForInteractiveObjectInFront }
         };
     }
 
@@ -73,11 +76,13 @@ public class WorldObject : MonoBehaviour {
     /// </summary>
     private void InitializeScript() {
         script = new Script(CoreModules.Preset_HardSandbox);
-        script.Options.DebugPrint = s => { Debug.Log(s); };//TODO: Debug-Nachrichten auf eine in-game lesbare Konsole schreiben.
+        script.Options.DebugPrint = s => { ConsolePanelManager.Instance.LogStringToInGameConsole(s); };
 
         foreach (string key in actionDictionary.Keys) {
             script.Globals[key] = (System.Func<DynValue>)actionDictionary[key];
         }
+        script.Globals["paint"] = (System.Func<string, DynValue>)Paint;
+
         if(scriptText) {
             scriptCode = scriptText.text;
         } else {
@@ -268,6 +273,15 @@ public class WorldObject : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Ändert die objectColor des World Objects und passt den Sprite an.
+    /// </summary>
+    /// <param name="newColor"></param>
+    public void ChangeColor(Color newColor) {
+        objectColor = newColor;
+        GetComponent<SpriteRenderer>().color = objectColor;
+    }
+
     //Aktionen:
 
     /// <summary>
@@ -317,11 +331,104 @@ public class WorldObject : MonoBehaviour {
     }
 
     /// <summary>
-    /// Lässt das WorldObject 1 Runde lang still stehen.
+    /// Lässt das WorldObject eine Runde lang still stehen.
     /// </summary>
     /// <returns></returns>
     public DynValue Wait() {
         Debug.Log(gameObject.name + " waits.");
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
+    }
+
+    /// <summary>
+    /// Versucht ein Objekt vor sich zu bemalen.
+    /// </summary>
+    /// <returns></returns>
+    public DynValue Paint(string colorName) {
+        Debug.Log(name + " versucht, etwas zu bemalen.");
+
+        Color paintColor;
+        ColorUtility.TryParseHtmlString(colorName, out paintColor);
+        if(paintColor == null) {
+            return DynValue.NewYieldReq(new DynValue[] { coroutine });
+        }
+
+        /*Vector2 raycastOrigin = new Vector2(transform.position.x, transform.position.y);
+        Vector2 raycastDirection = new Vector2(0, -1);
+        LayerMask collisionMask = GetComponent<RayCaster>().collisionMask;
+        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, 0.3f, collisionMask);
+        Debug.DrawRay(raycastOrigin, raycastDirection, Color.cyan, 0.5f);
+        if (hit) {
+            WorldObject found = hit.transform.gameObject.GetComponent<WorldObject>();
+            if (found != null && found.objectColor != paintColor) {
+                found.ChangeColor(paintColor);
+            } else {
+                Debug.Log("Objekt '" + hit.transform.name + "' kann nicht bemalt werden.");
+            }
+        }*/
+        WorldObject target = GetComponent<RayCaster>().CheckForWorldObject(myInteractiveObject.direction);
+        if(target != null && target.objectColor != paintColor) {
+            target.ChangeColor(paintColor);
+        } else {
+            Debug.Log("Objekt '" + target.name + "' kann nicht bemalt werden.");
+        }
+
+        return DynValue.NewYieldReq(new DynValue[] { coroutine });
+    }
+
+    /// <summary>
+    /// Überprüft, ob auf dem Feld vor dem WorldObject ein interaktives Objekt liegt.
+    /// </summary>
+    public DynValue CheckForInteractiveObjectInFront() {
+        Debug.Log(gameObject.name + " looks for an Object in its front.");
+        Table sensedData = new Table(script);
+
+        InteractiveObject temp = GetComponent<RayCaster>().CheckForInteractiveObject(myInteractiveObject.direction);
+        if (temp != null) {
+            //Wenn ein Interaktives Objekt vor dem Roboter steht wird es analysiert.
+            sensedData["x"] = temp.posX;
+            sensedData["y"] = temp.posY;
+            sensedData["direction"] = temp.GetFacingAngle(temp.direction);
+            sensedData["movable"] = temp.Movable;
+            sensedData["grabable"] = temp.Grabable;
+            sensedData["color"] = "none";
+            if (temp.grabbedBy != null) {
+                sensedData["grabbedBy"] = temp.grabbedBy.name;
+            } else {
+                sensedData["grabbedBy"] = "none";
+            }
+
+            Robot tempBot = temp.GetComponent<Robot>();
+            if (tempBot != null) {
+                sensedData["type"] = "Robot";
+            }
+
+            WorldObject tempObj = temp.GetComponent<WorldObject>();
+            if (tempObj != null) {
+                sensedData["type"] = tempObj.objectType;
+                sensedData["color"] = tempObj.objectColor.ToString();
+            }
+        } else if (GetComponent<RayCaster>().CheckForCollisionsInDirection(myInteractiveObject.direction)) {
+            //Wenn kein Interaktives Objekt vor dem Roboter steht, er aber trotzdem kollidieren würde, muss eine Wand vor ihm sein.
+            sensedData["type"] = "Wall";
+            sensedData["movable"] = false;
+            sensedData["grabable"] = false;
+            sensedData["grabbedBy"] = "none";
+            sensedData["direction"] = -1;
+            sensedData["color"] = "none";
+            sensedData["x"] = myInteractiveObject.posX + myInteractiveObject.direction.x;
+            sensedData["y"] = myInteractiveObject.posY + myInteractiveObject.direction.y;
+        } else {
+            //Wenn auch keine Kollision stattfinden würde, ist das Tile vor dem Roboter leer.
+            sensedData["type"] = "Nothing";
+            sensedData["movable"] = false;
+            sensedData["grabable"] = false;
+            sensedData["grabbedBy"] = "none";
+            sensedData["direction"] = -1;
+            sensedData["color"] = "none";
+            sensedData["x"] = myInteractiveObject.posX + myInteractiveObject.direction.x;
+            sensedData["y"] = myInteractiveObject.posY + myInteractiveObject.direction.y;
+        }
+
+        return DynValue.NewTable(sensedData);
     }
 }

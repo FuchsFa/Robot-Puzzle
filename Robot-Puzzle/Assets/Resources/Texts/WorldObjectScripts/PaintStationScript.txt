@@ -1,0 +1,10 @@
+function action()
+	while true do
+		obj = sense()
+		if obj["color"] ~= "none" then
+			paint("red")
+		else
+			wait()
+		end
+	end
+end

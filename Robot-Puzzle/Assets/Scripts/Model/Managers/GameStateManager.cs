@@ -47,11 +47,11 @@ public class GameStateManager : MonoBehaviour {
         string scriptCode = text.text;
         robotObject.GetComponent<Robot>().ChangeScriptCode(scriptCode);
 
-        /*GameObject worldObjectOne = worldObjectManager.CreateWorldObject("Ore", 0, -1);
+        GameObject worldObjectOne = worldObjectManager.CreateWorldObject("Ore", 0, -1);
         worldObjectOne.name = "Ore A";
         //worldObjectOne.GetComponent<WorldObject>().OpenForConnections();
-        GameObject worldObjectTwo = worldObjectManager.CreateWorldObject("Ore", -1, -1);
-        worldObjectTwo.name = "Ore B";*/
+        GameObject worldObjectTwo = worldObjectManager.CreateWorldObject("Ore", 1, -1);
+        worldObjectTwo.name = "Ore B";
         //worldObjectTwo.GetComponent<WorldObject>().OpenForConnections();
         //worldObjectManager.ConnectWorldObjects(worldObjectOne.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());
         /*GameObject worldObjectThree = worldObjectManager.CreateWorldObject("Ore", -2, -1);
@@ -111,6 +111,7 @@ public class GameStateManager : MonoBehaviour {
         playButtonText.text = "<b>Pause</b>";
         if (currentTurn == 0) {
             robotManager.StartRobotScripts();
+            worldObjectManager.StartWorldObjectScripts();
         }
     }
 

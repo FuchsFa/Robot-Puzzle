@@ -318,6 +318,9 @@ public class InteractiveObject : MonoBehaviour {
             //Wenn das Objekt eine WorldObjectGroup ist, müssen die einzelnen Teile davon auf Pushes und Kollisionen überprüft werden.
             CheckWorldObjectGroupCollision();
         }
+        if((oldX != posX || oldY != posY || oldDirection != direction) && GetComponent<WorldObject>()) {
+            CheckWorldObjectCollision(GetComponent<WorldObject>());
+        }
     }
 
     /// <summary>
@@ -325,33 +328,41 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     private void CheckWorldObjectGroupCollision() {
         foreach (WorldObject worldObject in GetComponent<WorldObjectGroup>().objects) {
-            Collider2D collider = worldObject.GetComponent<Collider2D>();
-            RayCaster raycaster = worldObject.GetComponent<RayCaster>();
-            Collider2D[] detectedCollider = new Collider2D[1];
-            ContactFilter2D contactFilter = new ContactFilter2D();
-            contactFilter.layerMask = raycaster.collisionMask;
-            contactFilter.useLayerMask = true;
+            CheckWorldObjectCollision(worldObject);
+        }
+    }
 
-            /*GameObject test = new GameObject();
-            test.layer = LayerMask.NameToLayer("Goals");
-            Debug.Log("!!!!!!!!!" + contactFilter.IsFilteringLayerMask(test));*/
+    /// <summary>
+    /// Überprüft das World Object auf Pushes und Kollsionen.
+    /// </summary>
+    /// <param name="worldObject"></param>
+    private void CheckWorldObjectCollision(WorldObject worldObject) {
+        Collider2D collider = worldObject.GetComponent<Collider2D>();
+        RayCaster raycaster = worldObject.GetComponent<RayCaster>();
+        Collider2D[] detectedCollider = new Collider2D[1];
+        ContactFilter2D contactFilter = new ContactFilter2D();
+        contactFilter.layerMask = raycaster.collisionMask;
+        contactFilter.useLayerMask = true;
 
-            collider.OverlapCollider(contactFilter, detectedCollider);
-            if(detectedCollider[0] != null && detectedCollider[0].GetComponent<InteractiveObject>()) {
-                Debug.Log("*" + worldObject.gameObject.name + " Overlap mit " + detectedCollider[0].name);
-                InteractiveObject interactiveObject = detectedCollider[0].GetComponent<InteractiveObject>();
-                Vector2 dir = detectedCollider[0].transform.position - worldObject.transform.position;
-                float angleBetweenObjects = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                //Debug.Log("**Winkel dazwischen: " + angleBetweenObjects);
-                Debug.DrawLine(detectedCollider[0].transform.position, worldObject.transform.position, Color.green);
-                Vector2 pushDirection = GetDirectionVectorForRoundedAngle(angleBetweenObjects + 90); //Es werden 90° addiert, weil angleBetweenObjects einen anderen Standard-Winkel hat als der Rest des Spiels.
-                if (CanPushObject(worldObject.GetComponent<InteractiveObject>(), interactiveObject, pushDirection)) {
-                    worldObject.GetComponent<InteractiveObject>().Push(interactiveObject, pushDirection);
-                } else if (interactiveObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(pushDirection)) {
-                    Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
-                }
-                
+        /*GameObject test = new GameObject();
+        test.layer = LayerMask.NameToLayer("Goals");
+        Debug.Log("!!!!!!!!!" + contactFilter.IsFilteringLayerMask(test));*/
+
+        collider.OverlapCollider(contactFilter, detectedCollider);
+        if (detectedCollider[0] != null && detectedCollider[0].GetComponent<InteractiveObject>()) {
+            Debug.Log("*" + worldObject.gameObject.name + " Overlap mit " + detectedCollider[0].name);
+            InteractiveObject interactiveObject = detectedCollider[0].GetComponent<InteractiveObject>();
+            Vector2 dir = detectedCollider[0].transform.position - worldObject.transform.position;
+            float angleBetweenObjects = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            //Debug.Log("**Winkel dazwischen: " + angleBetweenObjects);
+            Debug.DrawLine(detectedCollider[0].transform.position, worldObject.transform.position, Color.green);
+            Vector2 pushDirection = GetDirectionVectorForRoundedAngle(angleBetweenObjects + 90); //Es werden 90° addiert, weil angleBetweenObjects einen anderen Standard-Winkel hat als der Rest des Spiels.
+            if (CanPushObject(worldObject.GetComponent<InteractiveObject>(), interactiveObject, pushDirection)) {
+                worldObject.GetComponent<InteractiveObject>().Push(interactiveObject, pushDirection);
+            } else if (interactiveObject.GetComponent<RayCaster>().CheckForCollisionsInDirection(pushDirection)) {
+                Debug.LogError(gameObject.name + " kann sich nicht in die angegebene Richtung bewegen, weil es zur Kollision kommen würde.");
             }
+
         }
     }
 

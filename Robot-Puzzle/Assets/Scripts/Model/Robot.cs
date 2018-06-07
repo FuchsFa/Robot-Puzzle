@@ -447,6 +447,7 @@ public class Robot : MonoBehaviour {
             sensedData["direction"] = temp.GetFacingAngle(temp.direction);
             sensedData["movable"] = temp.Movable;
             sensedData["grabable"] = temp.Grabable;
+            sensedData["color"] = "none";
             if(temp.grabbedBy != null) {
                 sensedData["grabbedBy"] = temp.grabbedBy.name;
             } else {
@@ -461,6 +462,7 @@ public class Robot : MonoBehaviour {
             WorldObject tempObj = temp.GetComponent<WorldObject>();
             if (tempObj != null) {
                 sensedData["type"] = tempObj.objectType;
+                sensedData["color"] = tempObj.objectColor.ToString();
             }
         } else if(GetComponent<RayCaster>().CheckForCollisionsInDirection(myInteractiveObject.direction)) {
             //Wenn kein Interaktives Objekt vor dem Roboter steht, er aber trotzdem kollidieren würde, muss eine Wand vor ihm sein.
@@ -469,6 +471,7 @@ public class Robot : MonoBehaviour {
             sensedData["grabable"] = false;
             sensedData["grabbedBy"] = "none";
             sensedData["direction"] = -1;
+            sensedData["color"] = "none";
             sensedData["x"] = myInteractiveObject.posX + myInteractiveObject.direction.x;
             sensedData["y"] = myInteractiveObject.posY + myInteractiveObject.direction.y;
         } else {
@@ -478,6 +481,7 @@ public class Robot : MonoBehaviour {
             sensedData["grabable"] = false;
             sensedData["grabbedBy"] = "none";
             sensedData["direction"] = -1;
+            sensedData["color"] = "none";
             sensedData["x"] = myInteractiveObject.posX + myInteractiveObject.direction.x;
             sensedData["y"] = myInteractiveObject.posY + myInteractiveObject.direction.y;
         }
