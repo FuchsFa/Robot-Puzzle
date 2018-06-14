@@ -6,6 +6,11 @@ public class CameraController : MonoBehaviour {
 
     [SerializeField] private float moveSpeed = 1;
 
+    [SerializeField] private float cameraBoundsNegativeX;
+    [SerializeField] private float cameraBoundsPositiveX;
+    [SerializeField] private float cameraBoundsNegativeY;
+    [SerializeField] private float cameraBoundsPositiveY;
+
     private Vector3 dragOrigin;
     private Vector3 difference;
     private bool drag = false;
@@ -17,7 +22,7 @@ public class CameraController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void LateUpdate () {
-		if(RobotManager.Instance.selectedRobot == null) {
+		if(RobotManager.Instance.selectedRobot == null && !RobotManager.Instance.RobotPlacementActive) {
             HandleMouseDrag();
             MoveCamera();
         }
@@ -37,7 +42,9 @@ public class CameraController : MonoBehaviour {
             drag = false;
         }
         if(drag == true) {
-            Camera.main.transform.position = dragOrigin - difference;
+            float cameraX = Mathf.Clamp((dragOrigin.x - difference.x), cameraBoundsNegativeX, cameraBoundsPositiveX);
+            float cameraY = Mathf.Clamp((dragOrigin.y - difference.y), cameraBoundsNegativeY, cameraBoundsPositiveY);
+            Camera.main.transform.position = new Vector3(cameraX, cameraY, -10);
         }
     }
 
@@ -46,6 +53,8 @@ public class CameraController : MonoBehaviour {
     /// </summary>
     private void MoveCamera() {
         Vector3 move = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, Input.GetAxis("Vertical") * moveSpeed);
-        Camera.main.transform.position += move;
+        float cameraX = Mathf.Clamp((Camera.main.transform.position.x + move.x), cameraBoundsNegativeX, cameraBoundsPositiveX);
+        float cameraY = Mathf.Clamp((Camera.main.transform.position.y + move.y), cameraBoundsNegativeY, cameraBoundsPositiveY);
+        Camera.main.transform.position = new Vector3(cameraX, cameraY, -10);
     }
 }

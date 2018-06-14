@@ -8,6 +8,16 @@ public class RobotManager : MonoBehaviour {
 
     public static RobotManager Instance { get; protected set; }
 
+    public bool RobotPlacementActive {
+        get {
+            return robotPlacementActive;
+        }
+
+        set {
+            robotPlacementActive = value;
+        }
+    }
+
     [SerializeField]
     private GameObject robotPrefab;
 
