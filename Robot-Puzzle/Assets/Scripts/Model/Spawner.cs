@@ -41,6 +41,9 @@ public class Spawner : MonoBehaviour {
     private void InitializePrefabDictionary() {
         prefabDictionary = new Dictionary<string, GameObject>();
         foreach(string type in worldObjectTypes) {
+            if(prefabDictionary.ContainsKey(type)) {
+                return;
+            }
             GameObject worldObjectPrefab = GameStateManager.Instance.worldObjectManager.GetPrefabFromDictionary(type);
             prefabDictionary.Add(type, worldObjectPrefab);
         }

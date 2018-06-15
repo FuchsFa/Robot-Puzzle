@@ -43,6 +43,9 @@ public class ConsolePanelManager : MonoBehaviour {
     /// </summary>
     /// <param name="text"></param>
     public void LogStringToInGameConsole(string text) {
+        if(text.Length == 0) {
+            return;
+        }
         Debug.Log("Trying to log '" + text + "' to the ingame console.");
 
         consoleContent += "\n";

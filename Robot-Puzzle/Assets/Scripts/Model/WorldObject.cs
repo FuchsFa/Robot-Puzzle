@@ -352,19 +352,6 @@ public class WorldObject : MonoBehaviour {
             return DynValue.NewYieldReq(new DynValue[] { coroutine });
         }
 
-        /*Vector2 raycastOrigin = new Vector2(transform.position.x, transform.position.y);
-        Vector2 raycastDirection = new Vector2(0, -1);
-        LayerMask collisionMask = GetComponent<RayCaster>().collisionMask;
-        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, raycastDirection, 0.3f, collisionMask);
-        Debug.DrawRay(raycastOrigin, raycastDirection, Color.cyan, 0.5f);
-        if (hit) {
-            WorldObject found = hit.transform.gameObject.GetComponent<WorldObject>();
-            if (found != null && found.objectColor != paintColor) {
-                found.ChangeColor(paintColor);
-            } else {
-                Debug.Log("Objekt '" + hit.transform.name + "' kann nicht bemalt werden.");
-            }
-        }*/
         WorldObject target = GetComponent<RayCaster>().CheckForWorldObject(myInteractiveObject.direction);
         if(target != null && target.objectColor != paintColor) {
             target.ChangeColor(paintColor);

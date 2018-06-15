@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class VictoryPanelManager : MonoBehaviour {
@@ -32,12 +33,25 @@ public class VictoryPanelManager : MonoBehaviour {
         scoreCost = 0;
         scoreCode = 0;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
+    /// <summary>
+    /// Lädt das Level neu.
+    /// </summary>
+    public void RestartLevel() {
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
+    }
+
+    /// <summary>
+    /// Lädt das Hauptmenü.
+    /// </summary>
+    public void GoToMainMenu() {
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    /// <summary>
+    /// Wird aufgerufen, wenn alle Ziele des Levels erfüllt sind.
+    /// </summary>
     public void OnVictory() {
         CalculateScore();
         ChangeScoreText();

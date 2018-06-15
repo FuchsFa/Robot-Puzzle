@@ -88,7 +88,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1949982430755366}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5, y: -2.5, z: 0}
+  m_LocalPosition: {x: 5.5, y: -1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224363343394290082}
@@ -194,11 +194,13 @@ MonoBehaviour:
   worldObjectRotation: {x: 0, y: 0}
   connectionsMatter: 1
   connectionNorth: 0
-  connectionEast: 0
-  connectionSouth: 0
-  connectionWest: 1
+  connectionEast: 1
+  connectionSouth: 1
+  connectionWest: 0
+  colorMatters: 1
+  worldObjectColor: {r: 1, g: 0, b: 0, a: 1}
   worldObjectPreview: {fileID: 212963557086228726}
-  amountNeeded: 1
+  amountNeeded: 9
   display: {fileID: 114763175136565550}
   collisionMask:
     serializedVersion: 2
@@ -219,7 +221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3501838, g: 0.6923173, b: 0.9338235, a: 1}
+  m_Color: {r: 0.92901343, g: 0.93333334, b: 0.34901956, a: 1}
   m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:

@@ -33,7 +33,7 @@ public class GameStateManager : MonoBehaviour {
         isPaused = true;
         robotManager = GetComponent<RobotManager>();
         worldObjectManager = GetComponent<WorldObjectManager>();
-        TestStart();
+        //TestStart();
 	}
 
     /// <summary>
