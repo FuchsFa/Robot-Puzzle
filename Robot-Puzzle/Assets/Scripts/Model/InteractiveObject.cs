@@ -216,7 +216,7 @@ public class InteractiveObject : MonoBehaviour {
         if(movable && grabbedBy == null) {
             if(GetComponent<RayCaster>()) {
                 RayCaster raycaster = GetComponent<RayCaster>();
-                InteractiveObject interactiveObject = raycaster.CheckForPushableObject(direction);
+                InteractiveObject interactiveObject = raycaster.CheckForPushableObject(moveDir);
                 if (interactiveObject != null) {
                     Push(interactiveObject, moveDir);
                 }

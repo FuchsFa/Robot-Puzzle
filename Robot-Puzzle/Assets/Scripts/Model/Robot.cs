@@ -151,6 +151,7 @@ public class Robot : MonoBehaviour {
         string[] words = temp.Split(new char[] { ' ', '\n' });
         foreach(string word in words) {
             if((actionDictionary.ContainsKey(word) || word == "move") && !allowedActionNames.Contains(word)) {
+                Debug.Log("***Word '" + word + "' is not a valid part of a lua script.");
                 valid = false;
             }
         }
