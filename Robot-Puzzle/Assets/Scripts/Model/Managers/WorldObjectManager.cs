@@ -164,8 +164,10 @@ public class WorldObjectManager : MonoBehaviour {
             WorldObject obj = worldObject.GetComponent<WorldObject>();
             int x = worldObject.GetComponent<InteractiveObject>().posX;
             int y = worldObject.GetComponent<InteractiveObject>().posY;
-            if (!obj.CanWalkOn(groundTilemap.GetTile<GroundTile>(new Vector3Int(x, y, 0)))) {
+            GroundTile tile = groundTilemap.GetTile<GroundTile>(new Vector3Int(x, y, 0));
+            if (!obj.CanWalkOn(tile)) {
                 Debug.LogError(worldObject.name + " darf nicht auf dem Tile stehen, auf dem es gerade steht!");
+                ConsolePanelManager.Instance.LogErrorToInGameConsole(worldObject.name + " can't stand on " + tile.terrainType.ToString() + " ground.");
                 gameStateManager.Stop();
                 return;
             }

@@ -144,6 +144,7 @@ public class RobotManager : MonoBehaviour {
             bot.StartLuaScript();
         }
         if(scriptNotValid) {
+            //TODO: Error-Nachricht auf die ingamekonsole schreiben.
             gameStateManager.Stop();
         }
     }
@@ -165,8 +166,10 @@ public class RobotManager : MonoBehaviour {
             Robot bot = robotObject.GetComponent<Robot>();
             int x = robotObject.GetComponent<InteractiveObject>().posX;
             int y = robotObject.GetComponent<InteractiveObject>().posY;
-            if(!bot.CanWalkOn(tilemap.GetTile<GroundTile>(new Vector3Int(x, y, 0)))) {
+            GroundTile tile = tilemap.GetTile<GroundTile>(new Vector3Int(x, y, 0));
+            if (!bot.CanWalkOn(tile)) {
                 Debug.LogError(robotObject.name + " darf nicht auf dem Tile stehen, auf dem es gerade steht.");
+                ConsolePanelManager.Instance.LogErrorToInGameConsole(robotObject.name + " can't stand on " + tile.terrainType.ToString() + " ground.");
                 gameStateManager.Stop();
                 return;
             }

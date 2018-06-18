@@ -91,6 +91,8 @@ public class Goal : MonoBehaviour {
                 TakeGameObjectForOutput(hit.transform.gameObject);
             } else {
                 Debug.Log("Objekt kann nicht ans Ziel '" + gameObject.name + "' übergeben werden.");
+                ConsolePanelManager.Instance.LogErrorToInGameConsole("Trying to output an invalid object at " + gameObject.name + ".");
+                GameStateManager.Instance.Stop();
             }
         }
     }

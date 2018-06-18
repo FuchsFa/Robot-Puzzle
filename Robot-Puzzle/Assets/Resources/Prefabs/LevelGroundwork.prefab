@@ -8459,7 +8459,7 @@ MonoBehaviour:
   discardButton: {fileID: 114554717014816630}
   keywordColor:
     serializedVersion: 2
-    rgba: 4290869056
+    rgba: 4293215443
   commentColor:
     serializedVersion: 2
     rgba: 4284724311
@@ -8468,7 +8468,7 @@ MonoBehaviour:
     rgba: 4285306597
   numberColor:
     serializedVersion: 2
-    rgba: 4291854440
+    rgba: 4291873896
 --- !u!114 &114955707454094102
 MonoBehaviour:
   m_ObjectHideFlags: 1

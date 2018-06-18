@@ -19,6 +19,8 @@ public class ConsolePanelManager : MonoBehaviour {
 
     private string consoleContent;
 
+    private bool enableDevCommands = false;
+
 	// Use this for initialization
 	void Start () {
         Instance = this;
@@ -33,9 +35,23 @@ public class ConsolePanelManager : MonoBehaviour {
     /// <param name="text"></param>
     public void LogStringFromInputField(string text) {
         LogStringToInGameConsole(text);
+        if (text.StartsWith("/")) {
+            ProcessCommand(text);
+        }
         inputField.text = "";
         inputField.Select();
         inputField.OnPointerClick(new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current));
+    }
+
+    private void ProcessCommand(string command) {
+        if(command == "/dev" && Application.isEditor) {
+            enableDevCommands = true;
+        }
+        if(enableDevCommands) {
+            if(command == "/solve") {
+                //TODO: Jetzt lösen
+            }
+        }
     }
 
     /// <summary>

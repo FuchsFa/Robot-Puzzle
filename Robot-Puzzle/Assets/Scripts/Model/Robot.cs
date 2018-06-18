@@ -133,7 +133,16 @@ public class Robot : MonoBehaviour {
         if(scriptCode == "") {
             return;
         }
-        script.DoString(scriptCode);
+
+        try {
+            script.DoString(scriptCode);
+        }
+        catch (MoonSharp.Interpreter.SyntaxErrorException) {
+            ConsolePanelManager.Instance.LogErrorToInGameConsole("Syntax error in " + name + "'s script.");
+            GameStateManager.Instance.Stop();
+            return;
+        }
+        
 
         coroutine = null;
         DynValue function = script.Globals.Get("action");
@@ -204,7 +213,9 @@ public class Robot : MonoBehaviour {
         }
         coroutine = null;
         DynValue function = script.Globals.Get("action");
-        coroutine = script.CreateCoroutine(function);
+        if(function.Type == DataType.Function || function.Type == DataType.ClrFunction) {
+            coroutine = script.CreateCoroutine(function);
+        }
     }
 
     /// <summary>
@@ -328,8 +339,10 @@ public class Robot : MonoBehaviour {
     /// </summary>
     public DynValue ReleaseObject() {
         Debug.Log(gameObject.name + " releases its grabbed object.");
-        grabbedObject.OnRelease();
-        grabbedObject = null;
+        if(grabbedObject != null) {
+            grabbedObject.OnRelease();
+            grabbedObject = null;
+        }
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
