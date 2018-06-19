@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a36b44d005ad3524383d3e5ebe9e6955, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldObjectType: Ore
+  worldObjectTypes: []
   worldObjectPreview: {fileID: 212988159944582140}
   spawnInterval: 5
   counterDisplay: {fileID: 114450196661638558}
@@ -242,6 +242,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -286,6 +287,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -307,7 +309,7 @@ SpriteRenderer:
   m_SortingLayerID: 1987882343
   m_SortingLayer: 6
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300016, guid: 2fa09424e3a6630449db96e3b9c7ab1a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1d27cd842f2d2024094bcddd6983b2b2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.5019608}
   m_FlipX: 0
   m_FlipY: 0

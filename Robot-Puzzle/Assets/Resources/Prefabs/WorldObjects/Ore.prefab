@@ -193,7 +193,9 @@ MonoBehaviour:
   objectType: Ore
   scriptText: {fileID: 0}
   myGroup: {fileID: 0}
+  connective: 0
   terrainCompatability: 00000000
+  objectColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &114092871337005690
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -240,6 +242,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -284,6 +287,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -328,6 +332,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -372,6 +377,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -416,6 +422,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -437,7 +444,7 @@ SpriteRenderer:
   m_SortingLayerID: 1987882343
   m_SortingLayer: 6
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300016, guid: 2fa09424e3a6630449db96e3b9c7ab1a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1d27cd842f2d2024094bcddd6983b2b2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
