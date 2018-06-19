@@ -1,0 +1,21 @@
+function action()
+	while true do
+		tbl = sense()
+		if tbl["type"] == "Ore" then
+			grab()
+			traverseSea()
+			release()
+			traverseSea()
+		else
+			release()
+		end
+	end
+end
+
+function traverseSea()
+	turnLeft()
+	turnLeft()
+	while checkGround()["terrainType"] == "liquid" do
+		walk()
+	end
+end

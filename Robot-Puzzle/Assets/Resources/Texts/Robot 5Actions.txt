@@ -1,0 +1,65 @@
+horizontal = 3
+vertical = 3
+
+function action()
+	while true do
+		tbl = sense()
+		if tbl["type"] == "Ore" then
+			if tbl["grabbedBy"] == "none" then
+				grab()
+				enterRoom()
+				deployObject()
+				returnHome()
+				adjustMovementVariables()
+			end
+		end
+		release()
+	end
+end
+
+function enterRoom()
+	turnLeft()
+	move("west")
+	turnLeft()
+	move("east")
+	move("east")
+	move("east")
+	move("south")
+	move("south")
+end
+
+function deployObject()
+	for x=1,horizontal,1 do
+		move("east")
+	end
+	for y=1,vertical,1 do
+		move("north")
+	end
+	release()
+end
+
+function returnHome()
+	for x=1,horizontal,1 do
+		move("west")
+	end
+	for y=1,vertical,1 do
+		move("south")
+	end
+	move("north")
+	move("north")
+	move("west")
+	move("west")
+	turnRight()
+	turnRight()
+end
+
+function adjustMovementVariables()
+	vertical = vertical - 1
+	if vertical < 1 then
+		vertical = 3
+		horizontal = horizontal - 1
+		if horizontal < 1 then
+			horizontal = 3
+		end
+	end
+end

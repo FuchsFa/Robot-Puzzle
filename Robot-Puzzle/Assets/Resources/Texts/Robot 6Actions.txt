@@ -1,0 +1,66 @@
+refX = 9999
+columnCounter = 0
+
+function action()
+	while true do
+		ref = sense()
+		if ref["type"] == "Ore" then
+			refX = ref["x"]
+			tbl = scanSurroundings()
+			counter = 0
+			for index, value in ipairs(tbl) do
+				obj = value
+				if obj["x"] == refX then
+					if obj["type"] == "Ore" then
+						counter = counter + 1
+					end
+				end
+    		end
+			if counter == 3 then
+				weldColumn()
+				columnCounter = columnCounter +1
+				if columnCounter == 3 then
+					columnCounter = 0
+					returnHome()
+				end
+			else
+				weld()
+			end
+		else
+			weld()
+		end
+	end
+end
+
+function weldColumn()
+	move("west")
+	turnLeft()
+	direction = "south"
+	for i=1,3,1 do
+		if i%2 == 0 then
+			direction = "north"
+		else
+			direction = "south"
+		end
+		weldColumnOnce(direction)
+	end
+	for i=1,4,1 do
+		move("north")
+	end
+	turnRight()
+end
+
+function weldColumnOnce(dir)
+	for j=1,4,1 do
+		weld()
+		move(dir)
+	end
+end
+
+function returnHome()
+	move("south")
+	move("east")
+	move("east")
+	move("east")
+	move("north")
+end

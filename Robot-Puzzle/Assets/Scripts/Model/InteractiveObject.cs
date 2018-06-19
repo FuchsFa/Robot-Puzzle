@@ -179,10 +179,14 @@ public class InteractiveObject : MonoBehaviour {
             int temp = relativeX;
             relativeX = relativeY;
             relativeY = -temp;
+            Vector2 tempDir = relativeDirection;
+            relativeDirection = new Vector2(tempDir.y, -tempDir.x);
         } else if(turnDir == "Left") {
             int temp = relativeX;
             relativeX = -relativeY;
             relativeY = temp;
+            Vector2 tempDir = relativeDirection;
+            relativeDirection = new Vector2(-tempDir.y, tempDir.x);
         }
     }
 
@@ -212,7 +216,7 @@ public class InteractiveObject : MonoBehaviour {
     /// </summary>
     /// <param name="moveDir"></param>
     public void Move(Vector2 moveDir) {
-        Debug.Log(gameObject.name + " bewegt sich.");
+        //Debug.Log(gameObject.name + " bewegt sich.");
         if(movable && grabbedBy == null) {
             if(GetComponent<RayCaster>()) {
                 RayCaster raycaster = GetComponent<RayCaster>();
@@ -234,7 +238,7 @@ public class InteractiveObject : MonoBehaviour {
                 grabbedObject.MoveToRelativePosition();
             }
             gameObject.transform.position = new Vector3(posX + 0.5f, posY + 0.5f);
-            Debug.Log(gameObject.name + " neue Position: " + posX + "/" + posY);
+            //Debug.Log(gameObject.name + " neue Position: " + posX + "/" + posY);
         }
     }
 

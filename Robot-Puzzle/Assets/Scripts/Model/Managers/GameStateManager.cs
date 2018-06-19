@@ -33,34 +33,73 @@ public class GameStateManager : MonoBehaviour {
         isPaused = true;
         robotManager = GetComponent<RobotManager>();
         worldObjectManager = GetComponent<WorldObjectManager>();
-        //TestStart();
 	}
 
     /// <summary>
-    /// Erstellt die Für den Test nötigen Objekte und startet das Spiel.
+    /// Erstellt die Für den Test nötigen Objekte.
     /// </summary>
-    private void TestStart() {
-        GameObject robotObject = robotManager.CreateDefaultRobot();
-        robotObject.name = "Robot A";
-        WeldingTool tool = new WeldingTool(robotObject.GetComponent<Robot>());
-        TextAsset text = Resources.Load<TextAsset>("Texts/BotAActions");
+    public void TestSolve() {
+        //Robot1
+        GameObject robot1Object = robotManager.CreateRobot(-6, 3);
+        robotManager.TurnRobotStartingDirection(robot1Object);
+        robotManager.TurnRobotStartingDirection(robot1Object);
+        ShreddingTool tool1 = new ShreddingTool(robot1Object.GetComponent<Robot>());
+        BasicLeg leg1 = new BasicLeg(robot1Object.GetComponent<Robot>());
+        TextAsset text = Resources.Load<TextAsset>("Texts/Robot 1Actions");
         string scriptCode = text.text;
-        robotObject.GetComponent<Robot>().ChangeScriptCode(scriptCode);
+        robot1Object.GetComponent<Robot>().ChangeScriptCode(scriptCode);
 
-        GameObject worldObjectOne = worldObjectManager.CreateWorldObject("Ore", 0, -1);
-        worldObjectOne.name = "Ore A";
-        //worldObjectOne.GetComponent<WorldObject>().OpenForConnections();
-        GameObject worldObjectTwo = worldObjectManager.CreateWorldObject("Ore", 1, -1);
-        worldObjectTwo.name = "Ore B";
-        //worldObjectTwo.GetComponent<WorldObject>().OpenForConnections();
-        //worldObjectManager.ConnectWorldObjects(worldObjectOne.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());
-        /*GameObject worldObjectThree = worldObjectManager.CreateWorldObject("Ore", -2, -1);
-        worldObjectThree.name = "Ore C";
-        worldObjectManager.ConnectWorldObjects(worldObjectThree.GetComponent<WorldObject>(), worldObjectTwo.GetComponent<WorldObject>());*/
+        //Robot2
+        GameObject robot2Object = robotManager.CreateRobot(-7, 5);
+        BasicArm tool2 = new BasicArm(robot2Object.GetComponent<Robot>());
+        SpiderLeg leg2 = new SpiderLeg(robot2Object.GetComponent<Robot>());
+        BasicSensor sensor2 = new BasicSensor(robot2Object.GetComponent<Robot>());
+        text = Resources.Load<TextAsset>("Texts/Robot 2Actions");
+        scriptCode = text.text;
+        robot2Object.GetComponent<Robot>().ChangeScriptCode(scriptCode);
 
-        //GameObject worldObjectIngot = worldObjectManager.CreateWorldObject("Ingot", -4, 2);
+        //Robot3
+        GameObject robot3Object = robotManager.CreateRobot(-7, 2);
+        robotManager.TurnRobotStartingDirection(robot3Object);
+        robotManager.TurnRobotStartingDirection(robot3Object);
+        BasicArm tool3 = new BasicArm(robot3Object.GetComponent<Robot>());
+        Boat leg3 = new Boat(robot3Object.GetComponent<Robot>());
+        BasicSensor sensor3 = new BasicSensor(robot3Object.GetComponent<Robot>());
+        GroundSensor sensor3_2 = new GroundSensor(robot3Object.GetComponent<Robot>());
+        text = Resources.Load<TextAsset>("Texts/Robot 3Actions");
+        scriptCode = text.text;
+        robot3Object.GetComponent<Robot>().ChangeScriptCode(scriptCode);
 
-        //Play();
+        //Robot4
+        GameObject robot4Object = robotManager.CreateRobot(-7, -2);
+        robotManager.TurnRobotStartingDirection(robot4Object);
+        robotManager.TurnRobotStartingDirection(robot4Object);
+        BasicArm tool4 = new BasicArm(robot4Object.GetComponent<Robot>());
+        BasicLeg leg4 = new BasicLeg(robot4Object.GetComponent<Robot>());
+        BasicSensor sensor4 = new BasicSensor(robot4Object.GetComponent<Robot>());
+        text = Resources.Load<TextAsset>("Texts/Robot 4Actions");
+        scriptCode = text.text;
+        robot4Object.GetComponent<Robot>().ChangeScriptCode(scriptCode);
+
+        //Robot5
+        GameObject robot5Object = robotManager.CreateRobot(-2, -3);
+        robotManager.TurnRobotStartingDirection(robot5Object);
+        BasicArm tool5 = new BasicArm(robot5Object.GetComponent<Robot>());
+        SpiderLeg leg5 = new SpiderLeg(robot5Object.GetComponent<Robot>());
+        BasicSensor sensor5 = new BasicSensor(robot5Object.GetComponent<Robot>());
+        text = Resources.Load<TextAsset>("Texts/Robot 5Actions");
+        scriptCode = text.text;
+        robot5Object.GetComponent<Robot>().ChangeScriptCode(scriptCode);
+
+        //Robot6
+        GameObject robot6Object = robotManager.CreateRobot(4, -1);
+        WeldingTool tool6 = new WeldingTool(robot6Object.GetComponent<Robot>());
+        SpiderLeg leg6 = new SpiderLeg(robot6Object.GetComponent<Robot>());
+        BasicSensor sensor6 = new BasicSensor(robot6Object.GetComponent<Robot>());
+        Scanner sensor6_2 = new Scanner(robot6Object.GetComponent<Robot>());
+        text = Resources.Load<TextAsset>("Texts/Robot 6Actions");
+        scriptCode = text.text;
+        robot6Object.GetComponent<Robot>().ChangeScriptCode(scriptCode);
     }
 
     public void OnSpeedSliderChange() {

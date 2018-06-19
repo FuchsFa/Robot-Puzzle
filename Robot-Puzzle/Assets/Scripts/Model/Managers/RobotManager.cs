@@ -55,7 +55,7 @@ public class RobotManager : MonoBehaviour {
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    private GameObject CreateRobot(int x, int y) {
+    public GameObject CreateRobot(int x, int y) {
         GameObject robotObject = Instantiate(robotPrefab);
         Robot bot = robotObject.GetComponent<Robot>();
         bot.InitializeRobot(new Vector2(0, -1), x, y);
@@ -91,7 +91,7 @@ public class RobotManager : MonoBehaviour {
     /// Dreht den angegebenen Roboter um 90° im Uhrzeigersinn.
     /// </summary>
     /// <param name="robotObject"></param>
-    private void TurnRobotStartingDirection(GameObject robotObject) {
+    public void TurnRobotStartingDirection(GameObject robotObject) {
         InteractiveObject obj = robotObject.GetComponent<InteractiveObject>();
         obj.TurnStartingDirection();
     }
@@ -293,6 +293,23 @@ public class RobotManager : MonoBehaviour {
                 panelManager.OnDeselectRobot();
                 RobotDetailPanelManager.Instance.AdjustTotalCostDisplay();
             }
+        }
+    }
+
+    /// <summary>
+    /// Speichert die Skripte aller Roboter auf dem Spielfeld als .txt-Dateien im Resources/Texts Ordner.
+    /// </summary>
+    public void SaveCurrentRobotScripts() {
+        if(gameStateManager.isPaused) {
+            ConsolePanelManager.Instance.LogStringToInGameConsole("Saving Robot scripts for " + robots.Count + " robots.");
+            foreach(GameObject robotObject in robots) {
+                string scriptCode = robotObject.GetComponent<Robot>().GetScriptCode();
+                System.IO.File.WriteAllText("D:/Daten/Studium/BachelorArbeit/Robot-Puzzle/Robot-Puzzle/Assets/Resources/Texts/" + robotObject.name + "Actions.txt", scriptCode);
+                ConsolePanelManager.Instance.LogStringToInGameConsole(robotObject.name + "'s script has been saved.");
+            }
+            ConsolePanelManager.Instance.LogStringToInGameConsole("done saving robot scripts.");
+        } else {
+            ConsolePanelManager.Instance.LogStringToInGameConsole("Can't save scripts in play mode.");
         }
     }
 

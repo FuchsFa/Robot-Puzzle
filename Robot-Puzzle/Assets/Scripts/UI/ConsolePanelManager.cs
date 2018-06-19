@@ -46,10 +46,14 @@ public class ConsolePanelManager : MonoBehaviour {
     private void ProcessCommand(string command) {
         if(command == "/dev" && Application.isEditor) {
             enableDevCommands = true;
+            LogStringToInGameConsole("Developer mode enabled.");
         }
         if(enableDevCommands) {
             if(command == "/solve") {
-                //TODO: Jetzt lösen
+                GameStateManager.Instance.TestSolve();
+            }
+            if(command == "/save") {
+                RobotManager.Instance.SaveCurrentRobotScripts();
             }
         }
     }
@@ -62,7 +66,7 @@ public class ConsolePanelManager : MonoBehaviour {
         if(text.Length == 0) {
             return;
         }
-        Debug.Log("Trying to log '" + text + "' to the ingame console.");
+        //Debug.Log("Trying to log '" + text + "' to the ingame console.");
 
         consoleContent += "\n";
         consoleContent += text;

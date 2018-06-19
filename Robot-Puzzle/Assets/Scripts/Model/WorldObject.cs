@@ -28,6 +28,7 @@ public class WorldObject : MonoBehaviour {
     private GameObject[] connectionSprites;
 
     //Solange das WorldObject connective ist, verbindet es sich automatisch mit benachbarten WorldObjects, die ebenfalls connective sind.
+    [SerializeField]
     private bool connective;
 
     [SerializeField]
@@ -151,8 +152,10 @@ public class WorldObject : MonoBehaviour {
         int relativeX = other.gameObject.GetComponent<InteractiveObject>().posX - GetComponent<InteractiveObject>().posX;
         int relativeY = other.gameObject.GetComponent<InteractiveObject>().posY - GetComponent<InteractiveObject>().posY;
         Vector2 relativePosition = new Vector2(relativeX, relativeY);
+        Debug.Log("**relative Position: " + relativeX + "/" + relativeY);
         int slot = GetConnectionSlotForPosition(relativePosition);
-        if(connectedWorldObjects[slot] != null) {
+        Debug.Log("***slot:" + slot);
+        if(slot != -1 && connectedWorldObjects[slot] != null) {
             Debug.Log("Das angegebene WorldObject kann nicht mit diesem verbunden werden, weil der passende Slot schon belegt ist.");
             return;
         } else {
@@ -288,7 +291,7 @@ public class WorldObject : MonoBehaviour {
     /// Dreht die zurzeitige Ausrichtung des Roboters um 90° gegen den Uhrzeigersinn.
     /// </summary>
     public DynValue TurnLeft() {
-        Debug.Log(gameObject.name + " turns left.");
+        //Debug.Log(gameObject.name + " turns left.");
         myInteractiveObject.TurnLeft();
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
@@ -297,7 +300,7 @@ public class WorldObject : MonoBehaviour {
     /// Dreht die zurzeitige Ausrichtung des Roboters um 90° im Uhrzeigersinn.
     /// </summary>
     public DynValue TurnRight() {
-        Debug.Log(gameObject.name + " turns right.");
+        //Debug.Log(gameObject.name + " turns right.");
         myInteractiveObject.TurnRight();
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
@@ -306,7 +309,7 @@ public class WorldObject : MonoBehaviour {
     /// Lässt den Roboter einen Schritt in Blickrichtung gehen.
     /// </summary>
     public DynValue Walk() {
-        Debug.Log(gameObject.name + " walks.");
+        //Debug.Log(gameObject.name + " walks.");
         myInteractiveObject.Move(myInteractiveObject.direction);
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
@@ -335,7 +338,7 @@ public class WorldObject : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public DynValue Wait() {
-        Debug.Log(gameObject.name + " waits.");
+        //Debug.Log(gameObject.name + " waits.");
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 
@@ -344,7 +347,7 @@ public class WorldObject : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public DynValue Paint(string colorName) {
-        Debug.Log(name + " versucht, etwas zu bemalen.");
+        //Debug.Log(name + " versucht, etwas zu bemalen.");
 
         Color paintColor;
         ColorUtility.TryParseHtmlString(colorName, out paintColor);
@@ -366,7 +369,7 @@ public class WorldObject : MonoBehaviour {
     /// Überprüft, ob auf dem Feld vor dem WorldObject ein interaktives Objekt liegt.
     /// </summary>
     public DynValue CheckForInteractiveObjectInFront() {
-        Debug.Log(gameObject.name + " looks for an Object in its front.");
+        //Debug.Log(gameObject.name + " looks for an Object in its front.");
         Table sensedData = new Table(script);
 
         InteractiveObject temp = GetComponent<RayCaster>().CheckForInteractiveObject(myInteractiveObject.direction);

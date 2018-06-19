@@ -293,7 +293,7 @@ public class Robot : MonoBehaviour {
     /// Dreht die zurzeitige Ausrichtung des Roboters um 90° gegen den Uhrzeigersinn.
     /// </summary>
     public DynValue TurnLeft() {
-        Debug.Log(gameObject.name + " turns left.");
+        //Debug.Log(gameObject.name + " turns left.");
         myInteractiveObject.TurnLeft();
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
@@ -302,7 +302,7 @@ public class Robot : MonoBehaviour {
     /// Dreht die zurzeitige Ausrichtung des Roboters um 90° im Uhrzeigersinn.
     /// </summary>
     public DynValue TurnRight() {
-        Debug.Log(gameObject.name + " turns right.");
+        //Debug.Log(gameObject.name + " turns right.");
         myInteractiveObject.TurnRight();
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
@@ -313,7 +313,7 @@ public class Robot : MonoBehaviour {
     /// Wenn ein interactives Objekt vor dem Roboter liegt, wird es gegriffen,sofern noch kein anderes Objekt gehalten wird.
     /// </summary>
     public DynValue GrabObject() {
-        Debug.Log(gameObject.name + " tries to grab.");
+        //Debug.Log(gameObject.name + " tries to grab.");
         if (grabbedObject != null) {
             //Wenn bereits ein Objekt gegriffen wird, passiert nichts.
             return DynValue.NewYieldReq(new DynValue[] { coroutine });
@@ -338,7 +338,7 @@ public class Robot : MonoBehaviour {
     /// Lässt das derzeit gehaltene Objekt los.
     /// </summary>
     public DynValue ReleaseObject() {
-        Debug.Log(gameObject.name + " releases its grabbed object.");
+        //Debug.Log(gameObject.name + " releases its grabbed object.");
         if(grabbedObject != null) {
             grabbedObject.OnRelease();
             grabbedObject = null;
@@ -351,7 +351,7 @@ public class Robot : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public DynValue Weld() {
-        Debug.Log(name + " versucht, etwas zu schweißen.");
+        //Debug.Log(name + " versucht, etwas zu schweißen.");
         WorldObject objectToWeld = GetComponent<RayCaster>().CheckForWorldObject(GetComponent<InteractiveObject>().direction);
         if(objectToWeld != null) {
             objectToWeld.OpenForConnections(true);
@@ -364,7 +364,7 @@ public class Robot : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public DynValue Shred() {
-        Debug.Log(name + " versucht, etwas zu zerstören.");
+        //Debug.Log(name + " versucht, etwas zu zerstören.");
         WorldObject objectToDestroy = GetComponent<RayCaster>().CheckForWorldObject(GetComponent<InteractiveObject>().direction);
         if(objectToDestroy != null) {
             WorldObjectManager.Instance.RemoveWorldObject(objectToDestroy.gameObject);
@@ -378,7 +378,7 @@ public class Robot : MonoBehaviour {
     /// Lässt den Roboter einen Schritt in Blickrichtung gehen.
     /// </summary>
     public DynValue Walk() {
-        Debug.Log(gameObject.name + " walks.");
+        //Debug.Log(gameObject.name + " walks.");
         myInteractiveObject.Move(myInteractiveObject.direction);
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
@@ -389,8 +389,7 @@ public class Robot : MonoBehaviour {
     /// <param name="directionName"></param>
     /// <returns></returns>
     public DynValue Move(string directionName) {
-        Debug.Log(gameObject.name + " moves " + directionName);
-        //TODO: Bewegen
+        //Debug.Log(gameObject.name + " moves " + directionName);
         Vector2 direction = new Vector2();
         switch (directionName) {
             case "north":
@@ -450,7 +449,7 @@ public class Robot : MonoBehaviour {
     /// Überprüft, ob auf dem Feld vor dem Roboter ein interaktives Objekt liegt.
     /// </summary>
     public DynValue CheckForInteractiveObjectInFront() {
-        Debug.Log(gameObject.name + " activates its sensor.");
+        //Debug.Log(gameObject.name + " activates its sensor.");
         Table sensedData = new Table(script);
 
         InteractiveObject temp = GetComponent<RayCaster>().CheckForInteractiveObject(myInteractiveObject.direction);
@@ -508,7 +507,7 @@ public class Robot : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public DynValue CheckGroundTileInFront() {
-        Debug.Log(name + " checks the Ground Tile in its front.");
+        //Debug.Log(name + " checks the Ground Tile in its front.");
         Table sensedData = new Table(script);
 
         int x = myInteractiveObject.posX + (int)myInteractiveObject.direction.x;
@@ -531,7 +530,7 @@ public class Robot : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public DynValue ScanSurroundings() {
-        Debug.Log(name + " scans its surroundings.");
+        //Debug.Log(name + " scans its surroundings.");
         Table sensedData = new Table(script);
 
         List<WorldObject> temp = WorldObjectManager.Instance.GetWorldObjectList();

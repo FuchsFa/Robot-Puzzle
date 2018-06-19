@@ -1,0 +1,5 @@
+function action()
+	while true do
+		shred()
+	end
+end

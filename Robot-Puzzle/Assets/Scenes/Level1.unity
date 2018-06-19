@@ -490,7 +490,7 @@ Prefab:
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
       propertyPath: connectionNorth
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
@@ -584,6 +584,11 @@ Prefab:
       propertyPath: myGroup
       value: 
       objectReference: {fileID: 449629437}
+    - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
+        type: 2}
+      propertyPath: connectionSouth
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e7a35616353c46949b1f937392ad6fec, type: 2}
   m_IsPrefabParent: 0
@@ -668,7 +673,7 @@ Prefab:
     - target: {fileID: 114823196446615346, guid: 7cb02b575b2f4e24da0b0692c32b06dc,
         type: 2}
       propertyPath: worldObjectTypes.Array.size
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4766071392805010, guid: 7cb02b575b2f4e24da0b0692c32b06dc, type: 2}
       propertyPath: m_LocalPosition.x
@@ -725,6 +730,31 @@ Prefab:
     - target: {fileID: 114823196446615346, guid: 7cb02b575b2f4e24da0b0692c32b06dc,
         type: 2}
       propertyPath: worldObjectTypes.Array.data[4]
+      value: Rock
+      objectReference: {fileID: 0}
+    - target: {fileID: 114823196446615346, guid: 7cb02b575b2f4e24da0b0692c32b06dc,
+        type: 2}
+      propertyPath: worldObjectTypes.Array.data[5]
+      value: Rock
+      objectReference: {fileID: 0}
+    - target: {fileID: 114823196446615346, guid: 7cb02b575b2f4e24da0b0692c32b06dc,
+        type: 2}
+      propertyPath: worldObjectTypes.Array.data[6]
+      value: Rock
+      objectReference: {fileID: 0}
+    - target: {fileID: 114823196446615346, guid: 7cb02b575b2f4e24da0b0692c32b06dc,
+        type: 2}
+      propertyPath: worldObjectTypes.Array.data[7]
+      value: Rock
+      objectReference: {fileID: 0}
+    - target: {fileID: 114823196446615346, guid: 7cb02b575b2f4e24da0b0692c32b06dc,
+        type: 2}
+      propertyPath: worldObjectTypes.Array.data[8]
+      value: Rock
+      objectReference: {fileID: 0}
+    - target: {fileID: 114823196446615346, guid: 7cb02b575b2f4e24da0b0692c32b06dc,
+        type: 2}
+      propertyPath: worldObjectTypes.Array.data[9]
       value: Rock
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1411,7 +1441,7 @@ Prefab:
     - target: {fileID: 224142920999743980, guid: 9101fd82ff8fe2e44a5cb9ed8b58e042,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 0.000015258789
       objectReference: {fileID: 0}
     - target: {fileID: 224374457610880654, guid: 9101fd82ff8fe2e44a5cb9ed8b58e042,
         type: 2}
@@ -1575,7 +1605,7 @@ Prefab:
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
       propertyPath: connectionNorth
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
@@ -1585,7 +1615,7 @@ Prefab:
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
       propertyPath: connectionSouth
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
@@ -2086,7 +2116,7 @@ Prefab:
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
       propertyPath: connectionSouth
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
@@ -2633,12 +2663,12 @@ Prefab:
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
       propertyPath: connectionNorth
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
       propertyPath: connectionSouth
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
@@ -2860,7 +2890,7 @@ Prefab:
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}
       propertyPath: connectionNorth
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114449347503996544, guid: e7a35616353c46949b1f937392ad6fec,
         type: 2}

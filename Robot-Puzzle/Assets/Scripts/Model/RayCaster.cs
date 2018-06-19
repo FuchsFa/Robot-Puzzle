@@ -90,7 +90,7 @@ public class RayCaster : MonoBehaviour {
         Debug.DrawRay(raycastOrigin, raycastDirection, Color.red, 0.3f);
         if (hit) {
             if (hit.collider != myCollider && hit.transform.GetComponent<InteractiveObject>() != null) {
-                if(hit.transform.GetComponent<InteractiveObject>().Grabable == true) {
+                if(hit.transform.GetComponent<InteractiveObject>().Grabable == true && hit.transform.GetComponent<InteractiveObject>().grabbedBy == null) {
                     Debug.Log(gameObject.name + " hat ein Objekt zum Greifen gefunden: " + hit.transform.gameObject.name);
                     GameObject foundObject = hit.transform.gameObject;
                     if (foundObject.GetComponent<WorldObject>() && foundObject.GetComponent<WorldObject>().myGroup != null) {

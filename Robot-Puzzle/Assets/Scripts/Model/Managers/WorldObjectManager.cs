@@ -92,6 +92,7 @@ public class WorldObjectManager : MonoBehaviour {
         obj.InitializeWorldObject(new Vector2(0, -1), x, y);
         worldObject.transform.position = new Vector3(x + 0.5f, y + 0.5f);
         worldObjects.Add(worldObject);
+        worldObject.name = worldObject.GetComponent<WorldObject>().GetObjectType() + " ID: " + worldObjects.Count;
         worldObject.transform.SetParent(this.transform);
         return worldObject;
     }
@@ -210,8 +211,14 @@ public class WorldObjectManager : MonoBehaviour {
         List<GameObject> connectedThisTurn = new List<GameObject>();
         foreach(GameObject obj in worldObjects) {
             if(obj.GetComponent<WorldObject>().IsConnective()) {
+                Debug.Log("obj = " + obj.name);
                 foreach(GameObject objectToConnectTo in worldObjects) {
+                    Debug.Log("objectToConnectTo = " + objectToConnectTo.name);
                     if(objectToConnectTo != obj && objectToConnectTo.GetComponent<WorldObject>().IsConnective()) {
+                        if(obj.GetComponent<WorldObject>().myGroup != null && objectToConnectTo.GetComponent<WorldObject>().myGroup != null && obj.GetComponent<WorldObject>().myGroup == objectToConnectTo.GetComponent<WorldObject>().myGroup) {
+                            Debug.Log(obj.name + " und " + objectToConnectTo.name + " sind in der gleichen ObjectGroup");
+                            continue;
+                        }
                         ConnectWorldObjects(obj.GetComponent<WorldObject>(), objectToConnectTo.GetComponent<WorldObject>());
                         connectedThisTurn.Add(obj);
                     }
@@ -229,7 +236,7 @@ public class WorldObjectManager : MonoBehaviour {
     /// <param name="a"></param>
     /// <param name="b"></param>
     public void ConnectWorldObjects(WorldObject a, WorldObject b) {
-        if(Vector3.Distance(a.transform.position, b.transform.position) > 1) {
+        if(Vector3.Distance(a.transform.position, b.transform.position) > 1.1f) {
             Debug.Log("Die WorldObjects '" + a.gameObject.name + "' und '" + b.gameObject.name + "' sind zu weit auseinander, um verbunden zu werden.");
             return;
         }
