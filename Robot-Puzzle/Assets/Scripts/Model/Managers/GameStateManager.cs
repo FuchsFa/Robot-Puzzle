@@ -185,6 +185,9 @@ public class GameStateManager : MonoBehaviour {
     /// Bereitet alles Nötige für die derzeite Runde vor.
     /// </summary>
     private void PrepareTurn() {
+        robotManager.AdjustRobotObjects(1);
+        worldObjectManager.AdjustWorldObjects(1);
+
         robotManager.AdjustRobotAnimationVariables();
         worldObjectManager.AdjustWorldObjectAnimationVariables();
     }

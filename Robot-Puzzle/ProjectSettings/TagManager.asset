@@ -48,11 +48,11 @@ TagManager:
   - name: Wall
     uniqueID: 3951468531
     locked: 0
-  - name: Robot
-    uniqueID: 704723279
-    locked: 0
   - name: Goals
     uniqueID: 784979057
+    locked: 0
+  - name: Robot
+    uniqueID: 704723279
     locked: 0
   - name: ObjectConnections
     uniqueID: 1476249097
