@@ -68,6 +68,7 @@ public class Robot : MonoBehaviour {
         actionDictionary = new Dictionary<string, System.Func<DynValue>>();
         actionDictionary.Add("turnLeft", TurnLeft);
         actionDictionary.Add("turnRight", TurnRight);
+        actionDictionary.Add("wait", Wait);
         actionDictionary.Add("grab", GrabObject);
         actionDictionary.Add("release", ReleaseObject);
         actionDictionary.Add("walk", Walk);
@@ -85,6 +86,7 @@ public class Robot : MonoBehaviour {
         allowedActionNames = new List<string>();
         allowedActionNames.Add("turnLeft");
         allowedActionNames.Add("turnRight");
+        allowedActionNames.Add("wait");
         foreach(RobotPart part in parts) {
             allowedActionNames.AddRange(part.GetActionList());
         }
@@ -304,6 +306,15 @@ public class Robot : MonoBehaviour {
     public DynValue TurnRight() {
         //Debug.Log(gameObject.name + " turns right.");
         myInteractiveObject.TurnRight();
+        return DynValue.NewYieldReq(new DynValue[] { coroutine });
+    }
+
+    /// <summary>
+    /// Lässt den Roboter eine Runde lang still stehen.
+    /// </summary>
+    /// <returns></returns>
+    public DynValue Wait() {
+        //Debug.Log(gameObject.name + " waits.");
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }
 

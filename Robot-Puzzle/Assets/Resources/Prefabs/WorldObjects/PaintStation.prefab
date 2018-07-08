@@ -210,6 +210,7 @@ MonoBehaviour:
   objectType: PaintStation
   scriptText: {fileID: 4900000, guid: 3173ecf0b03c94c4e9a1924bacf31639, type: 3}
   myGroup: {fileID: 0}
+  connective: 0
   terrainCompatability: 00000000
   objectColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &114542079061080164
@@ -263,7 +264,7 @@ SpriteRenderer:
   m_SortingLayerID: 1987882343
   m_SortingLayer: 6
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300010, guid: 2fa09424e3a6630449db96e3b9c7ab1a, type: 3}
+  m_Sprite: {fileID: 21300002, guid: 3d6365fbd96893247808cb697147b301, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

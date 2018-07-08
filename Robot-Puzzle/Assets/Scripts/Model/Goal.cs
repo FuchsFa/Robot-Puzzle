@@ -63,7 +63,8 @@ public class Goal : MonoBehaviour {
         worldObjectReference.transform.position = new Vector3(1000, 0);
         worldObjectReference.GetComponent<WorldObject>().objectColor = worldObjectColor;
         worldObjectPreview.sprite = worldObjectReference.GetComponent<SpriteRenderer>().sprite;
-        worldObjectPreview.GetComponent<SpriteRenderer>().color = worldObjectColor;
+        Color previewColor = new Color(worldObjectColor.r, worldObjectColor.g, worldObjectColor.b, 0.5f);
+        worldObjectPreview.GetComponent<SpriteRenderer>().color = previewColor;
         GetComponent<InteractiveObject>().SetStartingPositionAndRotation((int)(transform.position.x - 0.5f), (int)(transform.position.y - 0.5f), new Vector2(0, -1));
     }
 
