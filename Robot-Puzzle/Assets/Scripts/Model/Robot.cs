@@ -149,6 +149,7 @@ public class Robot : MonoBehaviour {
         coroutine = null;
         DynValue function = script.Globals.Get("action");
         coroutine = script.CreateCoroutine(function);
+        coroutine.Coroutine.AutoYieldCounter = 200;
     }
 
     /// <summary>
@@ -295,7 +296,7 @@ public class Robot : MonoBehaviour {
     /// Dreht die zurzeitige Ausrichtung des Roboters um 90° gegen den Uhrzeigersinn.
     /// </summary>
     public DynValue TurnLeft() {
-        //Debug.Log(gameObject.name + " turns left.");
+        Debug.Log(gameObject.name + " turns left.");
         myInteractiveObject.TurnLeft();
         return DynValue.NewYieldReq(new DynValue[] { coroutine });
     }

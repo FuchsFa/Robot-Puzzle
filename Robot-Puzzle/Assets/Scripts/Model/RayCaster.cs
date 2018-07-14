@@ -48,11 +48,16 @@ public class RayCaster : MonoBehaviour {
         if (hit) {
             if (hit.collider != myCollider) {
                 //Debug.Log(gameObject.name + " ist mit " + hit.transform.gameObject.name + " zusammengestoßen.");
-                bool haveGroup = GetComponent<WorldObject>().myGroup != null;
+                bool haveGroup = false;
+                if (GetComponent<WorldObject>()) {
+                    haveGroup = GetComponent<WorldObject>().myGroup != null;
+                }
                 if (GetComponent<WorldObject>() && hit.transform.GetComponent<WorldObject>() && haveGroup && GetComponent<WorldObject>().myGroup.objects.Contains(hit.transform.GetComponent<WorldObject>())) {
                     //Debug.Log("Aber " + hit.transform.gameObject.name + " gehört zu seiner objectGroup und kann daher nicht mit ihm kollidieren.");
                 } else {
-                    return !hit.transform.GetComponent<InteractiveObject>().Movable;
+                    if(hit.transform.GetComponent<InteractiveObject>()) {
+                        return !hit.transform.GetComponent<InteractiveObject>().Movable;
+                    }
                 }
             }
         }
