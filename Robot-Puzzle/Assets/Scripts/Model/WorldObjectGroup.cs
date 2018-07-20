@@ -41,6 +41,19 @@ public class WorldObjectGroup : MonoBehaviour {
     }
 
     /// <summary>
+    /// Überprüft, ob mindestens eins der WorldObjects in der Gruppe gegriffen wird.
+    /// </summary>
+    /// <returns></returns>
+    public bool isGroupBeingGrabbed() {
+        foreach(WorldObject worldObj in objects) {
+            if(worldObj.GetComponent<InteractiveObject>().grabbedBy != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
     /// Gibt den Weg zum übergebenen WorldObject als Vector zurück.
     /// </summary>
     /// <param name="target"></param>

@@ -9,7 +9,7 @@ function action()
 			release()
 			processOre()
 		else
-			release()
+			wait()
 		end
 	end
 end

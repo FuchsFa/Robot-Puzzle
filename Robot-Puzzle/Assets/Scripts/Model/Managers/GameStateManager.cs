@@ -100,6 +100,18 @@ public class GameStateManager : MonoBehaviour {
         text = Resources.Load<TextAsset>("Texts/Robot 6Actions");
         scriptCode = text.text;
         robot6Object.GetComponent<Robot>().ChangeScriptCode(scriptCode);
+
+        //Robot7
+        GameObject robot7Object = robotManager.CreateRobot(0, -1);
+        robotManager.TurnRobotStartingDirection(robot7Object);
+        robotManager.TurnRobotStartingDirection(robot7Object);
+        robotManager.TurnRobotStartingDirection(robot7Object);
+        BasicArm tool7 = new BasicArm(robot7Object.GetComponent<Robot>());
+        SpiderLeg leg7 = new SpiderLeg(robot7Object.GetComponent<Robot>());
+        BasicSensor sensor7 = new BasicSensor(robot7Object.GetComponent<Robot>());
+        text = Resources.Load<TextAsset>("Texts/Robot 7Actions");
+        scriptCode = text.text;
+        robot7Object.GetComponent<Robot>().ChangeScriptCode(scriptCode);
     }
 
     public void OnSpeedSliderChange() {

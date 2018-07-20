@@ -69,7 +69,7 @@ public class VictoryPanelManager : MonoBehaviour {
                 break;
             }
         }
-        Debug.Log("Speed Score: " + scoreSpeed);
+        Debug.Log("Speed Score: " + scoreSpeed + "(" + turns + " turns)");
         int cost = RobotManager.Instance.GetTotalRobotCost();
         for (int i = 0; i < targetRobotCost.Length; i++) {
             if(cost <= targetRobotCost[i]) {
@@ -77,7 +77,7 @@ public class VictoryPanelManager : MonoBehaviour {
                 break;
             }
         }
-        Debug.Log("Cost Score: " + scoreCost);
+        Debug.Log("Cost Score: " + scoreCost + "(" + cost + "$)");
         int codeLength = RobotManager.Instance.GetTotalCodeLength();
         for (int i = 0; i < targetCodeLength.Length; i++) {
             if(codeLength <= targetCodeLength[i]) {
@@ -85,7 +85,7 @@ public class VictoryPanelManager : MonoBehaviour {
                 break;
             }
         }
-        Debug.Log("Code Score: " + scoreCode);
+        Debug.Log("Code Score: " + scoreCode + "(" + codeLength + " LOC)");
     }
 
     /// <summary>
@@ -112,9 +112,9 @@ public class VictoryPanelManager : MonoBehaviour {
         for (int i = 0; i < 5; i++) {
             if(score > i) {
                 //TODO: Zeichen durch icons ersetzen.
-                temp += "|";
+                temp += "<sprite index=" + (i + 1) + ">";
             } else {
-                temp += ".";
+                temp += "<sprite index=0>";
             }
         }
 

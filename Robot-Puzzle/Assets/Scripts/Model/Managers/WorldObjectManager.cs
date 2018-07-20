@@ -211,9 +211,9 @@ public class WorldObjectManager : MonoBehaviour {
         List<GameObject> connectedThisTurn = new List<GameObject>();
         foreach(GameObject obj in worldObjects) {
             if(obj.GetComponent<WorldObject>().IsConnective()) {
-                Debug.Log("obj = " + obj.name);
+                //Debug.Log("obj = " + obj.name);
                 foreach(GameObject objectToConnectTo in worldObjects) {
-                    Debug.Log("objectToConnectTo = " + objectToConnectTo.name);
+                    //Debug.Log("objectToConnectTo = " + objectToConnectTo.name);
                     if(objectToConnectTo != obj && objectToConnectTo.GetComponent<WorldObject>().IsConnective()) {
                         if(obj.GetComponent<WorldObject>().myGroup != null && objectToConnectTo.GetComponent<WorldObject>().myGroup != null && obj.GetComponent<WorldObject>().myGroup == objectToConnectTo.GetComponent<WorldObject>().myGroup) {
                             Debug.Log(obj.name + " und " + objectToConnectTo.name + " sind in der gleichen ObjectGroup");
@@ -258,6 +258,6 @@ public class WorldObjectManager : MonoBehaviour {
     /// <param name="group"></param>
     public void RemoveWorldObjectGroup(WorldObjectGroup group) {
         worldObjectGroups.Remove(group.gameObject);
-        Destroy(group);
+        Destroy(group.gameObject);
     }
 }

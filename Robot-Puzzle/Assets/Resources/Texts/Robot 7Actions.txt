@@ -1,0 +1,39 @@
+function action()
+	counter = 0
+	while true do
+		ref=sense()
+		if ref["type"] == "Robot" then
+			counter = counter + 1
+			if counter == 7 then
+				counter = 0
+				grabTarget()
+			else
+				wait()
+			end
+		else
+			wait()
+		end
+	end
+end
+
+function grabTarget()
+	move("south")
+	move("east")
+	grab()
+	moveTarget()
+end
+
+function moveTarget()
+	move("east")
+	move("east")
+	move("east")
+	release()
+	returnHome()
+end
+
+function returnHome()
+	for i=1,4,1 do
+		move("west")
+	end
+	move("north")
+end

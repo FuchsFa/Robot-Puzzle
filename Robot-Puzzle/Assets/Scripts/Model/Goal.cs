@@ -91,9 +91,13 @@ public class Goal : MonoBehaviour {
                 }
                 TakeGameObjectForOutput(hit.transform.gameObject);
             } else {
-                Debug.Log("Objekt kann nicht ans Ziel '" + gameObject.name + "' übergeben werden.");
-                ConsolePanelManager.Instance.LogErrorToInGameConsole("Trying to output an invalid object at " + gameObject.name + ".");
-                GameStateManager.Instance.Stop();
+                if (hit.transform.gameObject.GetComponent<WorldObject>().myGroup != null && hit.transform.gameObject.GetComponent<WorldObject>().myGroup.GetComponent<InteractiveObject>().grabbedBy != null) {
+                    Debug.Log("Objekt kann nicht ans Ziel '" + gameObject.name + "' übergeben werden, aber es ist Teil einer Gruppe.");
+                } else {
+                    Debug.Log("Objekt kann nicht ans Ziel '" + gameObject.name + "' übergeben werden.");
+                    ConsolePanelManager.Instance.LogErrorToInGameConsole("Trying to output an invalid object at " + gameObject.name + ".");
+                    GameStateManager.Instance.Stop();
+                }
             }
         }
     }

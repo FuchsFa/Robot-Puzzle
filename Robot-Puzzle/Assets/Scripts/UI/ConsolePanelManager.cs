@@ -55,6 +55,9 @@ public class ConsolePanelManager : MonoBehaviour {
             if(command == "/save") {
                 RobotManager.Instance.SaveCurrentRobotScripts();
             }
+            if(command == "/win") {
+                GameStateManager.Instance.victoryPanelManager.OnVictory();
+            }
         }
     }
 
