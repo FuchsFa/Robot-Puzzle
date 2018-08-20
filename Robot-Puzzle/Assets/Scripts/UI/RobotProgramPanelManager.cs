@@ -97,7 +97,7 @@ public class RobotProgramPanelManager : MonoBehaviour {
             int characterCount = textInfo.characterCount;
             
             if (characterCount == 0) {
-                yield return new WaitForSeconds(0.25f);
+                yield return new WaitForSeconds(0.1f);
                 continue;
             }
             
@@ -115,7 +115,7 @@ public class RobotProgramPanelManager : MonoBehaviour {
             multiLineComment = false;
             highlightString = false;
             //Debug.Log("**End Syntax Check");
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.1f);
         }
     }
 
@@ -294,9 +294,6 @@ public class RobotProgramPanelManager : MonoBehaviour {
 
     private void Update() {
         AdjustLineNumberScrollPosition();
-        /*if(editor.isFocused && Input.GetKeyDown(KeyCode.Tab)) {
-            Debug.Log("Tab pressed");
-        }*/
     }
 
     /// <summary>

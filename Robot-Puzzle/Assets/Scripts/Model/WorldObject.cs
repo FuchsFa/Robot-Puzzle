@@ -169,6 +169,7 @@ public class WorldObject : MonoBehaviour {
                     myGroup.AddObjectToGroup(other);
                 }
             }
+            OpenForConnections(false);
         }
     }
 

@@ -194,6 +194,9 @@ public class WorldObjectManager : MonoBehaviour {
     /// <param name="percentage"></param>
     public void AdjustWorldObjects(float percentage) {
         foreach(GameObject group in worldObjectGroups) {
+            if(group == null) {
+                continue;
+            }
             group.GetComponent<InteractiveObject>().AdjustGameObject(percentage);
         }
         foreach(GameObject worldObject in worldObjects) {
@@ -221,6 +224,7 @@ public class WorldObjectManager : MonoBehaviour {
                         }
                         ConnectWorldObjects(obj.GetComponent<WorldObject>(), objectToConnectTo.GetComponent<WorldObject>());
                         connectedThisTurn.Add(obj);
+                        connectedThisTurn.Add(objectToConnectTo);
                     }
                 }
             }
